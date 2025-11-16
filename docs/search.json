@@ -1,0 +1,368 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "OmicsRenv",
+    "section": "",
+    "text": "前言",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#推荐阅读",
+    "href": "index.html#推荐阅读",
+    "title": "OmicsRenv",
+    "section": "推荐阅读",
+    "text": "推荐阅读\n\nhttps://www.bioconductor.org\nOrchestrating Single-Cell Analysis with Bioconductor\nSeurat\n差异分析DESeq2\n富集分析clusterProfiler、Disease Ontology Semantic and Enrichment analysis\n伪时序分析monocle3\n系统发育树\nplink 2.0",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#bioconductor版本",
+    "href": "index.html#bioconductor版本",
+    "title": "OmicsRenv",
+    "section": "Bioconductor版本",
+    "text": "Bioconductor版本\n\n#&gt; [1] '3.22'",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#会话信息",
+    "href": "index.html#会话信息",
+    "title": "OmicsRenv",
+    "section": "会话信息",
+    "text": "会话信息\n\n#&gt; ─ Session info ───────────────────────────────────────────────────────────────\n#&gt;  setting  value\n#&gt;  version  R version 4.5.1 (2025-06-13 ucrt)\n#&gt;  os       Windows 11 x64 (build 26100)\n#&gt;  system   x86_64, mingw32\n#&gt;  ui       RTerm\n#&gt;  language en\n#&gt;  collate  Chinese (Simplified)_China.utf8\n#&gt;  ctype    Chinese (Simplified)_China.utf8\n#&gt;  tz       Asia/Shanghai\n#&gt;  date     2025-11-15\n#&gt;  pandoc   3.6.3 @ D:/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)\n#&gt;  quarto   NA @ D:\\\\RStudio\\\\RESOUR~1\\\\app\\\\bin\\\\quarto\\\\bin\\\\quarto.exe\n#&gt; \n#&gt; ─ Packages ───────────────────────────────────────────────────────────────────\n#&gt;  package     * version date (UTC) lib source\n#&gt;  BiocManager   1.30.27 2025-11-14 [1] CRAN (R 4.5.1)\n#&gt;  cachem        1.1.0   2024-05-16 [1] CRAN (R 4.5.1)\n#&gt;  cli           3.6.5   2025-04-23 [1] CRAN (R 4.5.1)\n#&gt;  devtools      2.4.6   2025-10-03 [1] CRAN (R 4.5.2)\n#&gt;  digest        0.6.38  2025-11-12 [1] CRAN (R 4.5.2)\n#&gt;  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.5.2)\n#&gt;  evaluate      1.0.5   2025-08-27 [1] CRAN (R 4.5.2)\n#&gt;  fastmap       1.2.0   2024-05-15 [1] CRAN (R 4.5.1)\n#&gt;  fs            1.6.6   2025-04-12 [1] CRAN (R 4.5.1)\n#&gt;  glue          1.8.0   2024-09-30 [1] CRAN (R 4.5.1)\n#&gt;  htmltools     0.5.8.1 2024-04-04 [1] CRAN (R 4.5.1)\n#&gt;  htmlwidgets   1.6.4   2023-12-06 [1] CRAN (R 4.5.2)\n#&gt;  jsonlite      2.0.0   2025-03-27 [1] CRAN (R 4.5.1)\n#&gt;  knitr         1.50    2025-03-16 [1] CRAN (R 4.5.1)\n#&gt;  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.5.1)\n#&gt;  magrittr      2.0.4   2025-09-12 [1] CRAN (R 4.5.2)\n#&gt;  memoise       2.0.1   2021-11-26 [1] CRAN (R 4.5.1)\n#&gt;  pkgbuild      1.4.8   2025-05-26 [1] CRAN (R 4.5.2)\n#&gt;  pkgload       1.4.1   2025-09-23 [1] CRAN (R 4.5.2)\n#&gt;  purrr         1.2.0   2025-11-04 [1] CRAN (R 4.5.2)\n#&gt;  R6            2.6.1   2025-02-15 [1] CRAN (R 4.5.1)\n#&gt;  remotes       2.5.0   2024-03-17 [1] CRAN (R 4.5.2)\n#&gt;  renv          1.1.5   2025-07-24 [1] CRAN (R 4.5.2)\n#&gt;  rlang         1.1.6   2025-04-11 [1] CRAN (R 4.5.1)\n#&gt;  rmarkdown     2.30    2025-09-28 [1] CRAN (R 4.5.2)\n#&gt;  rstudioapi    0.17.1  2024-10-22 [1] CRAN (R 4.5.2)\n#&gt;  sessioninfo   1.2.3   2025-02-05 [1] CRAN (R 4.5.2)\n#&gt;  usethis       3.2.1   2025-09-06 [1] CRAN (R 4.5.2)\n#&gt;  vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.5.2)\n#&gt;  xfun          0.54    2025-10-30 [1] CRAN (R 4.5.2)\n#&gt; \n#&gt;  [1] E:/_GitHub/OmicsNotes/OmicsRenv/renv/library/windows/R-4.5/x86_64-w64-mingw32\n#&gt;  [2] C:/Users/WANGANLIN/AppData/Local/R/cache/R/renv/sandbox/windows/R-4.5/x86_64-w64-mingw32/a26a79d9\n#&gt; \n#&gt; ──────────────────────────────────────────────────────────────────────────────",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html",
+    "href": "upstream_analysis.html",
+    "title": "8  上游分析",
+    "section": "",
+    "text": "8.1 测序数据FASTQ 文件\n@&lt;instrument&gt;:&lt;run num&gt;:&lt;flowcell ID&gt;:&lt;lane&gt;:&lt;tile&gt;:&lt;x&gt;:&lt;y&gt;:&lt;UMI&gt; &lt;read&gt;:&lt;filtered&gt;:&lt;control num&gt;:&lt;index&gt;\nFastq文件形如：\n每个碱基对应的字符在ASCII码中对应的十进制数字减去33即为该碱基质量（也即Phred33体系），例如上述序列中第一个碱基的质量为D，对应的十进制数字为68（见下表），则碱基质量为68-33=35。碱基质量Q=-10*lgP，P为碱基被测错的概率。也即Q为30代表被测错的概率为0.001，碱基质量越高，则被测错的概率越低。\nQ = -10 log10(P)",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#测序数据fastq-文件",
+    "href": "upstream_analysis.html#测序数据fastq-文件",
+    "title": "8  上游分析",
+    "section": "",
+    "text": "@M00970:337:000000000-BR5KF:1:1102:17745:1557 1:N:0:CGCAGAAC+ACAGAGTT\nACCAACCAACTTTCGATCTCTTGTAGATCTGTTCTCT...AAACGAACTTTAAAATCTGTGTGGCTGTCACTCGGCTGCATGC\n+\nDDDCDDDDDDFFGGGGGGGGGGHHHHHHHHHHHHHHH...HHHHGGGGHHHHHHHHHHHHHHHGHHGHHHHHHGGGGGGHHHH",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#导入-导出格式转换",
+    "href": "upstream_analysis.html#导入-导出格式转换",
+    "title": "8  上游分析",
+    "section": "8.2 导入 / 导出、格式转换",
+    "text": "8.2 导入 / 导出、格式转换\nrtracklayer",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#质量控制fastqc",
+    "href": "upstream_analysis.html#质量控制fastqc",
+    "title": "8  上游分析",
+    "section": "8.3 质量控制：FastQC",
+    "text": "8.3 质量控制：FastQC\nFastQC v0.12.1 (Win/Linux zip file)",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#剪切trimmomatic",
+    "href": "upstream_analysis.html#剪切trimmomatic",
+    "title": "8  上游分析",
+    "section": "8.4 剪切：Trimmomatic",
+    "text": "8.4 剪切：Trimmomatic\n接头序列的去除和低质量序列的修剪",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#序列比对star",
+    "href": "upstream_analysis.html#序列比对star",
+    "title": "8  上游分析",
+    "section": "8.5 序列比对：STAR",
+    "text": "8.5 序列比对：STAR",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#定量计数矩阵",
+    "href": "upstream_analysis.html#定量计数矩阵",
+    "title": "8  上游分析",
+    "section": "8.6 定量：计数矩阵",
+    "text": "8.6 定量：计数矩阵\nhttps://subread.sourceforge.net/featureCounts.html\n\n将读数与基因组对齐，并计算每个基因外显子内的读数数量。\nR 包 Rsubread 更简单、更快、更便宜、更适合 RNA 测序的比对和定量\nhttps://bioconductor.org/packages/release/bioc/html/Rsubread.html\nfeatureCount是subread软件包里的一个命令，所以安装subread R版，\n将读数与转录组对齐，量化转录表达，并将转录表达总结为基因表达\nPseudoalign针对转录组进行读取，使用相应的基因组作为诱饵，量化该过程中的转录物表达，并将转录物水平的表达总结为基因水平的表达",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "upstream_analysis.html#会话信息",
+    "href": "upstream_analysis.html#会话信息",
+    "title": "8  上游分析",
+    "section": "8.7 会话信息",
+    "text": "8.7 会话信息\n\n#&gt; ─ Session info ───────────────────────────────────────────────────────────────\n#&gt;  setting  value\n#&gt;  version  R version 4.5.1 (2025-06-13 ucrt)\n#&gt;  os       Windows 11 x64 (build 26100)\n#&gt;  system   x86_64, mingw32\n#&gt;  ui       RTerm\n#&gt;  language en\n#&gt;  collate  Chinese (Simplified)_China.utf8\n#&gt;  ctype    Chinese (Simplified)_China.utf8\n#&gt;  tz       Asia/Shanghai\n#&gt;  date     2025-11-15\n#&gt;  pandoc   3.6.3 @ D:/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)\n#&gt;  quarto   NA @ D:\\\\RStudio\\\\RESOUR~1\\\\app\\\\bin\\\\quarto\\\\bin\\\\quarto.exe\n#&gt; \n#&gt; ─ Packages ───────────────────────────────────────────────────────────────────\n#&gt;  package     * version date (UTC) lib source\n#&gt;  BiocManager   1.30.27 2025-11-14 [1] CRAN (R 4.5.1)\n#&gt;  cachem        1.1.0   2024-05-16 [1] CRAN (R 4.5.1)\n#&gt;  cli           3.6.5   2025-04-23 [1] CRAN (R 4.5.1)\n#&gt;  devtools      2.4.6   2025-10-03 [1] CRAN (R 4.5.2)\n#&gt;  digest        0.6.38  2025-11-12 [1] CRAN (R 4.5.2)\n#&gt;  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.5.2)\n#&gt;  evaluate      1.0.5   2025-08-27 [1] CRAN (R 4.5.2)\n#&gt;  fastmap       1.2.0   2024-05-15 [1] CRAN (R 4.5.1)\n#&gt;  fs            1.6.6   2025-04-12 [1] CRAN (R 4.5.1)\n#&gt;  glue          1.8.0   2024-09-30 [1] CRAN (R 4.5.1)\n#&gt;  htmltools     0.5.8.1 2024-04-04 [1] CRAN (R 4.5.1)\n#&gt;  htmlwidgets   1.6.4   2023-12-06 [1] CRAN (R 4.5.2)\n#&gt;  jsonlite      2.0.0   2025-03-27 [1] CRAN (R 4.5.1)\n#&gt;  knitr         1.50    2025-03-16 [1] CRAN (R 4.5.1)\n#&gt;  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.5.1)\n#&gt;  magrittr      2.0.4   2025-09-12 [1] CRAN (R 4.5.2)\n#&gt;  memoise       2.0.1   2021-11-26 [1] CRAN (R 4.5.1)\n#&gt;  pkgbuild      1.4.8   2025-05-26 [1] CRAN (R 4.5.2)\n#&gt;  pkgload       1.4.1   2025-09-23 [1] CRAN (R 4.5.2)\n#&gt;  purrr         1.2.0   2025-11-04 [1] CRAN (R 4.5.2)\n#&gt;  R6            2.6.1   2025-02-15 [1] CRAN (R 4.5.1)\n#&gt;  remotes       2.5.0   2024-03-17 [1] CRAN (R 4.5.2)\n#&gt;  renv          1.1.5   2025-07-24 [1] CRAN (R 4.5.2)\n#&gt;  rlang         1.1.6   2025-04-11 [1] CRAN (R 4.5.1)\n#&gt;  rmarkdown     2.30    2025-09-28 [1] CRAN (R 4.5.2)\n#&gt;  rstudioapi    0.17.1  2024-10-22 [1] CRAN (R 4.5.2)\n#&gt;  sessioninfo   1.2.3   2025-02-05 [1] CRAN (R 4.5.2)\n#&gt;  usethis       3.2.1   2025-09-06 [1] CRAN (R 4.5.2)\n#&gt;  vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.5.2)\n#&gt;  xfun          0.54    2025-10-30 [1] CRAN (R 4.5.2)\n#&gt;  yaml          2.3.10  2024-07-26 [1] CRAN (R 4.5.0)\n#&gt; \n#&gt;  [1] E:/_GitHub/OmicsNotes/OmicsRenv/renv/library/windows/R-4.5/x86_64-w64-mingw32\n#&gt;  [2] C:/Users/WANGANLIN/AppData/Local/R/cache/R/renv/sandbox/windows/R-4.5/x86_64-w64-mingw32/a26a79d9\n#&gt; \n#&gt; ──────────────────────────────────────────────────────────────────────────────",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>上游分析</span>"
+    ]
+  },
+  {
+    "objectID": "sequence_structure.html",
+    "href": "sequence_structure.html",
+    "title": "5  生物序列数据结构",
+    "section": "",
+    "text": "5.1 S4 类\nhttps://bioconductor.org/packages/release/workflows/html/sequencing.html",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>生物序列数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "sequence_structure.html#s4-类",
+    "href": "sequence_structure.html#s4-类",
+    "title": "5  生物序列数据结构",
+    "section": "",
+    "text": "5.1.1 DataFrame\n\n\nCode\nlibrary(S4Vectors)\n# 创建一个 DataFrame 对象\ndf &lt;- DataFrame(a = 1:3, b = letters[1:3])\ndf\n#&gt; DataFrame with 3 rows and 2 columns\n#&gt;           a           b\n#&gt;   &lt;integer&gt; &lt;character&gt;\n#&gt; 1         1           a\n#&gt; 2         2           b\n#&gt; 3         3           c\n\n\n\n\n5.1.2 Rle\nRun-Length Encoding (RLE) 是一种简单且常用的数据压缩方法，特别适用于存储和处理重复数据序列。class?Rle\n\n\nCode\n# 创建一个 Rle 对象\n\nrle_obj &lt;- Rle(c(rep(\"A\", 5), rep(\"B\", 3), rep(\"C\", 2), \"D\", rep(\"A\", 2)))\n\nprint(rle_obj)\n#&gt; character-Rle of length 13 with 5 runs\n#&gt;   Lengths:   5   3   2   1   2\n#&gt;   Values : \"A\" \"B\" \"C\" \"D\" \"A\"\n\nrunLength(rle_obj)\n#&gt; [1] 5 3 2 1 2\n\n\n在 RLE 中，连续的重复元素（称为“run”）被压缩成一个值和一个计数对。这个值表示重复的元素，计数表示它们的数量。例如，序列 [AAAAABBBCCDAA] 可以被编码为 (A5, B3, C2, D1, A2)。",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>生物序列数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "sequence_structure.html#biostrings",
+    "href": "sequence_structure.html#biostrings",
+    "title": "5  生物序列数据结构",
+    "section": "5.2 Biostrings",
+    "text": "5.2 Biostrings\nBiological strings\nDNAstringSet、RNAStringSet、AAStringSet、BStringSet\n\n5.2.1 DNA\n\n\nCode\n# BiocManager::install(\"Biostrings\")\nlibrary(Biostrings)\n\nBiostrings::DNA_ALPHABET\n#&gt;  [1] \"A\" \"C\" \"G\" \"T\" \"M\" \"R\" \"W\" \"S\" \"Y\" \"K\" \"V\" \"H\" \"D\" \"B\" \"N\" \"-\" \"+\" \".\"\nIUPAC_CODE_MAP\n#&gt;      A      C      G      T      M      R      W      S      Y      K      V \n#&gt;    \"A\"    \"C\"    \"G\"    \"T\"   \"AC\"   \"AG\"   \"AT\"   \"CG\"   \"CT\"   \"GT\"  \"ACG\" \n#&gt;      H      D      B      N \n#&gt;  \"ACT\"  \"AGT\"  \"CGT\" \"ACGT\"\n\nd &lt;- DNAStringSet(c(\"TGCACGTGCATT\",\"ACTGCA\"))\nd\n#&gt; DNAStringSet object of length 2:\n#&gt;     width seq\n#&gt; [1]    12 TGCACGTGCATT\n#&gt; [2]     6 ACTGCA\nlength(d)\n#&gt; [1] 2\n\nwidth(d)\n#&gt; [1] 12  6\nrev(d)\n#&gt; DNAStringSet object of length 2:\n#&gt;     width seq\n#&gt; [1]     6 ACTGCA\n#&gt; [2]    12 TGCACGTGCATT\nreverse(d)\n#&gt; DNAStringSet object of length 2:\n#&gt;     width seq\n#&gt; [1]    12 TTACGTGCACGT\n#&gt; [2]     6 ACGTCA\nreverseComplement(d)\n#&gt; DNAStringSet object of length 2:\n#&gt;     width seq\n#&gt; [1]    12 AATGCACGTGCA\n#&gt; [2]     6 TGCAGT\ntranslate(d)\n#&gt; AAStringSet object of length 2:\n#&gt;     width seq\n#&gt; [1]     4 CTCI\n#&gt; [2]     2 TA\n\nalphabetFrequency(d)\n#&gt;      A C G T M R W S Y K V H D B N - + .\n#&gt; [1,] 2 3 3 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n#&gt; [2,] 2 2 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0\nletterFrequency(d,letters = \"GC\")\n#&gt;      G|C\n#&gt; [1,]   6\n#&gt; [2,]   3\ndinucleotideFrequency(d)\n#&gt;      AA AC AG AT CA CC CG CT GA GC GG GT TA TC TG TT\n#&gt; [1,]  0  1  0  1  2  0  1  0  0  2  0  1  0  0  2  1\n#&gt; [2,]  0  1  0  0  1  0  0  1  0  1  0  0  0  0  1  0\n\n# 共识矩阵\n\nconsensusMatrix(d)\n#&gt;   [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12]\n#&gt; A    1    0    0    1    0    1    0    0    0     1     0     0\n#&gt; C    0    1    1    0    2    0    0    0    1     0     0     0\n#&gt; G    0    1    0    1    0    1    0    1    0     0     0     0\n#&gt; T    1    0    1    0    0    0    1    0    0     0     1     1\n#&gt; M    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; R    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; W    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; S    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; Y    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; K    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; V    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; H    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; D    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; B    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; N    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; -    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; +    0    0    0    0    0    0    0    0    0     0     0     0\n#&gt; .    0    0    0    0    0    0    0    0    0     0     0     0\n\n\n\n\n5.2.2 RNA\n\n\nCode\nBiostrings::GENETIC_CODE\n#&gt; TTT TTC TTA TTG TCT TCC TCA TCG TAT TAC TAA TAG TGT TGC TGA TGG CTT CTC CTA CTG \n#&gt; \"F\" \"F\" \"L\" \"L\" \"S\" \"S\" \"S\" \"S\" \"Y\" \"Y\" \"*\" \"*\" \"C\" \"C\" \"*\" \"W\" \"L\" \"L\" \"L\" \"L\" \n#&gt; CCT CCC CCA CCG CAT CAC CAA CAG CGT CGC CGA CGG ATT ATC ATA ATG ACT ACC ACA ACG \n#&gt; \"P\" \"P\" \"P\" \"P\" \"H\" \"H\" \"Q\" \"Q\" \"R\" \"R\" \"R\" \"R\" \"I\" \"I\" \"I\" \"M\" \"T\" \"T\" \"T\" \"T\" \n#&gt; AAT AAC AAA AAG AGT AGC AGA AGG GTT GTC GTA GTG GCT GCC GCA GCG GAT GAC GAA GAG \n#&gt; \"N\" \"N\" \"K\" \"K\" \"S\" \"S\" \"R\" \"R\" \"V\" \"V\" \"V\" \"V\" \"A\" \"A\" \"A\" \"A\" \"D\" \"D\" \"E\" \"E\" \n#&gt; GGT GGC GGA GGG \n#&gt; \"G\" \"G\" \"G\" \"G\" \n#&gt; attr(,\"alt_init_codons\")\n#&gt; [1] \"TTG\" \"CTG\"\nBiostrings::RNA_GENETIC_CODE\n#&gt; UUU UUC UUA UUG UCU UCC UCA UCG UAU UAC UAA UAG UGU UGC UGA UGG CUU CUC CUA CUG \n#&gt; \"F\" \"F\" \"L\" \"L\" \"S\" \"S\" \"S\" \"S\" \"Y\" \"Y\" \"*\" \"*\" \"C\" \"C\" \"*\" \"W\" \"L\" \"L\" \"L\" \"L\" \n#&gt; CCU CCC CCA CCG CAU CAC CAA CAG CGU CGC CGA CGG AUU AUC AUA AUG ACU ACC ACA ACG \n#&gt; \"P\" \"P\" \"P\" \"P\" \"H\" \"H\" \"Q\" \"Q\" \"R\" \"R\" \"R\" \"R\" \"I\" \"I\" \"I\" \"M\" \"T\" \"T\" \"T\" \"T\" \n#&gt; AAU AAC AAA AAG AGU AGC AGA AGG GUU GUC GUA GUG GCU GCC GCA GCG GAU GAC GAA GAG \n#&gt; \"N\" \"N\" \"K\" \"K\" \"S\" \"S\" \"R\" \"R\" \"V\" \"V\" \"V\" \"V\" \"A\" \"A\" \"A\" \"A\" \"D\" \"D\" \"E\" \"E\" \n#&gt; GGU GGC GGA GGG \n#&gt; \"G\" \"G\" \"G\" \"G\" \n#&gt; attr(,\"alt_init_codons\")\n#&gt; [1] \"UUG\" \"CUG\"\nRNA_ALPHABET\n#&gt;  [1] \"A\" \"C\" \"G\" \"U\" \"M\" \"R\" \"W\" \"S\" \"Y\" \"K\" \"V\" \"H\" \"D\" \"B\" \"N\" \"-\" \"+\" \".\"\nr &lt;- RNAStringSet(c(\"AUCG\", \"GCAU\", \"AUCGAU\", \"GCUA\"))\nr\n#&gt; RNAStringSet object of length 4:\n#&gt;     width seq\n#&gt; [1]     4 AUCG\n#&gt; [2]     4 GCAU\n#&gt; [3]     6 AUCGAU\n#&gt; [4]     4 GCUA\n\n\n\n\n5.2.3 蛋白质\n组成人体蛋白质的21种氨基酸，20 + 硒代半胱氨酸（UGA-终止密码子）\n\n\nCode\nBiostrings::AMINO_ACID_CODE\n#&gt;     A     R     N     D     C     Q     E     G     H     I     L     K     M \n#&gt; \"Ala\" \"Arg\" \"Asn\" \"Asp\" \"Cys\" \"Gln\" \"Glu\" \"Gly\" \"His\" \"Ile\" \"Leu\" \"Lys\" \"Met\" \n#&gt;     F     P     S     T     W     Y     V     U     O     B     J     Z     X \n#&gt; \"Phe\" \"Pro\" \"Ser\" \"Thr\" \"Trp\" \"Tyr\" \"Val\" \"Sec\" \"Pyl\" \"Asx\" \"Xle\" \"Glx\" \"Xaa\"\nAA_ALPHABET\n#&gt;  [1] \"A\" \"R\" \"N\" \"D\" \"C\" \"Q\" \"E\" \"G\" \"H\" \"I\" \"L\" \"K\" \"M\" \"F\" \"P\" \"S\" \"T\" \"W\" \"Y\"\n#&gt; [20] \"V\" \"U\" \"O\" \"B\" \"J\" \"Z\" \"X\" \"*\" \"-\" \"+\" \".\"\n\nprotein_strings &lt;- AAStringSet(c(\"MATH\", \"GCAU\", \"MATHMATH\", \"CUMA\"))\nprotein_strings\n#&gt; AAStringSet object of length 4:\n#&gt;     width seq\n#&gt; [1]     4 MATH\n#&gt; [2]     4 GCAU\n#&gt; [3]     8 MATHMATH\n#&gt; [4]     4 CUMA\n\n# 二进制字符串存储 如seq_id、quality\nbinary_strings &lt;- BStringSet(c(\"ERCC010101\", \"CRCC110011\", \"101010\", \"111000\"))\nbinary_strings\n#&gt; BStringSet object of length 4:\n#&gt;     width seq\n#&gt; [1]    10 ERCC010101\n#&gt; [2]    10 CRCC110011\n#&gt; [3]     6 101010\n#&gt; [4]     6 111000",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>生物序列数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "sequence_structure.html#ranges",
+    "href": "sequence_structure.html#ranges",
+    "title": "5  生物序列数据结构",
+    "section": "5.3 Ranges",
+    "text": "5.3 Ranges\n\n5.3.1 IntervalRanges\nIRanges\n\n\nCode\nlibrary(IRanges)\nset.seed(10)\nranges &lt;- IRanges::IRanges(\n  start = round(runif(10, 1, 100)),\n  width = round(runif(10, 0, 50)),\n  names = paste0(\"exton_\", letters[sample(1:26, 10)])\n)\nranges\n#&gt; IRanges object with 10 ranges and 0 metadata columns:\n#&gt;               start       end     width\n#&gt;           &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;\n#&gt;   exton_h        51        83        33\n#&gt;   exton_n        31        58        28\n#&gt;   exton_g        43        48         6\n#&gt;   exton_f        70        99        30\n#&gt;   exton_x         9        26        18\n#&gt;   exton_r        23        43        21\n#&gt;   exton_u        28        30         3\n#&gt;   exton_m        28        40        13\n#&gt;   exton_e        62        81        20\n#&gt;   exton_a        44        85        42\n\n\nstart(ranges)\n#&gt;  [1] 51 31 43 70  9 23 28 28 62 44\nwidth(ranges)\n#&gt;  [1] 33 28  6 30 18 21  3 13 20 42\nend(ranges)\n#&gt;  [1] 83 58 48 99 26 43 30 40 81 85\n\n\n没有维度，但有长度\n\n\nCode\ndim(ranges)\n#&gt; NULL\nlength(ranges)\n#&gt; [1] 10\n\n\n重叠检测: 检查不同区间是否有重叠。\n\n\nCode\nquery &lt;- IRanges(1, 10)\nsubject &lt;- IRanges(c(5, 15), c(10, 20))\noverlaps &lt;- findOverlaps(query, subject)\noverlaps\n#&gt; Hits object with 1 hit and 0 metadata columns:\n#&gt;       queryHits subjectHits\n#&gt;       &lt;integer&gt;   &lt;integer&gt;\n#&gt;   [1]         1           1\n#&gt;   -------\n#&gt;   queryLength: 1 / subjectLength: 2\n\nqueryHits(overlaps)\n#&gt; [1] 1\n\n\n合并区间: 将重叠或相邻的区间合并为一个更大的区间。\n\n\nCode\nmerged &lt;- GenomicRanges::reduce(IRanges(start = c(1, 5), end = c(10, 20)))\nprint(merged)\n#&gt; IRanges object with 1 range and 0 metadata columns:\n#&gt;           start       end     width\n#&gt;       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;\n#&gt;   [1]         1        20        20\n\n\n\n\nCode\nplotRanges &lt;- function(x, xlim = x , \n                       main =deparse(substitute(x)),\n                       col = \"black\", sep = 0.5, ...){\n  height = 1\n  if(is(xlim, class2 = \"Ranges\"))\n    xlim = c(min(start(xlim)), max(end(xlim)))\n  bins &lt;- disjointBins(IRanges(start(x),end(x)+1))\n  plot.new()\n  plot.window(xlim, c(0, max(bins)*(height + sep)))\n  ybottom &lt;- bins * (sep + height) - height\n  rect(start(x)-0.5, ybottom, end(x)+0.5, ybottom + height,\n       col = col, ...)\n  title(main)\n  axis(1)\n  \n}\n\n\n\n\nCode\nir &lt;- IRanges::IRanges(\n  start =c(1, 1, 4, 10),\n  end =  c(6, 3, 8, 10)\n)\nir\n#&gt; IRanges object with 4 ranges and 0 metadata columns:\n#&gt;           start       end     width\n#&gt;       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;\n#&gt;   [1]         1         6         6\n#&gt;   [2]         1         3         3\n#&gt;   [3]         4         8         5\n#&gt;   [4]        10        10         1\ndisjoin(ir)\n#&gt; IRanges object with 4 ranges and 0 metadata columns:\n#&gt;           start       end     width\n#&gt;       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;\n#&gt;   [1]         1         3         3\n#&gt;   [2]         4         6         3\n#&gt;   [3]         7         8         2\n#&gt;   [4]        10        10         1\n\ndisjointBins(IRanges(start(ir), end(ir) + 1)) # 1,2,3,1 放于第1，2，3，1层\n#&gt; [1] 1 2 3 1\ndisjointBins(IRanges(start(disjoin(ir)), end(disjoin(ir)) + 1)) #放于第1，2，1，1层\n#&gt; [1] 1 2 1 1\n\npar(mfrow = c(2,1))\nplotRanges(ir)\nplotRanges(disjoin(ir))\n\n\n\n\n\n\n\n\n\n\n\n5.3.2 GenomicRanges\nGRanges：用于表示基因组（染色体）范围的数据结构，例如Promoters，Genes，SNPs，CpG Islands，……\n\n\nCode\nlibrary(GenomicRanges)\n# help(\"GRanges-class\")\n\nset.seed(10)\nGranges &lt;- GRanges(\n  seqnames = Rle( values =  c('chr1', 'chr2', 'chr3'), lengths =  c(3, 3, 3)),\n  ranges = IRanges(start = seq(1,18,2), width = 3),\n  strand = rep(c(\"+\",\"-\",\"*\"),each=3),\n  score = 101:109,\n  GC = runif(9)\n)\nGranges\n#&gt; GRanges object with 9 ranges and 2 metadata columns:\n#&gt;       seqnames    ranges strand |     score        GC\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;numeric&gt;\n#&gt;   [1]     chr1       1-3      + |       101  0.507478\n#&gt;   [2]     chr1       3-5      + |       102  0.306769\n#&gt;   [3]     chr1       5-7      + |       103  0.426908\n#&gt;   [4]     chr2       7-9      - |       104  0.693102\n#&gt;   [5]     chr2      9-11      - |       105  0.085136\n#&gt;   [6]     chr2     11-13      - |       106  0.225437\n#&gt;   [7]     chr3     13-15      * |       107  0.274531\n#&gt;   [8]     chr3     15-17      * |       108  0.272305\n#&gt;   [9]     chr3     17-19      * |       109  0.615829\n#&gt;   -------\n#&gt;   seqinfo: 3 sequences from an unspecified genome; no seqlengths\n\n\n\n\nCode\nsort(Granges)\n#&gt; GRanges object with 9 ranges and 2 metadata columns:\n#&gt;       seqnames    ranges strand |     score        GC\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;numeric&gt;\n#&gt;   [1]     chr1       1-3      + |       101  0.507478\n#&gt;   [2]     chr1       3-5      + |       102  0.306769\n#&gt;   [3]     chr1       5-7      + |       103  0.426908\n#&gt;   [4]     chr2       7-9      - |       104  0.693102\n#&gt;   [5]     chr2      9-11      - |       105  0.085136\n#&gt;   [6]     chr2     11-13      - |       106  0.225437\n#&gt;   [7]     chr3     13-15      * |       107  0.274531\n#&gt;   [8]     chr3     15-17      * |       108  0.272305\n#&gt;   [9]     chr3     17-19      * |       109  0.615829\n#&gt;   -------\n#&gt;   seqinfo: 3 sequences from an unspecified genome; no seqlengths\n\nvalues(Granges) &lt;- DataFrame(score = rnorm(9), GC = runif(9))\nGranges\n#&gt; GRanges object with 9 ranges and 2 metadata columns:\n#&gt;       seqnames    ranges strand |     score        GC\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;\n#&gt;   [1]     chr1       1-3      + | -0.177211 0.2395891\n#&gt;   [2]     chr1       3-5      + |  0.170618 0.7707715\n#&gt;   [3]     chr1       5-7      + |  0.242814 0.3558977\n#&gt;   [4]     chr2       7-9      - | -0.179406 0.5355970\n#&gt;   [5]     chr2      9-11      - | -0.630519 0.0930881\n#&gt;   [6]     chr2     11-13      - |  0.978693 0.1698030\n#&gt;   [7]     chr3     13-15      * |  0.293297 0.8998325\n#&gt;   [8]     chr3     15-17      * | -0.370329 0.4226376\n#&gt;   [9]     chr3     17-19      * |  0.543615 0.7477465\n#&gt;   -------\n#&gt;   seqinfo: 3 sequences from an unspecified genome; no seqlengths\n\n\nflank(x, width, start = TRUE, both = FALSE) 用于在基因组范围对象 (GRanges) 上扩展或调整范围。它会基于输入的基因组范围返回其上游或下游的邻近区域。flanking sequence\n\nx: 一个 GRanges 对象。\nwidth: 你想要的上下游区域的宽度（如上例中的 5）。\nstart: 这个参数决定了是否使用起始端（TRUE）还是结束端（FALSE）来生成上下游区域。如果你的基因组是正链，start = TRUE 表示上游。如果是负链，start = TRUE 则表示下游。默认为 TRUE。\nboth: 如果设置为 TRUE，则会在范围的两端生成 width 宽度的区域。\n\n\n\nCode\nflank(Granges,5)\n#&gt; GRanges object with 9 ranges and 2 metadata columns:\n#&gt;       seqnames    ranges strand |     score        GC\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;\n#&gt;   [1]     chr1      -4-0      + | -0.177211 0.2395891\n#&gt;   [2]     chr1      -2-2      + |  0.170618 0.7707715\n#&gt;   [3]     chr1       0-4      + |  0.242814 0.3558977\n#&gt;   [4]     chr2     10-14      - | -0.179406 0.5355970\n#&gt;   [5]     chr2     12-16      - | -0.630519 0.0930881\n#&gt;   [6]     chr2     14-18      - |  0.978693 0.1698030\n#&gt;   [7]     chr3      8-12      * |  0.293297 0.8998325\n#&gt;   [8]     chr3     10-14      * | -0.370329 0.4226376\n#&gt;   [9]     chr3     12-16      * |  0.543615 0.7477465\n#&gt;   -------\n#&gt;   seqinfo: 3 sequences from an unspecified genome; no seqlengths\n\n\npromoters(x, upstream = 2000, downstream = 200) 通常用于提取基因的启动子区域（promoter regions）。在基因组分析中，启动子区域是靠近基因起始位点的区域，通常被认为是调控基因表达的关键区域。启动子区域是基于基因组范围的起始位置提取的，上游（upstream）和下游（downstream）的长度可以自定义。\n\n\nCode\npromoters(Granges)\n#&gt; GRanges object with 9 ranges and 2 metadata columns:\n#&gt;       seqnames    ranges strand |     score        GC\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;\n#&gt;   [1]     chr1 -1999-200      + | -0.177211 0.2395891\n#&gt;   [2]     chr1 -1997-202      + |  0.170618 0.7707715\n#&gt;   [3]     chr1 -1995-204      + |  0.242814 0.3558977\n#&gt;   [4]     chr2 -190-2009      - | -0.179406 0.5355970\n#&gt;   [5]     chr2 -188-2011      - | -0.630519 0.0930881\n#&gt;   [6]     chr2 -186-2013      - |  0.978693 0.1698030\n#&gt;   [7]     chr3 -1987-212      * |  0.293297 0.8998325\n#&gt;   [8]     chr3 -1985-214      * | -0.370329 0.4226376\n#&gt;   [9]     chr3 -1983-216      * |  0.543615 0.7477465\n#&gt;   -------\n#&gt;   seqinfo: 3 sequences from an unspecified genome; no seqlengths\n\n\n\n\nCode\ngenome(Granges) &lt;- \"hg19\"\n\nseqinfo(Granges)\n#&gt; Seqinfo object with 3 sequences from hg19 genome; no seqlengths:\n#&gt;   seqnames seqlengths isCircular genome\n#&gt;   chr1             NA         NA   hg19\n#&gt;   chr2             NA         NA   hg19\n#&gt;   chr3             NA         NA   hg19\nseqlevels(Granges)\n#&gt; [1] \"chr1\" \"chr2\" \"chr3\"\nseqlengths(Granges)\n#&gt; chr1 chr2 chr3 \n#&gt;   NA   NA   NA\n\n\ngaps(x)用于计算给定的 GRanges 对象中缺失（gaps）的基因组区域。它返回的是不被输入的 GRanges 对象覆盖的范围（即空白区域），通常用于确定在某些染色体区域中没有基因或特征的部分。\n\n\nCode\ngaps(Granges)\n#&gt; GRanges object with 2 ranges and 0 metadata columns:\n#&gt;       seqnames    ranges strand\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;\n#&gt;   [1]     chr2       1-6      -\n#&gt;   [2]     chr3      1-12      *\n#&gt;   -------\n#&gt;   seqinfo: 3 sequences from hg19 genome; no seqlengths\n\n\n\n\nCode\n\ngr1 &lt;- GRanges(seqnames = \"chr1\", \n               ranges = IRanges(start = c(1, 20), end = c(10, 30)))\ngr2 &lt;- GRanges(seqnames = \"chr1\", \n               ranges = IRanges(start = c(5, 25), end = c(15, 35)))\ngr1\n#&gt; GRanges object with 2 ranges and 0 metadata columns:\n#&gt;       seqnames    ranges strand\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;\n#&gt;   [1]     chr1      1-10      *\n#&gt;   [2]     chr1     20-30      *\n#&gt;   -------\n#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths\ngr2\n#&gt; GRanges object with 2 ranges and 0 metadata columns:\n#&gt;       seqnames    ranges strand\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;\n#&gt;   [1]     chr1      5-15      *\n#&gt;   [2]     chr1     25-35      *\n#&gt;   -------\n#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths\nGenomicRanges::setdiff(gr1, gr2)\n#&gt; GRanges object with 2 ranges and 0 metadata columns:\n#&gt;       seqnames    ranges strand\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;\n#&gt;   [1]     chr1       1-4      *\n#&gt;   [2]     chr1     20-24      *\n#&gt;   -------\n#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths\n\nfindOverlaps(gr1,gr2)\n#&gt; Hits object with 2 hits and 0 metadata columns:\n#&gt;       queryHits subjectHits\n#&gt;       &lt;integer&gt;   &lt;integer&gt;\n#&gt;   [1]         1           1\n#&gt;   [2]         2           2\n#&gt;   -------\n#&gt;   queryLength: 2 / subjectLength: 2\n\nsubsetByOverlaps(gr1, gr2)\n#&gt; GRanges object with 2 ranges and 0 metadata columns:\n#&gt;       seqnames    ranges strand\n#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;\n#&gt;   [1]     chr1      1-10      *\n#&gt;   [2]     chr1     20-30      *\n#&gt;   -------\n#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths",
+    "crumbs": [
+      "附录",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>生物序列数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "ExpressionSet.html",
+    "href": "ExpressionSet.html",
+    "title": "1  ExpressionSet",
+    "section": "",
+    "text": "1.1 组件",
+    "crumbs": [
+      "数据结构",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>`ExpressionSet`</span>"
+    ]
+  },
+  {
+    "objectID": "ExpressionSet.html#组件",
+    "href": "ExpressionSet.html#组件",
+    "title": "1  ExpressionSet",
+    "section": "",
+    "text": "1.1.1 Assay data\n包含实际的表达数据。通常是一个矩阵，其中行代表基因，列代表样本。数据可以是原始计数值、归一化的表达值等。\n\n\nCode\ndataDirectory &lt;- system.file(\"extdata\", package=\"Biobase\")\nexprsFile &lt;- file.path(dataDirectory, \"exprsData.txt\")\n\nexprs &lt;- as.matrix(read.table(exprsFile, header=TRUE, sep=\"\\t\",\n                              row.names=1,as.is=TRUE))\nclass(exprs)\n#&gt; [1] \"matrix\" \"array\"\ndim(exprs)\n#&gt; [1] 500  26\ncolnames(exprs)\n#&gt;  [1] \"A\" \"B\" \"C\" \"D\" \"E\" \"F\" \"G\" \"H\" \"I\" \"J\" \"K\" \"L\" \"M\" \"N\" \"O\" \"P\" \"Q\" \"R\" \"S\"\n#&gt; [20] \"T\" \"U\" \"V\" \"W\" \"X\" \"Y\" \"Z\"\nhead(exprs[,1:5])\n#&gt;                        A         B        C        D        E\n#&gt; AFFX-MurIL2_at  192.7420  85.75330 176.7570 135.5750 64.49390\n#&gt; AFFX-MurIL10_at  97.1370 126.19600  77.9216  93.3713 24.39860\n#&gt; AFFX-MurIL4_at   45.8192   8.83135  33.0632  28.7072  5.94492\n#&gt; AFFX-MurFAS_at   22.5445   3.60093  14.6883  12.3397 36.86630\n#&gt; AFFX-BioB-5_at   96.7875  30.43800  46.1271  70.9319 56.17440\n#&gt; AFFX-BioB-M_at   89.0730  25.84610  57.2033  69.9766 49.58220\n\n\n\n\n1.1.2 样本数据\n包含样本的数据，样本为细胞或病人。这个部分存储有关样本的信息，比如样本的处理条件、时间点等。通常以 AnnotatedDataFrame 的形式存储。\n\n\nCode\npDataFile &lt;- file.path(dataDirectory, \"pData.txt\")\npData &lt;- read.table(pDataFile,row.names=1, header=TRUE, sep=\"\\t\")\n\ndim(pData)\n#&gt; [1] 26  3\ncolnames(pData)\n#&gt; [1] \"gender\" \"type\"   \"score\"\nsapply(pData, class)\n#&gt;      gender        type       score \n#&gt; \"character\" \"character\"   \"numeric\"\n\nrownames(pData)\n#&gt;  [1] \"A\" \"B\" \"C\" \"D\" \"E\" \"F\" \"G\" \"H\" \"I\" \"J\" \"K\" \"L\" \"M\" \"N\" \"O\" \"P\" \"Q\" \"R\" \"S\"\n#&gt; [20] \"T\" \"U\" \"V\" \"W\" \"X\" \"Y\" \"Z\"\n\nsummary(pData)\n#&gt;     gender              type               score       \n#&gt;  Length:26          Length:26          Min.   :0.1000  \n#&gt;  Class :character   Class :character   1st Qu.:0.3275  \n#&gt;  Mode  :character   Mode  :character   Median :0.4150  \n#&gt;                                        Mean   :0.5369  \n#&gt;                                        3rd Qu.:0.7650  \n#&gt;                                        Max.   :0.9800\n\nall(rownames(pData)==colnames(exprs))\n#&gt; [1] TRUE\n\n\n元数据\n\n\nCode\nmetadata &lt;- data.frame(labelDescription= c(\"Patient gender\",\"Case/control status\",\n                                           \"Tumor progress on XYZ scale\"),\n                       row.names=c(\"gender\", \"type\", \"score\"))\nmetadata\n#&gt;                   labelDescription\n#&gt; gender              Patient gender\n#&gt; type           Case/control status\n#&gt; score  Tumor progress on XYZ scale\n\n\nBiobase 提供了AnnotatedDataFrame 类来保存表型数据及其元数据\n\n\nCode\nlibrary(Biobase)\nphenoData &lt;- new(\"AnnotatedDataFrame\",data=pData, varMetadata=metadata)\nphenoData\n#&gt; An object of class 'AnnotatedDataFrame'\n#&gt;   rowNames: A B ... Z (26 total)\n#&gt;   varLabels: gender type score\n#&gt;   varMetadata: labelDescription\n\n\n切片\n\n\nCode\nhead(pData(phenoData))\n#&gt;   gender    type score\n#&gt; A Female Control  0.75\n#&gt; B   Male    Case  0.40\n#&gt; C   Male Control  0.73\n#&gt; D   Male    Case  0.42\n#&gt; E Female    Case  0.93\n#&gt; F   Male Control  0.22\n\nphenoData[c(\"A\",\"Z\"),\"gender\"]\n#&gt; An object of class 'AnnotatedDataFrame'\n#&gt;   rowNames: A Z\n#&gt;   varLabels: gender\n#&gt;   varMetadata: labelDescription\npData(phenoData[phenoData$score&gt;0.8,])\n#&gt;   gender    type score\n#&gt; E Female    Case  0.93\n#&gt; G   Male    Case  0.96\n#&gt; X   Male Control  0.98\n#&gt; Y Female    Case  0.94\n\n\n\n\n1.1.3 基因元数据及其注释\n包含基因的元数据。这个部分存储有关基因的信息，比如基因的注释、位置等。通常以 AnnotatedDataFrame 的形式存储。\nannotation和AnnotationDbi包为元数据包提供了基本的数据操作\n\n\nCode\nannotation &lt;- \"hgu95av2\"\n\n\n\n\n1.1.4 实验元数据\n包含实验的元数据，比如实验设计、数据处理流程等。\nMIAME ob ject\n\n\nCode\nexperimentData &lt;- new(\"MIAME\",name=\"Pierre Fermat\",lab=\"Francis Galton Lab\",\n                      contact=\"pfermat@lab.not.exist\",\n                      title=\"Smoking-Cancer Experiment\",\n                      abstract=\"An example ExpressionSet\",\n                      url=\"www.lab.not.exist\",\n                      other=list(\n                        notes=\"Created from text files\"\n                        )\n                      )\nexperimentData\n#&gt; Experiment data\n#&gt;   Experimenter name: Pierre Fermat \n#&gt;   Laboratory: Francis Galton Lab \n#&gt;   Contact information: pfermat@lab.not.exist \n#&gt;   Title: Smoking-Cancer Experiment \n#&gt;   URL: www.lab.not.exist \n#&gt;   PMIDs:  \n#&gt; \n#&gt;   Abstract: A 3 word abstract is available. Use 'abstract' method.\n#&gt;   notes:\n#&gt;    notes:     \n#&gt;       Created from text files",
+    "crumbs": [
+      "数据结构",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>`ExpressionSet`</span>"
+    ]
+  },
+  {
+    "objectID": "ExpressionSet.html#构造expressionset",
+    "href": "ExpressionSet.html#构造expressionset",
+    "title": "1  ExpressionSet",
+    "section": "1.2 构造ExpressionSet",
+    "text": "1.2 构造ExpressionSet\n\n\nCode\n#help(\"ExpressionSet-class\")\nminiSet &lt;- ExpressionSet(assayData=exprs)\nminiSet\n#&gt; ExpressionSet (storageMode: lockedEnvironment)\n#&gt; assayData: 500 features, 26 samples \n#&gt;   element names: exprs \n#&gt; protocolData: none\n#&gt; phenoData: none\n#&gt; featureData: none\n#&gt; experimentData: use 'experimentData(object)'\n#&gt; Annotation:\n\nexampleSet &lt;- ExpressionSet(assayData=exprs,\n                            phenoData=phenoData,\n                            experimentData=experimentData,\n                            annotation=\"hgu95av2\")\n\nexampleSet\n#&gt; ExpressionSet (storageMode: lockedEnvironment)\n#&gt; assayData: 500 features, 26 samples \n#&gt;   element names: exprs \n#&gt; protocolData: none\n#&gt; phenoData\n#&gt;   sampleNames: A B ... Z (26 total)\n#&gt;   varLabels: gender type score\n#&gt;   varMetadata: labelDescription\n#&gt; featureData: none\n#&gt; experimentData: use 'experimentData(object)'\n#&gt; Annotation: hgu95av2\n\n\n\n1.2.1 访问\n\n\nCode\nexprs(exampleSet) |&gt;  head()\n#&gt;                        A         B        C        D        E       F        G\n#&gt; AFFX-MurIL2_at  192.7420  85.75330 176.7570 135.5750 64.49390 76.3569 160.5050\n#&gt; AFFX-MurIL10_at  97.1370 126.19600  77.9216  93.3713 24.39860 85.5088  98.9086\n#&gt; AFFX-MurIL4_at   45.8192   8.83135  33.0632  28.7072  5.94492 28.2925  30.9694\n#&gt; AFFX-MurFAS_at   22.5445   3.60093  14.6883  12.3397 36.86630 11.2568  23.0034\n#&gt; AFFX-BioB-5_at   96.7875  30.43800  46.1271  70.9319 56.17440 42.6756  86.5156\n#&gt; AFFX-BioB-M_at   89.0730  25.84610  57.2033  69.9766 49.58220 26.1262  75.0083\n#&gt;                       H       I         J        K       L       M       N\n#&gt; AFFX-MurIL2_at  65.9631 56.9039 135.60800 63.44320 78.2126 83.0943 89.3372\n#&gt; AFFX-MurIL10_at 81.6932 97.8015  90.48380 70.57330 94.5418 75.3455 68.5827\n#&gt; AFFX-MurIL4_at  14.7923 14.2399  34.48740 20.35210 14.1554 20.6251 15.9231\n#&gt; AFFX-MurFAS_at  16.2134 12.0375   4.54978  8.51782 27.2852 10.1616 20.2488\n#&gt; AFFX-BioB-5_at  30.7927 19.7183  46.35200 39.13260 41.7698 80.2197 36.4903\n#&gt; AFFX-BioB-M_at  42.3352 41.1207  91.53070 39.91360 49.8397 63.4794 24.7007\n#&gt;                       O       P        Q        R         S       T         U\n#&gt; AFFX-MurIL2_at  91.0615 95.9377 179.8450 152.4670 180.83400 85.4146 157.98900\n#&gt; AFFX-MurIL10_at 87.4050 84.4581  87.6806 108.0320 134.26300 91.4031  -8.68811\n#&gt; AFFX-MurIL4_at  20.1579 27.8139  32.7911  33.5292  19.81720 20.4190  26.87200\n#&gt; AFFX-MurFAS_at  15.7849 14.3276  15.9488  14.6753  -7.91911 12.8875  11.91860\n#&gt; AFFX-BioB-5_at  36.4021 35.3054  58.6239 114.0620  93.44020 22.5168  48.64620\n#&gt; AFFX-BioB-M_at  47.4641 47.3578  58.1331 104.1220 115.83100 58.1224  73.42210\n#&gt;                        V       W         X       Y         Z\n#&gt; AFFX-MurIL2_at  146.8000 93.8829 103.85500 64.4340 175.61500\n#&gt; AFFX-MurIL10_at  85.0212 79.2998  71.65520 64.2369  78.70680\n#&gt; AFFX-MurIL4_at   31.1488 22.3420  19.01350 12.1686  17.37800\n#&gt; AFFX-MurFAS_at   12.8324 11.1390   7.55564 19.9849   8.96849\n#&gt; AFFX-BioB-5_at   90.2215 42.0053  57.57380 44.8216  61.70440\n#&gt; AFFX-BioB-M_at   64.6066 40.3068  41.82090 46.1087  49.41220\n\npData(exampleSet)\n#&gt;   gender    type score\n#&gt; A Female Control  0.75\n#&gt; B   Male    Case  0.40\n#&gt; C   Male Control  0.73\n#&gt; D   Male    Case  0.42\n#&gt; E Female    Case  0.93\n#&gt; F   Male Control  0.22\n#&gt; G   Male    Case  0.96\n#&gt; H   Male    Case  0.79\n#&gt; I Female    Case  0.37\n#&gt; J   Male Control  0.63\n#&gt; K   Male    Case  0.26\n#&gt; L Female Control  0.36\n#&gt; M   Male    Case  0.41\n#&gt; N   Male    Case  0.80\n#&gt; O Female    Case  0.10\n#&gt; P Female Control  0.41\n#&gt; Q Female    Case  0.16\n#&gt; R   Male Control  0.72\n#&gt; S   Male    Case  0.17\n#&gt; T Female    Case  0.74\n#&gt; U   Male Control  0.35\n#&gt; V Female Control  0.77\n#&gt; W   Male Control  0.27\n#&gt; X   Male Control  0.98\n#&gt; Y Female    Case  0.94\n#&gt; Z Female    Case  0.32\n\nfData(exampleSet)\n#&gt; data frame with 0 columns and 500 rows\nexperimentData(exampleSet)\n#&gt; Experiment data\n#&gt;   Experimenter name: Pierre Fermat \n#&gt;   Laboratory: Francis Galton Lab \n#&gt;   Contact information: pfermat@lab.not.exist \n#&gt;   Title: Smoking-Cancer Experiment \n#&gt;   URL: www.lab.not.exist \n#&gt;   PMIDs:  \n#&gt; \n#&gt;   Abstract: A 3 word abstract is available. Use 'abstract' method.\n#&gt;   notes:\n#&gt;    notes:     \n#&gt;       Created from text files\n\n\n\n\n1.2.2 切片\n\n\nCode\nexampleSet$gender[1:5]\n#&gt; [1] \"Female\" \"Male\"   \"Male\"   \"Male\"   \"Female\"\nexampleSet$gender[1:5] == \"Female\"\n#&gt; [1]  TRUE FALSE FALSE FALSE  TRUE\n\nfeatureNames(exampleSet)[1:5]\n#&gt; [1] \"AFFX-MurIL2_at\"  \"AFFX-MurIL10_at\" \"AFFX-MurIL4_at\"  \"AFFX-MurFAS_at\" \n#&gt; [5] \"AFFX-BioB-5_at\"\nsampleNames(exampleSet)[1:5]\n#&gt; [1] \"A\" \"B\" \"C\" \"D\" \"E\"\nvarLabels(exampleSet)\n#&gt; [1] \"gender\" \"type\"   \"score\"\nexprs(exampleSet)[1:6,1:5]\n#&gt;                        A         B        C        D        E\n#&gt; AFFX-MurIL2_at  192.7420  85.75330 176.7570 135.5750 64.49390\n#&gt; AFFX-MurIL10_at  97.1370 126.19600  77.9216  93.3713 24.39860\n#&gt; AFFX-MurIL4_at   45.8192   8.83135  33.0632  28.7072  5.94492\n#&gt; AFFX-MurFAS_at   22.5445   3.60093  14.6883  12.3397 36.86630\n#&gt; AFFX-BioB-5_at   96.7875  30.43800  46.1271  70.9319 56.17440\n#&gt; AFFX-BioB-M_at   89.0730  25.84610  57.2033  69.9766 49.58220",
+    "crumbs": [
+      "数据结构",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>`ExpressionSet`</span>"
+    ]
+  },
+  {
+    "objectID": "SummarizedExperiment.html",
+    "href": "SummarizedExperiment.html",
+    "title": "2  SummarizedExperiment",
+    "section": "",
+    "text": "2.1 构造SummarizedExperiment实例\nSummarizeExperiment 如 Figure 2.1 所示\n具体可参考 SummarizedExperiment docs 。\nCode\nlibrary(SummarizedExperiment)\n# 计数矩阵\nnrows &lt;- 200\nncols &lt;- 6\ncounts &lt;- matrix(runif(nrows * ncols, 1, 1e4), nrows)\nhead(counts)\n#&gt;          [,1]     [,2]      [,3]     [,4]     [,5]     [,6]\n#&gt; [1,] 7034.163 2310.578 7611.7706 7106.106 3401.240 8562.139\n#&gt; [2,] 7894.975 9408.041 9169.3042 7406.625 1774.773 3817.866\n#&gt; [3,] 8390.560 1034.159 5790.8851 1475.760 8289.487 1436.086\n#&gt; [4,] 7062.769 7342.525 8221.8233 8939.928 8079.375 7918.103\n#&gt; [5,] 6030.536 9676.907  645.9051 8289.291 7663.242 2179.272\n#&gt; [6,] 3506.712 2259.127 6284.7849 7333.359 8997.909 9233.068\n\n# 行数据：基因\nrowData &lt;- GRanges(seqnames = rep(c(\"chr1\", \"chr2\"), c(50, 150)),\n                   ranges = IRanges(floor(runif(200, 1e5, 1e6)), width=100),\n                   strand=sample(c(\"+\", \"-\"), 200, TRUE),\n                   gene_id=sprintf(\"ID%03d\", 1:200))\nrowData[1:6,]\n#&gt; GRanges object with 6 ranges and 1 metadata column:\n#&gt;       seqnames        ranges strand |     gene_id\n#&gt;          &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;\n#&gt;   [1]     chr1 943268-943367      + |       ID001\n#&gt;   [2]     chr1 241225-241324      - |       ID002\n#&gt;   [3]     chr1 428423-428522      - |       ID003\n#&gt;   [4]     chr1 798412-798511      + |       ID004\n#&gt;   [5]     chr1 804531-804630      + |       ID005\n#&gt;   [6]     chr1 800571-800670      - |       ID006\n#&gt;   -------\n#&gt;   seqinfo: 2 sequences from an unspecified genome; no seqlengths\n\n\n# 列数据：样本\ncolData &lt;- DataFrame(Treatment=rep(c(\"ChIP\", \"Input\"), 3),\n                     row.names=LETTERS[1:6])\ncolData\n#&gt; DataFrame with 6 rows and 1 column\n#&gt;     Treatment\n#&gt;   &lt;character&gt;\n#&gt; A        ChIP\n#&gt; B       Input\n#&gt; C        ChIP\n#&gt; D       Input\n#&gt; E        ChIP\n#&gt; F       Input\n# 实验元数据\nmetadata &lt;- \"A example of how to create an instance of SummarizedExperiment\" \n\nse &lt;- SummarizedExperiment(assays=list(counts=counts),\n                           rowRanges=rowData, \n                           colData=colData,\n                           metadata=metadata)\nse\n#&gt; class: RangedSummarizedExperiment \n#&gt; dim: 200 6 \n#&gt; metadata(1): ''\n#&gt; assays(1): counts\n#&gt; rownames: NULL\n#&gt; rowData names(1): gene_id\n#&gt; colnames(6): A B ... E F\n#&gt; colData names(1): Treatment\nCode\ndim(se)\n#&gt; [1] 200   6\n\nSummarizedExperiment::assay(se)  |&gt;  head()\n#&gt;             A        B         C        D        E        F\n#&gt; [1,] 7034.163 2310.578 7611.7706 7106.106 3401.240 8562.139\n#&gt; [2,] 7894.975 9408.041 9169.3042 7406.625 1774.773 3817.866\n#&gt; [3,] 8390.560 1034.159 5790.8851 1475.760 8289.487 1436.086\n#&gt; [4,] 7062.769 7342.525 8221.8233 8939.928 8079.375 7918.103\n#&gt; [5,] 6030.536 9676.907  645.9051 8289.291 7663.242 2179.272\n#&gt; [6,] 3506.712 2259.127 6284.7849 7333.359 8997.909 9233.068\nSummarizedExperiment::rowData(se)\n#&gt; DataFrame with 200 rows and 1 column\n#&gt;         gene_id\n#&gt;     &lt;character&gt;\n#&gt; 1         ID001\n#&gt; 2         ID002\n#&gt; 3         ID003\n#&gt; 4         ID004\n#&gt; 5         ID005\n#&gt; ...         ...\n#&gt; 196       ID196\n#&gt; 197       ID197\n#&gt; 198       ID198\n#&gt; 199       ID199\n#&gt; 200       ID200\nSummarizedExperiment::rowRanges(se)\n#&gt; GRanges object with 200 ranges and 1 metadata column:\n#&gt;         seqnames        ranges strand |     gene_id\n#&gt;            &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;\n#&gt;     [1]     chr1 943268-943367      + |       ID001\n#&gt;     [2]     chr1 241225-241324      - |       ID002\n#&gt;     [3]     chr1 428423-428522      - |       ID003\n#&gt;     [4]     chr1 798412-798511      + |       ID004\n#&gt;     [5]     chr1 804531-804630      + |       ID005\n#&gt;     ...      ...           ...    ... .         ...\n#&gt;   [196]     chr2 906164-906263      + |       ID196\n#&gt;   [197]     chr2 985324-985423      - |       ID197\n#&gt;   [198]     chr2 946656-946755      + |       ID198\n#&gt;   [199]     chr2 634615-634714      - |       ID199\n#&gt;   [200]     chr2 496786-496885      + |       ID200\n#&gt;   -------\n#&gt;   seqinfo: 2 sequences from an unspecified genome; no seqlengths\nSummarizedExperiment::colData(se)\n#&gt; DataFrame with 6 rows and 1 column\n#&gt;     Treatment\n#&gt;   &lt;character&gt;\n#&gt; A        ChIP\n#&gt; B       Input\n#&gt; C        ChIP\n#&gt; D       Input\n#&gt; E        ChIP\n#&gt; F       Input",
+    "crumbs": [
+      "数据结构",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>`SummarizedExperiment`</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_database.html",
+    "href": "annotation_database.html",
+    "title": "4  注释数据资源",
+    "section": "",
+    "text": "4.1 人类基因组 Human Genome\n人类基因组参考联盟（Genome Reference Consortium Human）",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_database.html#人类基因组-human-genome",
+    "href": "annotation_database.html#人类基因组-human-genome",
+    "title": "4  注释数据资源",
+    "section": "",
+    "text": "基因组名称\nUCSC数据库别名\n发布年份\n描述\n\n\n\n\nGRCh37\nhg19\n2009\n存在部分未完全填补的“缺口”（gaps），实际覆盖约92%的人类基因组，已逐步淘汰\n\n\nGRCh38\nhg38\n2013\n目前的主流版本，修正了基因坐标错误，增加假染色体（ALT）\n\n\nT2T-CHM13\n无\n2022.The complete sequence of a human genome. Science\n首个完整人类基因组，填补了 GRCh38 缺失的 8% DNA",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_database.html#注释包",
+    "href": "annotation_database.html#注释包",
+    "title": "4  注释数据资源",
+    "section": "4.2 注释包",
+    "text": "4.2 注释包\nhttps://bioconductor.org/packages/release/workflows/html/annotation.html\nhttps://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html\n\n\n\nObject Type\nExample Package Name\nContents\n\n\n\n\nTxDb\nTxDb.Hsapiens.UCSC.hg19.knownGene\nTranscriptome ranges for the known gene track of Homo sapiens, e.g., introns, exons, UTR regions.\n\n\nOrgDb\norg.Hs.eg.db\norg.Mm.eg.db\nGene-based information ; useful for mapping between gene IDs, Names, Symbols, GO and KEGG identifiers, etc.\n\n\nBSgenome\nBSgenome.Hsapiens.UCSC.hg38\nFull genome sequence for Homo sapiens.\n\n\n\n\n4.2.1 BSgenome\n\n\nCode\nlibrary(BSgenome)\nbs &lt;- available.genomes(splitNameParts = T)\nhuman_genomes &lt;- bs[bs$organism == \"Hsapiens\", ] \nhuman_genomes\n#&gt;                                       pkgname organism    provider\n#&gt; 55       BSgenome.Hsapiens.1000genomes.hs37d5 Hsapiens 1000genomes\n#&gt; 56              BSgenome.Hsapiens.NCBI.GRCh38 Hsapiens        NCBI\n#&gt; 57       BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0 Hsapiens        NCBI\n#&gt; 58                BSgenome.Hsapiens.UCSC.hg17 Hsapiens        UCSC\n#&gt; 59         BSgenome.Hsapiens.UCSC.hg17.masked Hsapiens        UCSC\n#&gt; 60                BSgenome.Hsapiens.UCSC.hg18 Hsapiens        UCSC\n#&gt; 61         BSgenome.Hsapiens.UCSC.hg18.masked Hsapiens        UCSC\n#&gt; 62                BSgenome.Hsapiens.UCSC.hg19 Hsapiens        UCSC\n#&gt; 63         BSgenome.Hsapiens.UCSC.hg19.masked Hsapiens        UCSC\n#&gt; 64                BSgenome.Hsapiens.UCSC.hg38 Hsapiens        UCSC\n#&gt; 65 BSgenome.Hsapiens.UCSC.hg38.dbSNP151.major Hsapiens        UCSC\n#&gt; 66 BSgenome.Hsapiens.UCSC.hg38.dbSNP151.minor Hsapiens        UCSC\n#&gt; 67         BSgenome.Hsapiens.UCSC.hg38.masked Hsapiens        UCSC\n#&gt; 68                 BSgenome.Hsapiens.UCSC.hs1 Hsapiens        UCSC\n#&gt;                 genome masked\n#&gt; 55              hs37d5  FALSE\n#&gt; 56              GRCh38  FALSE\n#&gt; 57       T2T.CHM13v2.0  FALSE\n#&gt; 58                hg17  FALSE\n#&gt; 59                hg17   TRUE\n#&gt; 60                hg18  FALSE\n#&gt; 61                hg18   TRUE\n#&gt; 62                hg19  FALSE\n#&gt; 63                hg19   TRUE\n#&gt; 64                hg38  FALSE\n#&gt; 65 hg38.dbSNP151.major  FALSE\n#&gt; 66 hg38.dbSNP151.minor  FALSE\n#&gt; 67                hg38   TRUE\n#&gt; 68                 hs1  FALSE\ninstalled.genomes()\n#&gt; [1] \"BSgenome.Hsapiens.UCSC.hg38\"\n\n\n从UCSC hg38中加载智人的全基因组序列，计算14号染色体GC含量\n\n\nCode\n# pak::pak(\"BSgenome.Hsapiens.UCSC.hg38\")\nlibrary(BSgenome.Hsapiens.UCSC.hg38)\nchr14_range = GRanges(seqnames = \"chr14\",\n                      ranges =  IRanges(start = 1, \n                                       end = seqlengths(Hsapiens)[\"chr14\"])\n                      )\nchr14_dna &lt;- getSeq(Hsapiens, chr14_range)\nletterFrequency(chr14_dna, letters = \"GC\", as.prob=TRUE)\n#&gt;            G|C\n#&gt; [1,] 0.3454924\n\n\n\n\n4.2.2 OrgDb\norg.Hs.eg.db\n\n\nCode\nlibrary(AnnotationDbi)\nlibrary(org.Hs.eg.db)\n\n\nAnnotationDbi::keytypes(org.Hs.eg.db)  # 等价 AnnotationDbi::columns(org.Hs.eg.db)\n#&gt;  [1] \"ACCNUM\"       \"ALIAS\"        \"ENSEMBL\"      \"ENSEMBLPROT\"  \"ENSEMBLTRANS\"\n#&gt;  [6] \"ENTREZID\"     \"ENZYME\"       \"EVIDENCE\"     \"EVIDENCEALL\"  \"GENENAME\"    \n#&gt; [11] \"GENETYPE\"     \"GO\"           \"GOALL\"        \"IPI\"          \"MAP\"         \n#&gt; [16] \"OMIM\"         \"ONTOLOGY\"     \"ONTOLOGYALL\"  \"PATH\"         \"PFAM\"        \n#&gt; [21] \"PMID\"         \"PROSITE\"      \"REFSEQ\"       \"SYMBOL\"       \"UCSCKG\"      \n#&gt; [26] \"UNIPROT\"\n\n\n# 示例 \nentrez_id &lt;- c(\"1017\", \"1018\", \"1019\")  # 替换为你自己的 entrez_id\n\n# 进行映射\nAnnotationDbi::select(org.Hs.eg.db, \n                       keys = entrez_id, \n                       columns = c(\"GENENAME\",\"ALIAS\",\"SYMBOL\",\"GO\",\"ONTOLOGY\"), \n                       keytype = \"ENTREZID\", multiVals = \"CharacterList\") |&gt; \n  head()\n#&gt;   ENTREZID                  GENENAME ALIAS SYMBOL         GO EVIDENCE ONTOLOGY\n#&gt; 1     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000082      IBA       BP\n#&gt; 2     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000082      IEA       BP\n#&gt; 3     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000082      NAS       BP\n#&gt; 4     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000086      NAS       BP\n#&gt; 5     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000122      IEA       BP\n#&gt; 6     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000166      IEA       MF\n\n\n# mapIds can only use one column.\nmapIds(org.Hs.eg.db, \n     keys = entrez_id, \n     column = c(\"ALIAS\"),   # 别名\n     keytype = \"ENTREZID\", multiVals = \"CharacterList\") \n#&gt; CharacterList of length 3\n#&gt; [[\"1017\"]] CDKN2 p33(CDK2) CDK2\n#&gt; [[\"1018\"]] CDK3\n#&gt; [[\"1019\"]] CMM3 PSK-J3 CDK4",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "biomaRt.html",
+    "href": "biomaRt.html",
+    "title": "6  BioMart",
+    "section": "",
+    "text": "BioMart\n访问Ensembl ID\n查找智人（homo sapien）基因组\nhttps://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html#introduction\n\n\nCode\n# BiocManager::install(\"biomaRt\")\nlibrary(biomaRt)\n\nlistEnsembl()\n#&gt;         biomart                version\n#&gt; 1         genes      Ensembl Genes 115\n#&gt; 2 mouse_strains      Mouse strains 115\n#&gt; 3          snps  Ensembl Variation 115\n#&gt; 4    regulation Ensembl Regulation 115\n\n# 连接ENSEMBL数据库   智人基因数据集\nensembl &lt;- useEnsembl(biomart = \"genes\", dataset = \"hsapiens_gene_ensembl\")\nensembl\n#&gt; Object of class 'Mart':\n#&gt;   Using the ENSEMBL_MART_ENSEMBL BioMart database\n#&gt;   Using the hsapiens_gene_ensembl dataset\n\n\n# 获取基因信息\ngenes &lt;- getBM(attributes = c(\"ensembl_gene_id\", \"hgnc_symbol\", \"chromosome_name\", \n                             \"start_position\", \"end_position\", \"gene_biotype\"),\n              mart = ensembl)\n\ngenes |&gt; head() |&gt;  DT::datatable()\n\n\n\n\n\n\nCode\n# 获取转录本信息\ntranscripts &lt;- getBM(attributes = c(\"ensembl_transcript_id\", \"ensembl_gene_id\",\n                                   \"transcript_start\", \"transcript_end\"),\n                    mart = ensembl)\ntranscripts |&gt; head() |&gt;  DT::datatable()\n\n\n\n\n\n\nGRCh38（Genome Research Consortium human genome build 38）\n\n\nCode\n# 人类基因BioMart\nensembl &lt;- useEnsembl(biomart = \"ensembl\", \n                   dataset = \"hsapiens_gene_ensembl\", \n                   mirror = \"asia\")\n\n\n\n6.0.1 映射\n\n\nCode\nlistMarts()\n#&gt;                biomart                version\n#&gt; 1 ENSEMBL_MART_ENSEMBL      Ensembl Genes 115\n#&gt; 2   ENSEMBL_MART_MOUSE      Mouse strains 115\n#&gt; 3     ENSEMBL_MART_SNP  Ensembl Variation 115\n#&gt; 4 ENSEMBL_MART_FUNCGEN Ensembl Regulation 115\n# 连接到Ensembl BioMart\nmart &lt;- useMart(biomart = \"ENSEMBL_MART_ENSEMBL\", dataset = \"hsapiens_gene_ensembl\")\nlistAttributes(mart) |&gt;  DT::datatable()\n\n\n\n\n\n\nCode\n\n\n\n\nentrez_id &lt;- c(\"1017\", \"1018\", \"1019\")  \n\ngetBM(attributes = c(\"entrezgene_id\", \"ensembl_gene_id\", \"external_gene_name\"),\n                  filters = \"entrezgene_id\",\n                  values = entrez_id,,\n                  mart = mart)\n#&gt;   entrezgene_id ensembl_gene_id external_gene_name\n#&gt; 1          1017 ENSG00000123374               CDK2\n#&gt; 2          1018 ENSG00000250506               CDK3\n#&gt; 3          1019 ENSG00000135446               CDK4\n\n\n\n\n6.0.2 使用 Ensembl 的存档版本\n\n\nCode\nlistEnsemblArchives()\n#&gt;              name     date                                 url version\n#&gt; 1  Ensembl GRCh37 Feb 2014          https://grch37.ensembl.org  GRCh37\n#&gt; 2     Ensembl 115 Sep 2025 https://sep2025.archive.ensembl.org     115\n#&gt; 3     Ensembl 114 May 2025 https://may2025.archive.ensembl.org     114\n#&gt; 4     Ensembl 113 Oct 2024 https://oct2024.archive.ensembl.org     113\n#&gt; 5     Ensembl 112 May 2024 https://may2024.archive.ensembl.org     112\n#&gt; 6     Ensembl 111 Jan 2024 https://jan2024.archive.ensembl.org     111\n#&gt; 7     Ensembl 110 Jul 2023 https://jul2023.archive.ensembl.org     110\n#&gt; 8     Ensembl 109 Feb 2023 https://feb2023.archive.ensembl.org     109\n#&gt; 9     Ensembl 108 Oct 2022 https://oct2022.archive.ensembl.org     108\n#&gt; 10    Ensembl 107 Jul 2022 https://jul2022.archive.ensembl.org     107\n#&gt; 11    Ensembl 106 Apr 2022 https://apr2022.archive.ensembl.org     106\n#&gt; 12    Ensembl 105 Dec 2021 https://dec2021.archive.ensembl.org     105\n#&gt; 13    Ensembl 104 May 2021 https://may2021.archive.ensembl.org     104\n#&gt; 14    Ensembl 103 Feb 2021 https://feb2021.archive.ensembl.org     103\n#&gt; 15    Ensembl 102 Nov 2020 https://nov2020.archive.ensembl.org     102\n#&gt; 16    Ensembl 101 Aug 2020 https://aug2020.archive.ensembl.org     101\n#&gt; 17    Ensembl 100 Apr 2020 https://apr2020.archive.ensembl.org     100\n#&gt; 18     Ensembl 80 May 2015 https://may2015.archive.ensembl.org      80\n#&gt; 19     Ensembl 77 Oct 2014 https://oct2014.archive.ensembl.org      77\n#&gt; 20     Ensembl 75 Feb 2014 https://feb2014.archive.ensembl.org      75\n#&gt; 21     Ensembl 54 May 2009 https://may2009.archive.ensembl.org      54\n#&gt;    current_release\n#&gt; 1                 \n#&gt; 2                *\n#&gt; 3                 \n#&gt; 4                 \n#&gt; 5                 \n#&gt; 6                 \n#&gt; 7                 \n#&gt; 8                 \n#&gt; 9                 \n#&gt; 10                \n#&gt; 11                \n#&gt; 12                \n#&gt; 13                \n#&gt; 14                \n#&gt; 15                \n#&gt; 16                \n#&gt; 17                \n#&gt; 18                \n#&gt; 19                \n#&gt; 20                \n#&gt; 21\nlistEnsembl(version = 112)\n#&gt;         biomart                version\n#&gt; 1         genes      Ensembl Genes 112\n#&gt; 2 mouse_strains      Mouse strains 112\n#&gt; 3          snps  Ensembl Variation 112\n#&gt; 4    regulation Ensembl Regulation 112\nensembl_112 &lt;- useEnsembl(biomart = 'genes', \n                       dataset = 'hsapiens_gene_ensembl',\n                       mirror = \"asia\",\n                       version = 112)\n\n\n\n\n6.0.3 使用 Ensembl 基因组\n\n\nCode\nlistEnsemblGenomes()\n#&gt;               biomart                        version\n#&gt; 1       protists_mart      Ensembl Protists Genes 62\n#&gt; 2 protists_variations Ensembl Protists Variations 62\n#&gt; 3          fungi_mart         Ensembl Fungi Genes 62\n#&gt; 4    fungi_variations    Ensembl Fungi Variations 62\n#&gt; 5        metazoa_mart       Ensembl Metazoa Genes 62\n#&gt; 6  metazoa_variations  Ensembl Metazoa Variations 62\n#&gt; 7         plants_mart        Ensembl Plants Genes 62\n#&gt; 8   plants_variations   Ensembl Plants Variations 62\nensembl_plants &lt;- useEnsemblGenomes(biomart = \"plants_mart\")\nsearchDatasets(ensembl_plants, pattern = \"Arabidopsis\")\n#&gt;              dataset                         description version\n#&gt; 6   ahalleri_eg_gene Arabidopsis halleri genes (Ahal2.2) Ahal2.2\n#&gt; 10   alyrata_eg_gene    Arabidopsis lyrata genes (v.1.0)   v.1.0\n#&gt; 15 athaliana_eg_gene Arabidopsis thaliana genes (TAIR10)  TAIR10\nensembl_arabidopsis &lt;- useEnsemblGenomes(biomart = \"plants_mart\", \n                                         dataset = \"athaliana_eg_gene\")",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>BioMart</span>"
+    ]
+  },
+  {
+    "objectID": "Orchestrating_Single_Cell_Analysis.html",
+    "href": "Orchestrating_Single_Cell_Analysis.html",
+    "title": "7  自定义分析",
+    "section": "",
+    "text": "参考Orchestrating Single-Cell Analysis with Bioconductor",
+    "crumbs": [
+      "单细胞组学 Single cell omics",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>自定义分析</span>"
+    ]
+  },
+  {
+    "objectID": "read.html",
+    "href": "read.html",
+    "title": "4  读取表达矩阵",
+    "section": "",
+    "text": "参考https://bioconductor.org/books/3.22/OSCA.intro/getting-scrna-seq-datasets.html",
+    "crumbs": [
+      "数据结构",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>读取表达矩阵</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_resources.html",
+    "href": "annotation_resources.html",
+    "title": "5  注释数据资源",
+    "section": "",
+    "text": "5.1 人类基因组 Human Genome\n人类基因组参考联盟（Genome Reference Consortium Human）",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_resources.html#人类基因组-human-genome",
+    "href": "annotation_resources.html#人类基因组-human-genome",
+    "title": "5  注释数据资源",
+    "section": "",
+    "text": "基因组名称\nUCSC数据库别名\n发布年份\n描述\n\n\n\n\nGRCh37\nhg19\n2009\n存在部分未完全填补的“缺口”（gaps），实际覆盖约92%的人类基因组，已逐步淘汰\n\n\nGRCh38\nhg38\n2013\n目前的主流版本，修正了基因坐标错误，增加假染色体（ALT）\n\n\nT2T-CHM13\n无\n2022.The complete sequence of a human genome. Science\n首个完整人类基因组，填补了 GRCh38 缺失的 8% DNA",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_resources.html#小鼠基因组",
+    "href": "annotation_resources.html#小鼠基因组",
+    "title": "5  注释数据资源",
+    "section": "5.2 小鼠基因组",
+    "text": "5.2 小鼠基因组\nGRCm\nGencode mouse",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "annotation_resources.html#注释包",
+    "href": "annotation_resources.html#注释包",
+    "title": "5  注释数据资源",
+    "section": "5.3 注释包",
+    "text": "5.3 注释包\nhttps://bioconductor.org/packages/3.22/data/annotation/\nhttps://bioconductor.org/packages/release/workflows/html/annotation.html\nhttps://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html\n\n\n\nObject Type\nExample Package Name\nContents\n\n\n\n\nTxDb\nTxDb.Hsapiens.UCSC.hg19.knownGene\nTranscriptome ranges for the known gene track of Homo sapiens, e.g., introns, exons, UTR regions.\n\n\nOrgDb\norg.Hs.eg.db\norg.Mm.eg.db\nGene-based information ; useful for mapping between gene IDs, Names, Symbols, GO and KEGG identifiers, etc.\n\n\nBSgenome\nBSgenome.Hsapiens.UCSC.hg38\nFull genome sequence for Homo sapiens.\n\n\n\n\n5.3.1 BSgenome\n\n\nCode\nlibrary(BSgenome)\nbs &lt;- available.genomes(splitNameParts = T)\nhuman_genomes &lt;- bs[bs$organism == \"Hsapiens\", ] \nhuman_genomes\n#&gt;                                       pkgname organism    provider\n#&gt; 55       BSgenome.Hsapiens.1000genomes.hs37d5 Hsapiens 1000genomes\n#&gt; 56              BSgenome.Hsapiens.NCBI.GRCh38 Hsapiens        NCBI\n#&gt; 57       BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0 Hsapiens        NCBI\n#&gt; 58                BSgenome.Hsapiens.UCSC.hg17 Hsapiens        UCSC\n#&gt; 59         BSgenome.Hsapiens.UCSC.hg17.masked Hsapiens        UCSC\n#&gt; 60                BSgenome.Hsapiens.UCSC.hg18 Hsapiens        UCSC\n#&gt; 61         BSgenome.Hsapiens.UCSC.hg18.masked Hsapiens        UCSC\n#&gt; 62                BSgenome.Hsapiens.UCSC.hg19 Hsapiens        UCSC\n#&gt; 63         BSgenome.Hsapiens.UCSC.hg19.masked Hsapiens        UCSC\n#&gt; 64                BSgenome.Hsapiens.UCSC.hg38 Hsapiens        UCSC\n#&gt; 65 BSgenome.Hsapiens.UCSC.hg38.dbSNP151.major Hsapiens        UCSC\n#&gt; 66 BSgenome.Hsapiens.UCSC.hg38.dbSNP151.minor Hsapiens        UCSC\n#&gt; 67         BSgenome.Hsapiens.UCSC.hg38.masked Hsapiens        UCSC\n#&gt; 68                 BSgenome.Hsapiens.UCSC.hs1 Hsapiens        UCSC\n#&gt;                 genome masked\n#&gt; 55              hs37d5  FALSE\n#&gt; 56              GRCh38  FALSE\n#&gt; 57       T2T.CHM13v2.0  FALSE\n#&gt; 58                hg17  FALSE\n#&gt; 59                hg17   TRUE\n#&gt; 60                hg18  FALSE\n#&gt; 61                hg18   TRUE\n#&gt; 62                hg19  FALSE\n#&gt; 63                hg19   TRUE\n#&gt; 64                hg38  FALSE\n#&gt; 65 hg38.dbSNP151.major  FALSE\n#&gt; 66 hg38.dbSNP151.minor  FALSE\n#&gt; 67                hg38   TRUE\n#&gt; 68                 hs1  FALSE\ninstalled.genomes()\n#&gt; [1] \"BSgenome.Hsapiens.UCSC.hg38\"\n\n\n从UCSC hg38中加载智人的全基因组序列，计算14号染色体GC含量\n\n\nCode\n# pak::pak(\"BSgenome.Hsapiens.UCSC.hg38\")\nlibrary(BSgenome.Hsapiens.UCSC.hg38)\nchr14_range = GRanges(seqnames = \"chr14\",\n                      ranges =  IRanges(start = 1, \n                                       end = seqlengths(Hsapiens)[\"chr14\"])\n                      )\nchr14_dna &lt;- getSeq(Hsapiens, chr14_range)\nletterFrequency(chr14_dna, letters = \"GC\", as.prob=TRUE)\n#&gt;            G|C\n#&gt; [1,] 0.3454924\n\n\n\n\n5.3.2 OrgDb\norg.Hs.eg.db\n\n\nCode\nlibrary(AnnotationDbi)\nlibrary(org.Hs.eg.db)\n\n\nAnnotationDbi::keytypes(org.Hs.eg.db)  # 等价 AnnotationDbi::columns(org.Hs.eg.db)\n#&gt;  [1] \"ACCNUM\"       \"ALIAS\"        \"ENSEMBL\"      \"ENSEMBLPROT\"  \"ENSEMBLTRANS\"\n#&gt;  [6] \"ENTREZID\"     \"ENZYME\"       \"EVIDENCE\"     \"EVIDENCEALL\"  \"GENENAME\"    \n#&gt; [11] \"GENETYPE\"     \"GO\"           \"GOALL\"        \"IPI\"          \"MAP\"         \n#&gt; [16] \"OMIM\"         \"ONTOLOGY\"     \"ONTOLOGYALL\"  \"PATH\"         \"PFAM\"        \n#&gt; [21] \"PMID\"         \"PROSITE\"      \"REFSEQ\"       \"SYMBOL\"       \"UCSCKG\"      \n#&gt; [26] \"UNIPROT\"\n\n\n# 示例 \nentrez_id &lt;- c(\"1017\", \"1018\", \"1019\")  # 替换为你自己的 entrez_id\n\n# 进行映射\nAnnotationDbi::select(org.Hs.eg.db, \n                       keys = entrez_id, \n                       columns = c(\"GENENAME\",\"ALIAS\",\"SYMBOL\",\"GO\",\"ONTOLOGY\"), \n                       keytype = \"ENTREZID\", multiVals = \"CharacterList\") |&gt; \n  head()\n#&gt;   ENTREZID                  GENENAME ALIAS SYMBOL         GO EVIDENCE ONTOLOGY\n#&gt; 1     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000082      IBA       BP\n#&gt; 2     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000082      IEA       BP\n#&gt; 3     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000082      NAS       BP\n#&gt; 4     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000086      NAS       BP\n#&gt; 5     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000122      IEA       BP\n#&gt; 6     1017 cyclin dependent kinase 2 CDKN2   CDK2 GO:0000166      IEA       MF\n\n\n# mapIds can only use one column.\nmapIds(org.Hs.eg.db, \n     keys = entrez_id, \n     column = c(\"ALIAS\"),   # 别名\n     keytype = \"ENTREZID\", multiVals = \"CharacterList\") \n#&gt; CharacterList of length 3\n#&gt; [[\"1017\"]] CDKN2 p33(CDK2) CDK2\n#&gt; [[\"1018\"]] CDK3\n#&gt; [[\"1019\"]] CMM3 PSK-J3 CDK4",
+    "crumbs": [
+      "注释数据资源",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>注释数据资源</span>"
+    ]
+  },
+  {
+    "objectID": "single_cell_omics.html",
+    "href": "single_cell_omics.html",
+    "title": "单细胞组学 Single cell omics",
+    "section": "",
+    "text": "单细胞分离技术\n人体由约30万亿个细胞构成。\n单细胞组学利用单细胞分离与分选技术、单细胞组测序技术及其生物信息学分析算法，开展高通量、多维度和大群体细胞学研究。包括单一细胞层级上的基因组学（genomics）、转录组学（transcriptomics）、蛋白组学（proteomics）、免疫组学、微生物组学和细胞间相互作用等的研究。\nRNA quantification\ndropout，doublet\n捕获细胞数目和测序深度最佳权衡\n引物\n低通量\n高通量 核酸捕获（capture）",
+    "crumbs": [
+      "单细胞组学 Single cell omics"
+    ]
+  },
+  {
+    "objectID": "single_cell_omics.html#单细胞分离技术",
+    "href": "single_cell_omics.html#单细胞分离技术",
+    "title": "单细胞组学 Single cell omics",
+    "section": "",
+    "text": "手动单细胞挑取\n连续稀释\n流式细胞术（Fluorescence-activated cell sorter，FACS）\n激光捕获显微切割技术（laser capture microdissection，LCM）\n显微操作（micromanipulation）\n\n\n\n微流控microfluidic：液滴droplet，“油包水”，事实标准，高通量，低成本\n微孔板microwell",
+    "crumbs": [
+      "单细胞组学 Single cell omics"
+    ]
+  },
+  {
+    "objectID": "single_cell_omics.html#表达矩阵",
+    "href": "single_cell_omics.html#表达矩阵",
+    "title": "单细胞组学 Single cell omics",
+    "section": "表达矩阵",
+    "text": "表达矩阵\n\n单细胞分离：单细胞悬液\n细胞标记：16bp   在细胞包入微液滴时，带有 Barcode 和 UMI 的寡核苷酸序列一同进入微滴，与细胞释放的 mRNA 分子杂交，之后在反转录过程中标签整合进 cDNA。后续测序和分析时，用 Barcode 区分不同细胞数据、用 UMI 精准定量细胞内基因表达。\n核酸捕获：基于微滴，基于微孔板，磁珠捕获，基于组合索引\n文库制备：PCR扩增或体外转录扩增\n\n退化寡核苷酸引物PCR（DOP-PCR）\n多重链置换扩增技术MDA\n多重退火环状循环扩增技术MALBAC\n纯线性扩增技术LIANTI\n\n高通量测序\n\nplate-based protocols with UMIs：减轻了PCR扩增噪声的影响，如CEL-seq2、MARS-seq；\nplate-based protocols with reads：覆盖转录本全长，如Smart-seq2；\ndroplet-based：如10X Genomics、in Drops和Drop-seq;\n组合索引：sci-RNA-seq\nCyto-seq，Seq-Well，Microwell-seq，\n\n序列联配、\n定量\n\n测序数据→计数矩阵\n\nCellranger 10XGenomics/cellranger https://www.nature.com/articles/ncomms14049\nalevin 伪对比方法. https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1670-y\nspike-in transcripts 将 spike-in sequences作为参考基因组的一部分",
+    "crumbs": [
+      "单细胞组学 Single cell omics"
+    ]
+  },
+  {
+    "objectID": "single_cell_omics.html#session-information",
+    "href": "single_cell_omics.html#session-information",
+    "title": "单细胞组学 Single cell omics",
+    "section": "Session Information",
+    "text": "Session Information\n\n\nCode\nSys.Date()\n#&gt; [1] \"2025-11-16\"\nBiocManager::version()\n#&gt; [1] '3.22'\ndevtools::session_info()\n#&gt; ─ Session info ───────────────────────────────────────────────────────────────\n#&gt;  setting  value\n#&gt;  version  R version 4.5.1 (2025-06-13 ucrt)\n#&gt;  os       Windows 11 x64 (build 26100)\n#&gt;  system   x86_64, mingw32\n#&gt;  ui       RTerm\n#&gt;  language en\n#&gt;  collate  Chinese (Simplified)_China.utf8\n#&gt;  ctype    Chinese (Simplified)_China.utf8\n#&gt;  tz       Asia/Shanghai\n#&gt;  date     2025-11-16\n#&gt;  pandoc   3.6.3 @ D:/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)\n#&gt;  quarto   NA @ D:\\\\RStudio\\\\RESOUR~1\\\\app\\\\bin\\\\quarto\\\\bin\\\\quarto.exe\n#&gt; \n#&gt; ─ Packages ───────────────────────────────────────────────────────────────────\n#&gt;  package     * version date (UTC) lib source\n#&gt;  BiocManager   1.30.27 2025-11-14 [1] CRAN (R 4.5.1)\n#&gt;  cachem        1.1.0   2024-05-16 [1] CRAN (R 4.5.1)\n#&gt;  cli           3.6.5   2025-04-23 [1] CRAN (R 4.5.1)\n#&gt;  devtools      2.4.6   2025-10-03 [1] CRAN (R 4.5.2)\n#&gt;  digest        0.6.38  2025-11-12 [1] CRAN (R 4.5.2)\n#&gt;  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.5.2)\n#&gt;  evaluate      1.0.5   2025-08-27 [1] CRAN (R 4.5.2)\n#&gt;  fastmap       1.2.0   2024-05-15 [1] CRAN (R 4.5.1)\n#&gt;  fs            1.6.6   2025-04-12 [1] CRAN (R 4.5.1)\n#&gt;  glue          1.8.0   2024-09-30 [1] CRAN (R 4.5.1)\n#&gt;  htmltools     0.5.8.1 2024-04-04 [1] CRAN (R 4.5.1)\n#&gt;  htmlwidgets   1.6.4   2023-12-06 [1] CRAN (R 4.5.2)\n#&gt;  jsonlite      2.0.0   2025-03-27 [1] CRAN (R 4.5.1)\n#&gt;  knitr         1.50    2025-03-16 [1] CRAN (R 4.5.1)\n#&gt;  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.5.1)\n#&gt;  magrittr      2.0.4   2025-09-12 [1] CRAN (R 4.5.2)\n#&gt;  memoise       2.0.1   2021-11-26 [1] CRAN (R 4.5.1)\n#&gt;  pkgbuild      1.4.8   2025-05-26 [1] CRAN (R 4.5.2)\n#&gt;  pkgload       1.4.1   2025-09-23 [1] CRAN (R 4.5.2)\n#&gt;  purrr         1.2.0   2025-11-04 [1] CRAN (R 4.5.2)\n#&gt;  R6            2.6.1   2025-02-15 [1] CRAN (R 4.5.1)\n#&gt;  remotes       2.5.0   2024-03-17 [1] CRAN (R 4.5.2)\n#&gt;  renv          1.1.5   2025-07-24 [1] CRAN (R 4.5.2)\n#&gt;  rlang         1.1.6   2025-04-11 [1] CRAN (R 4.5.1)\n#&gt;  rmarkdown     2.30    2025-09-28 [1] CRAN (R 4.5.2)\n#&gt;  rstudioapi    0.17.1  2024-10-22 [1] CRAN (R 4.5.2)\n#&gt;  sessioninfo   1.2.3   2025-02-05 [1] CRAN (R 4.5.2)\n#&gt;  usethis       3.2.1   2025-09-06 [1] CRAN (R 4.5.2)\n#&gt;  vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.5.2)\n#&gt;  xfun          0.54    2025-10-30 [1] CRAN (R 4.5.2)\n#&gt;  yaml          2.3.10  2024-07-26 [1] CRAN (R 4.5.0)\n#&gt; \n#&gt;  [1] E:/_GitHub/OmicsNotes/OmicsRenv/renv/library/windows/R-4.5/x86_64-w64-mingw32\n#&gt;  [2] C:/Users/WANGANLIN/AppData/Local/R/cache/R/renv/sandbox/windows/R-4.5/x86_64-w64-mingw32/a26a79d9\n#&gt; \n#&gt; ──────────────────────────────────────────────────────────────────────────────",
+    "crumbs": [
+      "单细胞组学 Single cell omics"
+    ]
+  }
+]

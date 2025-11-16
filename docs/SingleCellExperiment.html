@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; SingleCellExperiment – OmicsRenv</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./annotation_database.html" rel="next">
+<link href="./SummarizedExperiment.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ExpressionSet.html">数据结构</a></li><li class="breadcrumb-item"><a href="./SingleCellExperiment.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><code>SingleCellExperiment</code></span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">OmicsRenv</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">数据结构</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ExpressionSet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title"><code>ExpressionSet</code></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./SummarizedExperiment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><code>SummarizedExperiment</code></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./SingleCellExperiment.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><code>SingleCellExperiment</code></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">注释数据库</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotation_database.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">注释数据库</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">附录</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./upstream_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">上游分析</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sequence_structure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">生物序列数据结构</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#表达矩阵rawtransformed-counts" id="toc-表达矩阵rawtransformed-counts" class="nav-link active" data-scroll-target="#表达矩阵rawtransformed-counts"><span class="header-section-number">3.1</span> 表达矩阵（raw/transformed counts）</a>
+  <ul class="collapse">
+  <li><a href="#assays" id="toc-assays" class="nav-link" data-scroll-target="#assays"><span class="header-section-number">3.1.1</span> <code>assays</code></a></li>
+  <li><a href="#添加assays" id="toc-添加assays" class="nav-link" data-scroll-target="#添加assays"><span class="header-section-number">3.1.2</span> 添加<code>assays</code></a></li>
+  </ul></li>
+  <li><a href="#列数据coldata" id="toc-列数据coldata" class="nav-link" data-scroll-target="#列数据coldata"><span class="header-section-number">3.2</span> 列数据（<code>colData</code>）</a>
+  <ul class="collapse">
+  <li><a href="#coldata" id="toc-coldata" class="nav-link" data-scroll-target="#coldata"><span class="header-section-number">3.2.1</span> <code>colData</code></a></li>
+  <li><a href="#添加coldata" id="toc-添加coldata" class="nav-link" data-scroll-target="#添加coldata"><span class="header-section-number">3.2.2</span> <strong>添加<code>colData</code></strong></a></li>
+  <li><a href="#函数自动添加" id="toc-函数自动添加" class="nav-link" data-scroll-target="#函数自动添加"><span class="header-section-number">3.2.3</span> 函数自动添加</a></li>
+  </ul></li>
+  <li><a href="#行数据-rowdata" id="toc-行数据-rowdata" class="nav-link" data-scroll-target="#行数据-rowdata"><span class="header-section-number">3.3</span> 行数据 ( <code>rowData</code>)</a>
+  <ul class="collapse">
+  <li><a href="#其他元数据" id="toc-其他元数据" class="nav-link" data-scroll-target="#其他元数据"><span class="header-section-number">3.3.1</span> 其他元数据</a></li>
+  </ul></li>
+  <li><a href="#子集和组合" id="toc-子集和组合" class="nav-link" data-scroll-target="#子集和组合"><span class="header-section-number">3.4</span> 子集和组合</a>
+  <ul class="collapse">
+  <li><a href="#子集" id="toc-子集" class="nav-link" data-scroll-target="#子集"><span class="header-section-number">3.4.1</span> 子集</a></li>
+  <li><a href="#组合" id="toc-组合" class="nav-link" data-scroll-target="#组合"><span class="header-section-number">3.4.2</span> 组合</a></li>
+  </ul></li>
+  <li><a href="#单细胞特定字段" id="toc-单细胞特定字段" class="nav-link" data-scroll-target="#单细胞特定字段"><span class="header-section-number">3.5</span> 单细胞特定字段</a>
+  <ul class="collapse">
+  <li><a href="#降维-reduceddims" id="toc-降维-reduceddims" class="nav-link" data-scroll-target="#降维-reduceddims"><span class="header-section-number">3.5.1</span> 降维 <code>reducedDims</code></a></li>
+  <li><a href="#替代试验-alternative-experiments" id="toc-替代试验-alternative-experiments" class="nav-link" data-scroll-target="#替代试验-alternative-experiments"><span class="header-section-number">3.5.2</span> 替代试验 Alternative Experiments</a></li>
+  <li><a href="#缩放因子sizefactors" id="toc-缩放因子sizefactors" class="nav-link" data-scroll-target="#缩放因子sizefactors"><span class="header-section-number">3.5.3</span> 缩放因子<code>sizeFactors</code></a></li>
+  <li><a href="#文库大小因子" id="toc-文库大小因子" class="nav-link" data-scroll-target="#文库大小因子"><span class="header-section-number">3.5.4</span> 文库大小因子</a></li>
+  <li><a href="#聚类标签" id="toc-聚类标签" class="nav-link" data-scroll-target="#聚类标签"><span class="header-section-number">3.5.5</span> 聚类标签</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ExpressionSet.html">数据结构</a></li><li class="breadcrumb-item"><a href="./SingleCellExperiment.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><code>SingleCellExperiment</code></span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><code>SingleCellExperiment</code></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>该数据结构实际上是从 <a href="https://bioconductor.org/packages/3.18/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">SummarizedExperiment</a> 继承而来。</p>
+<p><code>SingleCellExperiment</code> 如 <a href="#fig-sce" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> 所示。</p>
+<div id="fig-sce" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sce-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/SingleCellExperiment.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sce-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: `SingleCellExperiment `的结构概述：assays的每一行对应于 rowData（粉色阴影）的一行，而assays的每一列对应于 colData 和 reducedDims（黄色阴影）的一行
+</figcaption>
+</figure>
+</div>
+<section id="表达矩阵rawtransformed-counts" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="表达矩阵rawtransformed-counts"><span class="header-section-number">3.1</span> 表达矩阵（raw/transformed counts）</h2>
+<p>要构造一个<code>SingleCellExperiment</code>对象，我们只需要导入<code>assays</code> ( <a href="#fig-sce" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> ,蓝色框 )，其中行对应于特征（基因），列对应于样本（细胞）。<a href="https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-5522" id="sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-tbl-counts_Calero_20160113.tsv">下载：counts_Calero_20160113.tsv</a>。</p>
+<section id="assays" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="assays"><span class="header-section-number">3.1.1</span> <code>assays</code></h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dtplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/SingleCellExperiment/counts_Calero_20160113.tsv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(GeneID) <span class="sc">|&gt;</span>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">1</span>,<span class="at">end =</span> <span class="dv">7</span>) <span class="sc">|&gt;</span>   </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CBFB-MY ENSMUSG ERCC-00   SIRV1   SIRV2   SIRV3   SIRV4   SIRV5   SIRV6   SIRV7 </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       1   46603      92       1       1       1       1       1       1       1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>外源RNA对照联盟 （External RNA Controls Consortium，ERCC） 定量质控</p>
+<ol type="1">
+<li><p>ERCC RNA Spike-In Mix（Mix1）：适用于绝对定量实验，评估表达水平准确性</p></li>
+<li><p>ERCC ExFold（Mix1+Mix2）：专为差异表达分析设计，评估倍数变化准确性（Mix1 和 Mix2 形成已知的倍数关系）</p></li>
+</ol>
+<p>erccdashboard (R 包)<a href="https://bioconductor.org/packages//release/bioc/html/erccdashboard.html" class="uri">https://bioconductor.org/packages//release/bioc/html/erccdashboard.html</a></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Lexogen 公司：SIRVs (Spike-in RNA Variant Control Mixes) 可变剪切质控</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 分离出spike-in RNA</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_spikein <span class="ot">&lt;-</span> df[<span class="fu">str_detect</span>(df<span class="sc">$</span>GeneID,<span class="at">pattern =</span> <span class="st">"^ERCC-"</span>),]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 只考虑内源性基因</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df_endogenous<span class="ot">&lt;-</span> df[<span class="fu">str_detect</span>(df<span class="sc">$</span>GeneID,<span class="at">pattern =</span> <span class="st">"^ENSMUSG"</span>),]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 分离基因长度</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>gene_length <span class="ot">&lt;-</span> df_endogenous<span class="sc">$</span>Length</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># geneID --&gt;行标识符</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>df_endogenous <span class="ot">&lt;-</span> df_endogenous <span class="sc">|&gt;</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"GeneID"</span>) </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 计数矩阵</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>counts<span class="ot">&lt;-</span> df_endogenous <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Length) <span class="sc">|&gt;</span>  <span class="fu">as.matrix</span>()</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(counts)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 46603    96</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># fwrite(df_endogenous, file = "data/SingleCellExperiment/df_endogenous.csv", </span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#        row.names = T)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="添加assays" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="添加assays"><span class="header-section-number">3.1.2</span> 添加<code>assays</code></h3>
+<p>使用函数 <code>SingleCellExperiment()</code> 以命名列表的形式提供数据，其中列表的每个对象都是一个矩阵。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleCellExperiment)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> <span class="fu">SingleCellExperiment</span>(<span class="at">assays =</span> <span class="fu">list</span>(<span class="at">counts =</span> counts))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(0):</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="标准化变换" class="level4" data-number="3.1.2.1">
+<h4 data-number="3.1.2.1" class="anchored" data-anchor-id="标准化变换"><span class="header-section-number">3.1.2.1</span> 标准化变换</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scuttle<span class="sc">::</span><span class="fu">logNormCounts</span>(sce) <span class="co">#对数变换标准化表达矩阵</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sce    <span class="co">#  assays 多了一个  "logcounts"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(2): counts logcounts</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(1): sizeFactor</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(<span class="fu">logcounts</span>(sce))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 46603    96</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="线性变换" class="level4" data-number="3.1.2.2">
+<h4 data-number="3.1.2.2" class="anchored" data-anchor-id="线性变换"><span class="header-section-number">3.1.2.2</span> 线性变换</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>counts_100 <span class="ot">&lt;-</span> <span class="fu">counts</span>(sce) <span class="sc">+</span> <span class="dv">100</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(sce, <span class="st">"counts_100"</span>) <span class="ot">&lt;-</span> counts_100 </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">assays</span>(sce) </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of length 3</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; names(3): counts logcounts counts_100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="访问和切片" class="level4" data-number="3.1.2.3">
+<h4 data-number="3.1.2.3" class="anchored" data-anchor-id="访问和切片"><span class="header-section-number">3.1.2.3</span> 访问和切片</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#访问计数矩阵</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(sce)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "counts"     "logcounts"  "counts_100"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>mat2 <span class="ot">&lt;-</span> <span class="fu">assay</span>(sce, <span class="st">"counts"</span>)  <span class="co">#通用</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>mat3 <span class="ot">&lt;-</span> <span class="fu">counts</span>(sce)           <span class="co">#特殊名称 counts  </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>log_mat <span class="ot">&lt;-</span> <span class="fu">logcounts</span>(sce)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(<span class="fu">assays</span>(sce))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "counts"     "logcounts"  "counts_100"</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 切片</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">assays</span>(sce) <span class="ot">&lt;-</span> <span class="fu">assays</span>(sce)[<span class="dv">1</span>]</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(sce)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "counts"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+</section>
+<section id="列数据coldata" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="列数据coldata"><span class="header-section-number">3.2</span> 列数据（<code>colData</code>）</h2>
+<p>为了进一步构造对象<code>SingleCellExperiment</code>，需要添加列数据<code>colData</code>注释细胞或样本，该对象<code>DataFrame</code>中的行对应于细胞，列对应于样本数据字段，例如原产地批次batch of origin、处理条件treatment condition等（ <a href="#fig-sce" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> ,橙色框）。<a href="https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-5522">下载：E-MTAB-5522.sdrf.txt（第2页）</a></p>
+<section id="coldata" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="coldata"><span class="header-section-number">3.2.1</span> <code>colData</code></h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sdrf <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/SingleCellExperiment//E-MTAB-5522.sdrf.txt"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 仅保留在计数矩阵的细胞  第44列=="counts_Calero_20160113.tsv"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> sdrf[sdrf<span class="sc">$</span><span class="st">`</span><span class="at">Derived Array Data File</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"counts_Calero_20160113.tsv"</span>, ]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 仅保留部分列和设置行标识符</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">genotype=</span>coldata<span class="sc">$</span><span class="st">`</span><span class="at">Characteristics[genotype]</span><span class="st">`</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">phenotype=</span>coldata<span class="sc">$</span><span class="st">`</span><span class="at">Characteristics[phenotype]</span><span class="st">`</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">spike_in=</span>coldata<span class="sc">$</span><span class="st">`</span><span class="at">Factor Value[spike-in addition]</span><span class="st">`</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> coldata<span class="sc">$</span><span class="st">`</span><span class="at">Source Name</span><span class="st">`</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>coldata</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 96 rows and 3 columns</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    genotype</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt;</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                   phenotype    spike_in</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt; &lt;character&gt;</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...         ...</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1    wild type phenotype    Premixed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>添加之前确保<code>colData</code>的行名与计数矩阵的列名相同</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">rownames</span>(coldata), <span class="fu">colnames</span>(counts))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="添加coldata" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="添加coldata"><span class="header-section-number">3.2.2</span> <strong>添加<code>colData</code></strong></h3>
+<section id="从头开始" class="level4" data-number="3.2.2.1">
+<h4 data-number="3.2.2.1" class="anchored" data-anchor-id="从头开始"><span class="header-section-number">3.2.2.1</span> 从头开始</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sce0 <span class="ot">&lt;-</span> <span class="fu">SingleCellExperiment</span>(<span class="at">assays =</span> <span class="fu">list</span>(<span class="at">counts=</span>counts), </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">colData=</span> coldata)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>sce0</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(sce0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="向现有对象添加" class="level4" data-number="3.2.2.2">
+<h4 data-number="3.2.2.2" class="anchored" data-anchor-id="向现有对象添加"><span class="header-section-number">3.2.2.2</span> 向现有对象添加</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(1): sizeFactor</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(sce) <span class="ot">&lt;-</span> coldata</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(3): genotype phenotype spike_in</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>或者 分块添加</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sce1 <span class="ot">&lt;-</span> <span class="fu">SingleCellExperiment</span>(<span class="fu">list</span>(<span class="at">counts=</span>counts))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sce1<span class="sc">$</span>phenotype <span class="ot">&lt;-</span> coldata<span class="sc">$</span>phenotype</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(sce1)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 96 rows and 1 column</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                   phenotype</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    wild type phenotype</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1    wild type phenotype</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1    wild type phenotype</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1    wild type phenotype</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="函数自动添加" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="函数自动添加"><span class="header-section-number">3.2.3</span> 函数自动添加</h3>
+<p>某些函数在<code>colData</code>中返回额外样本元数据字段，自动添加列元数据。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scuttle<span class="sc">::</span><span class="fu">addPerCellQC</span>(sce)  <span class="co">#quality control metrics质量控制指标</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(sce)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 96 rows and 6 columns</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    genotype</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                   phenotype    spike_in</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt; &lt;character&gt;</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...         ...</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1    wild type phenotype    Premixed</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            sum  detected     total</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    854171      7617    854171</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   1044243      7520   1044243</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1   1152450      8305   1152450</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1   1193876      8142   1193876</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1   1521472      7153   1521472</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                        ...       ...       ...</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1    203221      5608    203221</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1   1059853      6948   1059853</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1   1672343      6879   1672343</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1   1939537      7213   1939537</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1   1436899      8469   1436899</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(6): genotype phenotype ... detected total</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="行数据-rowdata" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="行数据-rowdata"><span class="header-section-number">3.3</span> 行数据 ( <code>rowData</code>)</h2>
+<p>添加行数据<code>rawData</code>注释基因，<code>DataFrame</code>中每行对应一个基因，每列对应一个基因数据字段，例如转录本长度、基因符号等注释。（ <a href="#fig-sce" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> ,绿色框）</p>
+<section id="rowdata" class="level4" data-number="3.3.0.1">
+<h4 data-number="3.3.0.1" class="anchored" data-anchor-id="rowdata"><span class="header-section-number">3.3.0.1</span> <code>rowData</code></h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(sce)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 46603 rows and 0 columns</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(sce)<span class="sc">$</span>Length <span class="ot">&lt;-</span> gene_length</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(sce)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 46603 rows and 1 column</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       Length</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    &lt;integer&gt;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102693      1070</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000064842       110</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951      6094</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102851       480</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000103377      2819</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                      ...</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094431       100</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094621       121</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000098647        99</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730      3077</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742       243</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>某些函数在<code>rowData</code>中返回额外基因元数据字段，自动添加行元数据。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scuttle<span class="sc">::</span><span class="fu">addPerFeatureQC</span>(sce)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(sce)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 46603 rows and 3 columns</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       Length      mean  detected</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    &lt;integer&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102693      1070 0.0000000   0.00000</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000064842       110 0.0000000   0.00000</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951      6094 0.0000000   0.00000</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102851       480 0.0000000   0.00000</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000103377      2819 0.0208333   1.04167</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                      ...       ...       ...</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094431       100         0         0</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094621       121         0         0</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000098647        99         0         0</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730      3077         0         0</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742       243         0         0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="rowranges" class="level4" data-number="3.3.0.2">
+<h4 data-number="3.3.0.2" class="anchored" data-anchor-id="rowranges"><span class="header-section-number">3.3.0.2</span> <code>rowRanges</code></h4>
+<p><code>rowRanges</code>：以<code>GRangesList</code>或 <code>GRanges</code>的形式保存基因组坐标，描述了特征（基因、基因组区域）的染色体、起始坐标和结束坐标。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>SummarizedExperiment<span class="sc">::</span><span class="fu">rowRanges</span>(sce)  <span class="co">#empty</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GRangesList object of length 46603:</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ENSMUSG00000102693</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GRanges object with 0 ranges and 0 metadata columns:</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    seqnames    ranges strand</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   -------</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   seqinfo: no sequences</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ENSMUSG00000064842</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GRanges object with 0 ranges and 0 metadata columns:</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    seqnames    ranges strand</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   -------</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   seqinfo: no sequences</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ENSMUSG00000051951</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GRanges object with 0 ranges and 0 metadata columns:</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    seqnames    ranges strand</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   -------</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   seqinfo: no sequences</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;46600 more elements&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>填充 <code>rowRanges</code>的方式取决于在比对和定量过程中使用的生物体种类和注释文件。 常用的是Ensembl 标识符，因此我们可以使用<a href="https://bioconductor.org/packages/3.18/rtracklayer"><em>rtracklayer</em></a>从包含 Ensembl 注释的 GTF 文件中载入<code>GRanges</code>。<a href="http://ftp.ensembl.org/pub/release-82/gtf/mus_musculus/">下载：Mus_musculus.GRCm38.82.gtf.gz</a></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>GTF（General Transfer Format）<strong>通用转录组注释格式</strong></p>
+<ol type="1">
+<li><p>seqid 字符串 参考序列 ID（如染色体编号、 scaffold 编号），示例：chr1、NC_000001</p></li>
+<li><p>source 字符串 注释来源（数据库或预测工具），示例：Ensembl、Gencode、augustus</p></li>
+<li><p>type 字符串 注释特征类型（严格限定关键词），常见：gene、transcript、exon、CDS</p></li>
+<li><p>start 整数 特征在参考序列上的起始坐标（1-based 索引，闭区间），示例：1001</p></li>
+<li><p>end 整数 特征在参考序列上的终止坐标，示例：2000</p></li>
+<li><p>score 浮点数 /. 置信度得分（预测工具输出），. 表示无数据，示例：95.3、.</p></li>
+<li><p>strand 字符 链方向，+（正链）、-（负链）、.（未知）、?（不确定）</p></li>
+<li><p>phase 整数 /. 仅 CDS 特征有效，0/1/2 表示密码子阅读框偏移，非 CDS 特征用.，示例：0、.</p></li>
+<li><p>attributes 字符串 键值对属性（核心扩展字段），格式：key1 “value1”; key2 “value2”;</p></li>
+</ol>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>gene_data <span class="ot">&lt;-</span> rtracklayer<span class="sc">::</span><span class="fu">import</span>(<span class="st">"data/SingleCellExperiment/Mus_musculus.GRCm38.82.gtf.gz"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>gene_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GRanges object with 6 ranges and 9 metadata columns:</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       seqnames          ranges strand |   source       type     score     phase</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt; &lt;integer&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [1]        1 3073253-3074322      + |  havana  gene              NA      &lt;NA&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [2]        1 3073253-3074322      + |  havana  transcript        NA      &lt;NA&gt;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [3]        1 3073253-3074322      + |  havana  exon              NA      &lt;NA&gt;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [4]        1 3102016-3102125      + |  ensembl gene              NA      &lt;NA&gt;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [5]        1 3102016-3102125      + |  ensembl transcript        NA      &lt;NA&gt;</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [6]        1 3102016-3102125      + |  ensembl exon              NA      &lt;NA&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  gene_id gene_version     gene_name gene_source gene_biotype</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              &lt;character&gt;  &lt;character&gt;   &lt;character&gt; &lt;character&gt;  &lt;character&gt;</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [1] ENSMUSG00000102693            1 4933401J01Rik      havana          TEC</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [2] ENSMUSG00000102693            1 4933401J01Rik      havana          TEC</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [3] ENSMUSG00000102693            1 4933401J01Rik      havana          TEC</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [4] ENSMUSG00000064842            1       Gm26206     ensembl        snRNA</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [5] ENSMUSG00000064842            1       Gm26206     ensembl        snRNA</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [6] ENSMUSG00000064842            1       Gm26206     ensembl        snRNA</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   -------</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   seqinfo: 45 sequences from an unspecified genome; no seqlengths</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 整理数据</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>gene_data <span class="ot">&lt;-</span> gene_data[gene_data<span class="sc">$</span>type<span class="sc">==</span><span class="st">"gene"</span>,]</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(gene_data) <span class="ot">&lt;-</span> gene_data<span class="sc">$</span>gene_id</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 保留gene_开头的列   metadata columns</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>is.gene.related <span class="ot">&lt;-</span> <span class="fu">str_detect</span>(<span class="fu">colnames</span>(<span class="fu">mcols</span>(gene_data)),<span class="st">"^gene_"</span>) </span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(is.gene.related)</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; is.gene.related</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FALSE  TRUE </span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    21     5</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(gene_data) <span class="ot">&lt;-</span> <span class="fu">mcols</span>(gene_data)[,is.gene.related]</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(gene_data)  <span class="co"># 46603 ×  5</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 46603 rows and 5 columns</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                               gene_id gene_version      gene_name</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                           &lt;character&gt;  &lt;character&gt;    &lt;character&gt;</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102693 ENSMUSG00000102693            1  4933401J01Rik</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000064842 ENSMUSG00000064842            1        Gm26206</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951 ENSMUSG00000051951            5           Xkr4</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102851 ENSMUSG00000102851            1        Gm18956</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000103377 ENSMUSG00000103377            1        Gm37180</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                               ...          ...            ...</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094431 ENSMUSG00000094431            1 CAAA01205117.1</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094621 ENSMUSG00000094621            1 CAAA01098150.1</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000098647 ENSMUSG00000098647            1 CAAA01064564.1</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730 ENSMUSG00000096730            6       Vmn2r122</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742 ENSMUSG00000095742            1 CAAA01147332.1</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       gene_source         gene_biotype</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       &lt;character&gt;          &lt;character&gt;</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102693         havana                  TEC</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000064842        ensembl                snRNA</span></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951 ensembl_havana       protein_coding</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102851         havana processed_pseudogene</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000103377         havana                  TEC</span></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                           ...                  ...</span></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094431        ensembl                miRNA</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094621        ensembl                miRNA</span></span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000098647        ensembl                miRNA</span></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730        ensembl       protein_coding</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742        ensembl       protein_coding</span></span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a><span class="co">#rownames(sce) 46603行 观测基因</span></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>SummarizedExperiment<span class="sc">::</span><span class="fu">rowRanges</span>(sce) <span class="ot">&lt;-</span> gene_data[<span class="fu">rownames</span>(sce)]</span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>SummarizedExperiment<span class="sc">::</span><span class="fu">rowRanges</span>(sce)[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,]</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GRanges object with 6 ranges and 5 metadata columns:</span></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                      seqnames          ranges strand |            gene_id</span></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                         &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; |        &lt;character&gt;</span></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000102693        1 3073253-3074322      + | ENSMUSG00000102693</span></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000064842        1 3102016-3102125      + | ENSMUSG00000064842</span></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000051951        1 3205901-3671498      - | ENSMUSG00000051951</span></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000102851        1 3252757-3253236      + | ENSMUSG00000102851</span></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000103377        1 3365731-3368549      - | ENSMUSG00000103377</span></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000104017        1 3375556-3377788      - | ENSMUSG00000104017</span></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                      gene_version     gene_name    gene_source</span></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       &lt;character&gt;   &lt;character&gt;    &lt;character&gt;</span></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000102693            1 4933401J01Rik         havana</span></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000064842            1       Gm26206        ensembl</span></span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000051951            5          Xkr4 ensembl_havana</span></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000102851            1       Gm18956         havana</span></span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000103377            1       Gm37180         havana</span></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000104017            1       Gm37363         havana</span></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              gene_biotype</span></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                               &lt;character&gt;</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000102693                  TEC</span></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000064842                snRNA</span></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000051951       protein_coding</span></span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000102851 processed_pseudogene</span></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000103377                  TEC</span></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000104017                  TEC</span></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   -------</span></span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   seqinfo: 45 sequences from an unspecified genome; no seqlengths</span></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(5): gene_id gene_version gene_name gene_source</span></span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gene_biotype</span></span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(6): genotype phenotype ... detected total</span></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="其他元数据" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="其他元数据"><span class="header-section-number">3.3.1</span> 其他元数据</h3>
+<p>其他注释以命名列表存储在<code>metadata</code> 中。 例如，实验元数据，高度可变基因（highly variable genes）。。。，缺点是与表达矩阵的行或列的操作不同步。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>DEG_up <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"gene_x"</span>, <span class="st">"gene_y"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span>(sce) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">HVGs =</span> DEG_up)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span>(sce)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $HVGs</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "gene_x" "gene_y"</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>DEG_down <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"gene_a"</span>, <span class="st">"gene_b"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span>(sce)<span class="sc">$</span>DEG_down <span class="ot">&lt;-</span> DEG_down</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span>(sce)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $HVGs</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "gene_x" "gene_y"</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $DEG_down</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "gene_a" "gene_b"</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(2): HVGs DEG_down</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(5): gene_id gene_version gene_name gene_source</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gene_biotype</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(6): genotype phenotype ... detected total</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="子集和组合" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="子集和组合"><span class="header-section-number">3.4</span> 子集和组合</h2>
+<section id="子集" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="子集"><span class="header-section-number">3.4.1</span> 子集</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>first<span class="fl">.10</span> <span class="ot">&lt;-</span> sce[,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(<span class="fu">counts</span>(first<span class="fl">.10</span>)) <span class="co">#  计数矩阵仅有 10 列</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(first<span class="fl">.10</span>) <span class="co"># only 10 rows.</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 10 rows and 6 columns</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    genotype</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt;</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S508.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                   phenotype    spike_in</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt; &lt;character&gt;</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S508.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S517.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S502.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S503.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            sum  detected     total</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    854171      7617    854171</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   1044243      7520   1044243</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1   1152450      8305   1152450</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1   1193876      8142   1193876</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1   1521472      7153   1521472</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1    866705      6828    866705</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S508.C89V9ANXX.s_1.r_1    608581      6966    608581</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S517.C89V9ANXX.s_1.r_1   1113526      8634   1113526</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S502.C89V9ANXX.s_1.r_1   1308250      8364   1308250</span></span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S503.C89V9ANXX.s_1.r_1    778605      8665    778605</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>只想要野生型细胞</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>wt.only <span class="ot">&lt;-</span> sce[, sce<span class="sc">$</span>phenotype <span class="sc">==</span> <span class="st">"wild type phenotype"</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(<span class="fu">counts</span>(wt.only))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 48</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(wt.only)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 48 rows and 6 columns</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    genotype           phenotype</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt;         &lt;character&gt;</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...                 ...</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N711_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S504.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl.. wild type phenotype</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                         spike_in       sum  detected     total</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                      &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1   ERCC+SIRV    854171      7617    854171</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   ERCC+SIRV   1044243      7520   1044243</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1   ERCC+SIRV   1152450      8305   1152450</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S517.C89V9ANXX.s_1.r_1   ERCC+SIRV   1113526      8634   1113526</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N702_S502.C89V9ANXX.s_1.r_1   ERCC+SIRV   1308250      8364   1308250</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                          ...       ...       ...       ...</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N711_S517.C89V9ANXX.s_1.r_1    Premixed   1317671      8581   1317671</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S502.C89V9ANXX.s_1.r_1    Premixed   1736189      9687   1736189</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S503.C89V9ANXX.s_1.r_1    Premixed   1521132      8983   1521132</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S504.C89V9ANXX.s_1.r_1    Premixed   1759166      8480   1759166</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1    Premixed   1436899      8469   1436899</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>只想保留蛋白质编码基因</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>coding.only <span class="ot">&lt;-</span> sce[<span class="fu">rowData</span>(sce)<span class="sc">$</span>gene_biotype <span class="sc">==</span> <span class="st">"protein_coding"</span>,]</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">counts</span>(coding.only))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 22013</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(coding.only)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 22013 rows and 5 columns</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                               gene_id gene_version      gene_name</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                           &lt;character&gt;  &lt;character&gt;    &lt;character&gt;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951 ENSMUSG00000051951            5           Xkr4</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000025900 ENSMUSG00000025900            9            Rp1</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000025902 ENSMUSG00000025902           12          Sox17</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000033845 ENSMUSG00000033845           12         Mrpl15</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000025903 ENSMUSG00000025903           13         Lypla1</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                               ...          ...            ...</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000079808 ENSMUSG00000079808            3     AC168977.1</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095041 ENSMUSG00000095041            6           PISD</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000063897 ENSMUSG00000063897            3          DHRSX</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730 ENSMUSG00000096730            6       Vmn2r122</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742 ENSMUSG00000095742            1 CAAA01147332.1</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       gene_source   gene_biotype</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       &lt;character&gt;    &lt;character&gt;</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951 ensembl_havana protein_coding</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000025900 ensembl_havana protein_coding</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000025902 ensembl_havana protein_coding</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000033845 ensembl_havana protein_coding</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000025903 ensembl_havana protein_coding</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                           ...            ...</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000079808        ensembl protein_coding</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095041        ensembl protein_coding</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000063897        ensembl protein_coding</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730        ensembl protein_coding</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742        ensembl protein_coding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="组合" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="组合"><span class="header-section-number">3.4.2</span> 组合</h3>
+<p>按列组合，假设所有涉及的对象都具有相同的行注释值和兼容的列注释字段</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sce2 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(sce, sce)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(<span class="fu">counts</span>(sce2)) <span class="co"># twice as many columns</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 192</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(sce2) <span class="co"># twice as many rows</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 192 rows and 6 columns</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    genotype</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1 Doxycycline-inducibl..</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                   phenotype    spike_in</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                 &lt;character&gt; &lt;character&gt;</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1    wild type phenotype   ERCC+SIRV</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..   ERCC+SIRV</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                                     ...         ...</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1 induced CBFB-MYH11 o..    Premixed</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1    wild type phenotype    Premixed</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            sum  detected     total</span></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1    854171      7617    854171</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   1044243      7520   1044243</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1   1152450      8305   1152450</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1   1193876      8142   1193876</span></span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1   1521472      7153   1521472</span></span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                                        ...       ...       ...</span></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S505.C89V9ANXX.s_1.r_1    203221      5608    203221</span></span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S506.C89V9ANXX.s_1.r_1   1059853      6948   1059853</span></span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S507.C89V9ANXX.s_1.r_1   1672343      6879   1672343</span></span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S508.C89V9ANXX.s_1.r_1   1939537      7213   1939537</span></span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N712_S517.C89V9ANXX.s_1.r_1   1436899      8469   1436899</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>按行组合，假设所有对象都具有相同的列注释值和兼容的行注释字段。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sce2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(sce, sce)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">counts</span>(sce2)) <span class="co"># twice as many rows</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 93206</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(sce2) <span class="co"># twice as many rows</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DataFrame with 93206 rows and 5 columns</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                               gene_id gene_version      gene_name</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                           &lt;character&gt;  &lt;character&gt;    &lt;character&gt;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102693 ENSMUSG00000102693            1  4933401J01Rik</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000064842 ENSMUSG00000064842            1        Gm26206</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951 ENSMUSG00000051951            5           Xkr4</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102851 ENSMUSG00000102851            1        Gm18956</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000103377 ENSMUSG00000103377            1        Gm37180</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                               ...          ...            ...</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094431 ENSMUSG00000094431            1 CAAA01205117.1</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094621 ENSMUSG00000094621            1 CAAA01098150.1</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000098647 ENSMUSG00000098647            1 CAAA01064564.1</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730 ENSMUSG00000096730            6       Vmn2r122</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742 ENSMUSG00000095742            1 CAAA01147332.1</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       gene_source         gene_biotype</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       &lt;character&gt;          &lt;character&gt;</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102693         havana                  TEC</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000064842        ensembl                snRNA</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000051951 ensembl_havana       protein_coding</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000102851         havana processed_pseudogene</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000103377         havana                  TEC</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...                           ...                  ...</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094431        ensembl                miRNA</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000094621        ensembl                miRNA</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000098647        ensembl                miRNA</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000096730        ensembl       protein_coding</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ENSMUSG00000095742        ensembl       protein_coding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="单细胞特定字段" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="单细胞特定字段"><span class="header-section-number">3.5</span> 单细胞特定字段</h2>
+<section id="降维-reduceddims" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="降维-reduceddims"><span class="header-section-number">3.5.1</span> 降维 <code>reducedDims</code></h3>
+<p>降维结果保存在一个列表中，列表的每一个对象是一个代表计数矩阵的低维的数值矩阵，其中行表示计数矩阵的列（如细胞），列表示维度。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>PCA</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sce</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 46603 96 </span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(2): HVGs DEG_down</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(46603): ENSMUSG00000102693 ENSMUSG00000064842 ...</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ENSMUSG00000096730 ENSMUSG00000095742</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(5): gene_id gene_version gene_name gene_source</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gene_biotype</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(6): genotype phenotype ... detected total</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mainExpName: NULL</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; altExpNames(0):</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scater<span class="sc">::</span><span class="fu">logNormCounts</span>(sce)</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scater<span class="sc">::</span><span class="fu">runPCA</span>(sce)</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">reducedDim</span>(sce, <span class="st">"PCA"</span>))</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                              PC1        PC2        PC3</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  25.3211829 -29.255059  19.924611</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   8.5853041 -24.268878 -18.126000</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  47.1785847 -10.430627  19.918057</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  -0.7246197  42.677052 -18.786200</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -44.8772729   7.165398  -2.557318</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -38.3072406   7.030712  -6.703706</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            PC4         PC5       PC6       PC7</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  2.353028   0.7134296 -4.657165 -4.529785</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  9.457525   6.6261762 -7.374656  9.479859</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  9.043069   0.5371746  5.369461 -4.579162</span></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 10.052217 -11.2629834  5.066610 -3.989710</span></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  2.063798  23.2470805  9.972536 -2.224446</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 35.617030  11.8510185 -5.534609 -1.628105</span></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                             PC8        PC9        PC10</span></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  12.739486  5.3528313 -17.4712747</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   9.933231 -3.0253703  -7.7697509</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  -5.394808 -0.2653627   1.9569984</span></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1   1.609922 -5.9842292   4.2662705</span></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1   0.922675 -3.3105931 -10.4905096</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -10.031722  1.3764729  -0.6400844</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           PC11       PC12      PC13</span></span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  6.272022   1.309453  2.142689</span></span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 -8.628675 -23.782808 13.086537</span></span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 -1.742621   5.794494  1.081155</span></span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  7.924183   4.118848 -1.318160</span></span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -3.991925   2.945433  7.997875</span></span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -2.048618  16.074028 -1.601696</span></span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                              PC14      PC15        PC16</span></span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  -3.21487530 -3.586042  -0.8868563</span></span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  -0.07695582 -1.622621  16.5055262</span></span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1   5.37813494 -4.204543  -2.4987753</span></span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  -3.08602026 -1.632896  14.2865809</span></span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  -2.60771987 19.278739 -10.3415881</span></span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -14.46500274 -9.901801  14.8844890</span></span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            PC17      PC18       PC19       PC20</span></span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  8.3092835 -8.254021  3.2032199   8.400580</span></span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 -7.0968297  7.479420  2.3893440  11.335409</span></span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  6.1373345  6.841587  2.0491731 -12.153631</span></span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 10.6386401 -6.811841  4.3494316  11.066570</span></span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -2.3761618  7.564805 -0.5513294  -2.781294</span></span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -0.5659762 -2.644617  3.7978583   1.368715</span></span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            PC21       PC22       PC23</span></span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1   6.046180  0.3084271 15.4402055</span></span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  -2.781302 10.9606893  0.9337166</span></span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  -7.230595  4.2540263 -3.7111678</span></span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  -4.998028 -3.7927570 -5.8715888</span></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -14.916002 -0.6490183 -5.7146241</span></span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -16.096460 -1.5767236  1.6884199</span></span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                            PC24       PC25        PC26</span></span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1   4.681700 -6.8980048  -6.9414484</span></span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 -12.282928 -7.7927146 -15.5028217</span></span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  -2.971526 -1.0340304   3.0595966</span></span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  -7.261821  0.1469728  -0.3389878</span></span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  -6.742021  9.0437395  13.3845540</span></span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1  15.742625  2.8595182   1.0181258</span></span>
+<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           PC27       PC28         PC29</span></span>
+<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  2.542829   9.985183  -3.49240985</span></span>
+<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  4.475004  -8.571937   1.37038588</span></span>
+<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 -7.788931  -3.190580  -0.07106325</span></span>
+<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 -4.334259  13.180193 -12.61790029</span></span>
+<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -4.173710   5.856713   2.51899198</span></span>
+<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1  3.088050 -17.295198  -3.71292452</span></span>
+<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                              PC30       PC31      PC32</span></span>
+<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 -15.80727198 -0.5220196  7.013530</span></span>
+<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  11.10310511 -6.5958587 13.719887</span></span>
+<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  -0.01329056  7.0592846  3.650680</span></span>
+<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  -1.88963759 18.5238767  2.819896</span></span>
+<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -12.55439568  1.9920756  8.699811</span></span>
+<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -11.41168626  4.4201476  5.879863</span></span>
+<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           PC33       PC34      PC35       PC36</span></span>
+<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 -6.114895 -8.0054624 -8.761877 -8.7666596</span></span>
+<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 11.659703  5.4103879 -5.109168  2.3577599</span></span>
+<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  4.115808  2.7495522  2.431918  3.9233042</span></span>
+<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 -9.079732 -0.6305226  6.234937 -4.1432864</span></span>
+<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  8.695278 -6.0949988 -4.720441  6.2858893</span></span>
+<span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -1.344748 -3.3667688 -5.063130  0.7113685</span></span>
+<span id="cb23-98"><a href="#cb23-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           PC37       PC38      PC39        PC40</span></span>
+<span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 -4.146180  -4.632087 -7.384395   5.3545001</span></span>
+<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 -8.559027  -1.528232 -6.537447  -0.6943536</span></span>
+<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  2.049022   2.601003 -5.790073   0.4880258</span></span>
+<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  8.396337  -5.866749 -4.707630   5.3081910</span></span>
+<span id="cb23-103"><a href="#cb23-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -2.584457 -11.548363 -6.699724 -17.0674135</span></span>
+<span id="cb23-104"><a href="#cb23-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 10.266019   4.807745  6.021079   1.2115131</span></span>
+<span id="cb23-105"><a href="#cb23-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           PC41       PC42       PC43</span></span>
+<span id="cb23-106"><a href="#cb23-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 -3.939611  13.753571  -2.933861</span></span>
+<span id="cb23-107"><a href="#cb23-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 -8.165024  -8.682295  -5.419327</span></span>
+<span id="cb23-108"><a href="#cb23-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 -3.556190 -11.034037   1.609018</span></span>
+<span id="cb23-109"><a href="#cb23-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  1.450141  -3.135220   3.758943</span></span>
+<span id="cb23-110"><a href="#cb23-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  7.091337  -9.855553   7.788290</span></span>
+<span id="cb23-111"><a href="#cb23-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -1.975210  -1.080137 -14.012539</span></span>
+<span id="cb23-112"><a href="#cb23-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                             PC44      PC45       PC46</span></span>
+<span id="cb23-113"><a href="#cb23-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  7.10867875  2.744699  0.3557068</span></span>
+<span id="cb23-114"><a href="#cb23-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  0.09050595  3.099078 -3.0561133</span></span>
+<span id="cb23-115"><a href="#cb23-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  0.63401271 -7.388260 -4.8308179</span></span>
+<span id="cb23-116"><a href="#cb23-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1 -4.57483871  6.691166 -4.6248279</span></span>
+<span id="cb23-117"><a href="#cb23-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  9.95694101 -3.096031  4.8812097</span></span>
+<span id="cb23-118"><a href="#cb23-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1  1.94998482  0.468822 -6.8053076</span></span>
+<span id="cb23-119"><a href="#cb23-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                              PC47       PC48        PC49</span></span>
+<span id="cb23-120"><a href="#cb23-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  -2.91052787 -12.911035   0.9586156</span></span>
+<span id="cb23-121"><a href="#cb23-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   0.99067457   3.865605  -9.6252109</span></span>
+<span id="cb23-122"><a href="#cb23-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1   0.05644908   7.466290 -14.3186667</span></span>
+<span id="cb23-123"><a href="#cb23-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1   1.52787940   0.740261  -0.2277275</span></span>
+<span id="cb23-124"><a href="#cb23-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1   4.97965548  -6.475406   7.2102380</span></span>
+<span id="cb23-125"><a href="#cb23-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -11.00798917  -2.598978   3.5586230</span></span>
+<span id="cb23-126"><a href="#cb23-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           PC50</span></span>
+<span id="cb23-127"><a href="#cb23-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1 -1.468232</span></span>
+<span id="cb23-128"><a href="#cb23-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 -4.673149</span></span>
+<span id="cb23-129"><a href="#cb23-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 -4.002830</span></span>
+<span id="cb23-130"><a href="#cb23-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  1.546890</span></span>
+<span id="cb23-131"><a href="#cb23-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1  2.537450</span></span>
+<span id="cb23-132"><a href="#cb23-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -7.319533</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>tSNE</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scater<span class="sc">::</span><span class="fu">runTSNE</span>(sce, <span class="at">perplexity =</span> <span class="fl">0.1</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perplexity should be lower than K!</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">reducedDim</span>(sce, <span class="st">"TSNE"</span>))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           TSNE1      TSNE2</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1   762.5866  -549.3040</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1   336.7162   591.4587</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1 -1167.2996  -411.6957</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1   172.7646  -188.8121</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1   575.0761 -1154.9966</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1   139.4120 -1428.1949</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>UMAP</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scater<span class="sc">::</span><span class="fu">runUMAP</span>(sce)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">reducedDim</span>(sce,<span class="st">"UMAP"</span>))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                          UMAP1       UMAP2</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  6.476384  0.92232811</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  5.694130  0.40770971</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  6.899131  1.31853854</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  8.024528 -0.69645191</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -8.901412  0.26416027</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -9.432525  0.08151817</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>手动添加UMAP</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> uwot<span class="sc">::</span><span class="fu">umap</span>(<span class="fu">t</span>(<span class="fu">logcounts</span>(sce)), <span class="at">n_neighbors =</span> <span class="dv">2</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">reducedDim</span>(sce, <span class="st">"UMAP_uwot"</span>) <span class="ot">&lt;-</span> u</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">reducedDims</span>(sce) <span class="co"># Now stored in the object.</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of length 4</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; names(4): PCA TSNE UMAP UMAP_uwot</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">reducedDim</span>(sce, <span class="st">"UMAP_uwot"</span>))</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           [,1]      [,2]</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S502.C89V9ANXX.s_1.r_1  4.899905 2.3621000</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S503.C89V9ANXX.s_1.r_1  5.569812 0.4105074</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S504.C89V9ANXX.s_1.r_1  4.316229 2.7554661</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S505.C89V9ANXX.s_1.r_1  4.784112 4.8707987</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S506.C89V9ANXX.s_1.r_1 -3.444970 0.4209308</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SLX-9555.N701_S507.C89V9ANXX.s_1.r_1 -1.768182 1.6421386</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reducedDims</span>(sce) </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of length 4</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; names(4): PCA TSNE UMAP UMAP_uwot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="替代试验-alternative-experiments" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="替代试验-alternative-experiments"><span class="header-section-number">3.5.2</span> 替代试验 Alternative Experiments</h3>
+<p><code>SingleCellExperiment</code>提供了”替代实验”的概念，其是一组不同特征但同一组样本/细胞的数据。经典应用是存储加标转录（spike-in transcripts）的每细胞计数，能够保留这些数据以供下游使用，但要将其与保存的内源性基因计数分离，因为此类替代特征通常需要单独处理。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df_spikein <span class="ot">&lt;-</span> df_spikein <span class="sc">|&gt;</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">"GeneID"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>spike_length <span class="ot">&lt;-</span> df_spikein<span class="sc">$</span>Length</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>spike_mat<span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(df_spikein[,<span class="sc">-</span><span class="dv">1</span>]) </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>spike_mat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ERCC-00002                                12948</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ERCC-00003                                  220</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            SLX-9555.N701_S503.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ERCC-00002                                11287</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ERCC-00003                                  911</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>首先创建一个单独的对象<code>SummarizedExperiment</code></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>spike_se <span class="ot">&lt;-</span> <span class="fu">SummarizedExperiment</span>(<span class="fu">list</span>(<span class="at">counts=</span>spike_mat))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>spike_se</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SummarizedExperiment </span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 92 96 </span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(92): ERCC-00002 ERCC-00003 ... ERCC-00170 ERCC-00171</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(96): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1 ...</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S508.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N712_S517.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">altExp</span>(sce, <span class="st">"spike"</span>) <span class="ot">&lt;-</span> spike_se</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">altExps</span>(sce) </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of length 1</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; names(1): spike</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>替代实验概念确保单细胞数据集的所有相关方面都可以保存在单个对象中，并且确保我们的加标数据与内源性基因的数据同步。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>sub <span class="ot">&lt;-</span> sce[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="co"># retain only two samples.</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">altExp</span>(sub, <span class="st">"spike"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: SummarizedExperiment </span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dim: 92 2 </span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assays(1): counts</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rownames(92): ERCC-00002 ERCC-00003 ... ERCC-00170 ERCC-00171</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rowData names(0):</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colnames(2): SLX-9555.N701_S502.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SLX-9555.N701_S503.C89V9ANXX.s_1.r_1</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; colData names(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>任何<code>SummarizedExperiment</code>对象都可以存储为<code>alternative Experiment</code>, 包括另一个 <code>SingleCellExperiment</code>。</p>
+</section>
+<section id="缩放因子sizefactors" class="level3" data-number="3.5.3">
+<h3 data-number="3.5.3" class="anchored" data-anchor-id="缩放因子sizefactors"><span class="header-section-number">3.5.3</span> 缩放因子<code>sizeFactors</code></h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 反卷积deconvolution-based size factors</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> scran<span class="sc">::</span><span class="fu">computeSumFactors</span>(sce) </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">sizeFactors</span>(sce))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.1513  0.7417  0.9478  1.0000  1.1239  3.5583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="文库大小因子" class="level3" data-number="3.5.4">
+<h3 data-number="3.5.4" class="anchored" data-anchor-id="文库大小因子"><span class="header-section-number">3.5.4</span> 文库大小因子</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library size-derived factors</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sizeFactors</span>(sce) <span class="ot">&lt;-</span> scater<span class="sc">::</span><span class="fu">librarySizeFactors</span>(sce) </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">sizeFactors</span>(sce))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.1703  0.7657  0.9513  1.0000  1.1064  3.6050</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="聚类标签" class="level3" data-number="3.5.5">
+<h3 data-number="3.5.5" class="anchored" data-anchor-id="聚类标签"><span class="header-section-number">3.5.5</span> 聚类标签</h3>
+<p>该函数允许我们获取或设置每个细胞标签的向量或因子，通常对应于由无监督聚类分析的分组 或从分类算法预测细胞类型身份。</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colLabels</span>(sce) <span class="ot">&lt;-</span> scran<span class="sc">::</span><span class="fu">clusterCells</span>(sce, <span class="at">use.dimred=</span><span class="st">"PCA"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">colLabels</span>(sce))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2 </span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 47 49</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./SummarizedExperiment.html" class="pagination-link" aria-label="`SummarizedExperiment`">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><code>SummarizedExperiment</code></span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./annotation_database.html" class="pagination-link" aria-label="注释数据库">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">注释数据库</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

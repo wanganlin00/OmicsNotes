@@ -1,4 +1,6 @@
-## [BioMart](https://bioconductor.org/packages/release/bioc/html/biomaRt.html)
+## BioMart
+
+[BioMart](https://bioconductor.org/packages/release/bioc/html/biomaRt.html)
 
 访问Ensembl ID
 
@@ -22,12 +24,12 @@ genes <- getBM(attributes = c("ensembl_gene_id", "hgnc_symbol", "chromosome_name
                              "start_position", "end_position", "gene_biotype"),
               mart = ensembl)
 
-genes |> DT::datatable()
+genes |> head() |>  DT::datatable()
 # 获取转录本信息
 transcripts <- getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id",
                                    "transcript_start", "transcript_end"),
                     mart = ensembl)
-transcripts |> DT::datatable()
+transcripts |> head() |>  DT::datatable()
 ```
 
 [GRCh38（Genome Research Consortium human genome build 38）](https://asia.ensembl.org/index.html)
