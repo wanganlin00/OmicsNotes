@@ -1,0 +1,489 @@
+```{r}
+#| include: false
+conflicts_prefer(GenomicRanges::setdiff)
+#conflicts_prefer(dplyr::filter)
+```
+
+# 聚类
+
+
+聚类是一种无监督学习过程，旨在通过计算基因之间的欧几里得距离来识别具有相似转录组学谱的细胞，使用易于理解的离散标签来描述群体异质性，而不是试图理解细胞真正所在的高维流形。
+
+```{r}
+#| label: loading-sce.pbmc_to_降维
+
+
+#--- loading ---#
+library(DropletUtils)
+sce.pbmc <- DropletUtils::read10xCounts("data/OSCA/raw_gene_bc_matrices/GRCh38",
+                                        col.names = TRUE)
+
+#--- gene-annotation ---#
+library(scater)
+rownames(sce.pbmc) <- uniquifyFeatureNames(
+    rowData(sce.pbmc)$ID, rowData(sce.pbmc)$Symbol)
+
+library(EnsDb.Hsapiens.v86)
+location <- mapIds(EnsDb.Hsapiens.v86, keys=rowData(sce.pbmc)$ID, 
+    column="SEQNAME", keytype="GENEID")
+
+#--- cell-detection ---#
+set.seed(100)
+e.out <- emptyDrops(counts(sce.pbmc))
+sce.pbmc <- sce.pbmc[,which(e.out$FDR <= 0.001)]
+
+#--- quality-control ---#
+stats <- perCellQCMetrics(sce.pbmc, subsets=list(Mito=which(location=="MT")))
+high.mito <- isOutlier(stats$subsets_Mito_percent, type="higher")
+sce.pbmc <- sce.pbmc[,!high.mito]
+
+#--- normalization ---#
+library(scran)
+set.seed(1000)
+clusters <- quickCluster(sce.pbmc)
+sce.pbmc <- computeSumFactors(sce.pbmc, cluster=clusters)
+sce.pbmc <- logNormCounts(sce.pbmc)
+
+#--- variance-modelling ---#
+set.seed(1001)
+dec.pbmc <- modelGeneVarByPoisson(sce.pbmc)
+top.pbmc <- getTopHVGs(dec.pbmc, prop=0.1)
+
+#--- dimensionality-reduction ---#
+set.seed(10000)
+sce.pbmc <- denoisePCA(sce.pbmc, subset.row=top.pbmc, technical=dec.pbmc)
+
+set.seed(100000)
+sce.pbmc <- runTSNE(sce.pbmc, dimred="PCA")
+
+set.seed(1000000)
+sce.pbmc <- runUMAP(sce.pbmc, dimred="PCA")
+```
+
+```{r}
+sce.pbmc
+```
+
+## Graph-based clustering
+
+基于图的聚类因其在 Seurat 中的使用而广为普及，是一种灵活且可扩展的技术，用于聚类大型 scRNA-seq 数据集。首先构建一个图，其中每个节点都是一个连接到高维空间中 nearest neighbors 的细胞。根据所涉及的细胞之间的相似性对边缘进行加权，对关系更密切的细胞赋予更高的权重。然后应用算法来识别在同一群落中的细胞比在非同一群落的细胞更紧密的“簇”。
+
+
+基于图的聚类的主要优势在于其可伸缩性。 它只需要一个 k-nearest neighbor 搜索，避免了对簇的形状或每个簇内细胞的分布做出强有力的假设，例如k-means（有利于球面簇）或高斯混合模型（需要正态性）。
+
+主要缺点是在图构造之后，不会保留超出邻近细胞关系的信息。在细胞密度差异的数据产生一些实际后果。
+
+```{r}
+library(scran)
+nn.clusters <- clusterCells(sce.pbmc, use.dimred="PCA")
+table(nn.clusters)
+```
+
+```{r}
+library(scater)
+colLabels(sce.pbmc) <- nn.clusters
+plotReducedDim(sce.pbmc, "TSNE", colour_by="label")
+```
+
+默认情况下，使用每个细胞的 10 个最近邻来构造共享的最近邻图。如果两个细胞的任何最近邻共享，则通过一条边连接， 边权重由共享最近邻的最高平均秩定义。` walktrap`
+
+显式指定参数,改变参数切换不同的聚类算法
+
+```{r}
+library(bluster)
+nn.clusters2 <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=SNNGraphParam(k=10, type="rank", cluster.fun="walktrap"))
+table(nn.clusters2)
+```
+通过在`clusterCells()`中指定`full=TRUE`来获取图本身，这样做将返回聚类分析期间使用的所有中间结构，包括 [igraph](https://cran.r-project.org/web/packages/igraph/index.html) 包中的图形对象。 该图可以使用力导向布局(force-directed layout)进行可视化
+
+```{r}
+nn.clust.info <- clusterCells(sce.pbmc, use.dimred="PCA", full=TRUE)
+nn.clust.info$objects$graph
+```
+```{r}
+#| label: fig-Force-directed-layout--shared-nearest-neighbor-graph
+set.seed(11000)
+reducedDim(sce.pbmc, "force") <- igraph::layout_with_fr(nn.clust.info$objects$graph)
+plotReducedDim(sce.pbmc, colour_by="label", dimred="force")
+```
+此外，该图还可用于生成有关基于图的聚类行为的详细诊断。
+
+### 参数
+
+#### ` k ` 最近邻数目
+
+用于构造图的最近邻的数量，这控制了聚类的分辨率，其中更高的分辨率（k越小）是更互联的图和更多的聚类。
+最近邻越多，聚类越少。
+
+```{r}
+# More resolved.
+clust.5 <- clusterCells(sce.pbmc, use.dimred="PCA", BLUSPARAM=NNGraphParam(k=5))
+table(clust.5)
+```
+
+```{r}
+# Less resolved.
+clust.50 <- clusterCells(sce.pbmc, use.dimred="PCA", BLUSPARAM=NNGraphParam(k=50))
+table(clust.50)
+```
+#### ` type ` 边缘加权方法
+
+`type="number" `将根据两个细胞之间共享的最近邻的数量对边进行加权。
+
+```{r}
+clust.num <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(type="number"))
+table(clust.num)
+```
+
+
+`type="jaccard" `将根据两组最近邻的 Jaccard 指数对边缘进行加权。
+
+```{r}
+clust.jaccard <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(type="jaccard"))
+table(clust.jaccard)
+```
+
+不对边缘加权
+
+```{r}
+clust.none <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=KNNGraphParam())
+table(clust.none)
+```
+
+
+#### ` cluster.fun ` 簇识别方法
+
+[igraph](https://cran.r-project.org/web/packages/igraph/index.html) 
+
+```{r}
+library(igraph)
+clust.walktrap <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(cluster.fun="walktrap"))
+
+clust.louvain <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(cluster.fun="louvain"))
+
+clust.infomap <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(cluster.fun="infomap"))
+
+clust.fast <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(cluster.fun="fast_greedy"))
+
+clust.labprop <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(cluster.fun="label_prop"))
+
+clust.eigen <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=NNGraphParam(cluster.fun="leading_eigen"))
+```
+
+
+```{r}
+#| label: fig-Infomap_vs_Walktrap
+
+library(pheatmap)
+# Using a large pseudo-count for a smoother color transition
+# between 0 and 1 cell in each 'tab'.
+tab <- table(paste("Infomap", clust.infomap), 
+    paste("Walktrap", clust.walktrap))
+ivw <- pheatmap(log10(tab+10), main="Infomap vs Walktrap",
+    color=viridis::viridis(100), silent=TRUE)
+gridExtra::grid.arrange(ivw[[4]])
+```
+
+```{r}
+#| label: fig-Fast-greedy_vs_Walktrap
+tab <- table(paste("Fast", clust.fast), 
+    paste("Walktrap", clust.walktrap))
+fvw <- pheatmap(log10(tab+10), main="Fast-greedy vs Walktrap",
+    color=viridis::viridis(100), silent=TRUE)
+
+gridExtra::grid.arrange(fvw[[4]])
+```
+
+
+涉及[ scran ](https://bioconductor.org/packages/3.18/bioc/html/scran.html)的管道默认为基于秩（rank）的权重，后跟 Walktrap 聚类。 相比之下，Seurat 使用基于 Jaccard 的权重，然后是 Louvain 聚类。 
+
+
+## K-means 聚类
+
+k-means 聚类是一种经典的向量量化技术，可将细胞分成 k 个簇。通过随机初始配置 k 个质心，最小化簇内的平方和以实现每个细胞都被分配给最接近质心的簇，
+。 我们通常设置 k以较大的值（例如细胞数的平方根）来获得细粒度（ fine-grained）的簇。 
+
+```{r}
+set.seed(100)
+clust.kmeans <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=KmeansParam(centers=10))
+table(clust.kmeans)
+```
+
+```{r}
+colLabels(sce.pbmc) <- clust.kmeans
+plotReducedDim(sce.pbmc, "TSNE", colour_by="label")
+```
+
+```{r}
+set.seed(100)
+clust.kmeans2 <- clusterCells(sce.pbmc, use.dimred="PCA", 
+    BLUSPARAM=KmeansParam(centers=20))
+table(clust.kmeans2)
+colLabels(sce.pbmc) <- clust.kmeans2
+plotTSNE(sce.pbmc, colour_by="label", text_by="label")
+```
+
+### mini-batch k-means 
+
+[mbkmeans](https://bioconductor.org/packages/3.18/bioc/html/mbkmeans.html)
+
+```{r}
+set.seed(100)
+clust.mbkmeans <- clusterCells(sce.pbmc, use.dimred="PCA",
+    BLUSPARAM=MbkmeansParam(centers=10))
+table(clust.mbkmeans)
+```
+
+就其本身而言， k-means 存在几个缺点：
+
+1.  它隐式偏向于半径相等的球形簇，这可能会导致在包含大小和形状不规则的分组的数据集上出现不直观的分区。
+2.  簇个数（质心数，centers） k 必须事先指定，并表示聚类分辨率的上限。k小于细胞类型数量时将始终导致两
+种细胞类型的共聚类。相比之下，其他方法（如基于图的聚类）将遵循强分离，即使相关分辨率参数设置为低值。
+3.  它取决于随机选择的初始质心。 这需要多次运行来验证簇是否稳定。
+
+### "two-step" mode：Kmeans-nnGraph
+
+k-means 首先用于获得经过基于图的聚类的代表性质心。
+然后，将每个细胞放置在相同的基于图的簇中，这也是k-means聚类分配的簇。
+
+```{r}
+#| label: fig-K-Graph_cluster
+# Setting the seed due to the randomness of k-means.
+set.seed(0101010)
+kgraph.clusters <- clusterCells(sce.pbmc, use.dimred="PCA",
+    BLUSPARAM=TwoStepParam(
+        first=KmeansParam(centers=1000),
+        second=NNGraphParam(k=5)
+    )
+)
+table(kgraph.clusters)
+
+plotTSNE(sce.pbmc, colour_by=I(kgraph.clusters))
+```
+
+## Hierarchical clustering
+
+分层聚类是一种古老的技术，它根据样本彼此之间的相对相似性将样本排列到层次结构中。 大多数实现通过将最相似的示例加入到新集群中，然后将相似的集群加入到更大的集群中，依此类推，直到所有样本都属于单个集群。 此过程将获得一个树状图，该树状图定义了粒度逐渐增加的聚类。 分层聚类方法的变体主要区别在于它们选择如何执行集聚。 例如，完全连接旨在合并具有最小最大距离的簇，而 Ward 方法旨在最小化簇内方差的增加。
+
+分层聚类的主要优势在于树状图的产生，可以定量捕获不同分辨率下的亚群之间的关系 @fig-hclust 。 以高分辨率切割树状图也保证产生嵌套在以低分辨率切割获得的聚类中的聚类，这可能有助于解释 @fig-hclust-dynamicTreeCut 。
+树状图也是细胞从相对较新的共同祖先传代而来的数据的自然表示。
+
+缺点是计算成本高，速度太慢。
+
+```{r}
+#--- loading ---#
+library(scRNAseq)
+sce.416b <- LunSpikeInData(which="416b") 
+sce.416b$block <- factor(sce.416b$block)
+
+#--- gene-annotation ---#
+library(AnnotationHub)
+ens.mm.v97 <- AnnotationHub()[["AH73905"]]
+rowData(sce.416b)$ENSEMBL <- rownames(sce.416b)
+rowData(sce.416b)$SYMBOL <- mapIds(ens.mm.v97, keys=rownames(sce.416b),
+    keytype="GENEID", column="SYMBOL")
+rowData(sce.416b)$SEQNAME <- mapIds(ens.mm.v97, keys=rownames(sce.416b),
+    keytype="GENEID", column="SEQNAME")
+
+library(scater)
+rownames(sce.416b) <- uniquifyFeatureNames(rowData(sce.416b)$ENSEMBL, 
+    rowData(sce.416b)$SYMBOL)
+
+#--- quality-control ---#
+mito <- which(rowData(sce.416b)$SEQNAME=="MT")
+stats <- perCellQCMetrics(sce.416b, subsets=list(Mt=mito))
+qc <- quickPerCellQC(stats, percent_subsets=c("subsets_Mt_percent",
+    "altexps_ERCC_percent"), batch=sce.416b$block)
+sce.416b <- sce.416b[,!qc$discard]
+
+#--- normalization ---#
+library(scran)
+sce.416b <- computeSumFactors(sce.416b)
+sce.416b <- logNormCounts(sce.416b)
+
+#--- variance-modelling ---#
+dec.416b <- modelGeneVarWithSpikes(sce.416b, "ERCC", block=sce.416b$block)
+chosen.hvgs <- getTopHVGs(dec.416b, prop=0.1)
+
+#--- batch-correction ---#
+library(limma)
+assay(sce.416b, "corrected") <- removeBatchEffect(logcounts(sce.416b), 
+    design=model.matrix(~sce.416b$phenotype), batch=sce.416b$block)
+
+#--- dimensionality-reduction ---#
+sce.416b <- runPCA(sce.416b, ncomponents=10, subset_row=chosen.hvgs,
+    exprs_values="corrected", BSPARAM=BiocSingular::ExactParam())
+
+set.seed(1010)
+sce.416b <- runTSNE(sce.416b, dimred="PCA", perplexity=10)
+```
+
+```{r}
+sce.416b
+```
+
+```{r}
+#| label: fig-hclust
+#| fig-cap: "根据致癌基因诱导状态（红色为诱导，蓝色为对照）和起始板（浅色或深色）进行着色"
+hclust.416b <- clusterCells(sce.416b, use.dimred="PCA",
+    BLUSPARAM=HclustParam(method="ward.D2"), full=TRUE)
+tree.416b <- hclust.416b$objects$hclust
+
+# Making a prettier dendrogram.
+library(dendextend)
+tree.416b$labels <- seq_along(tree.416b$labels)
+dend <- as.dendrogram(tree.416b, hang=0.1)
+
+combined.fac <- paste0(sce.416b$block, ".", 
+    sub(" .*", "", sce.416b$phenotype))
+labels_colors(dend) <- c(
+    "20160113.wild"="blue",
+    "20160113.induced"="red",
+    "20160325.wild"="dodgerblue",
+    "20160325.induced"="salmon"
+)[combined.fac][order.dendrogram(dend)]
+
+plot(dend)
+```
+为了获得显式聚类 @fig-hclust-dynamicTreeCut ，我们通过删除内部分支来“切割”树，使每个子树代表一个不同的聚类。
+
+[dynamicTreeCut](https://cran.r-project.org/web/packages/dynamicTreeCut/index.html)
+
+```{r}
+#| label: fig-hclust-dynamicTreeCut
+#| fig-cap: "根据dynamic Cut中分配的聚类标识进行着色"
+hclust.dyn <- clusterCells(sce.416b, use.dimred="PCA",
+    BLUSPARAM=HclustParam(method="ward.D2", cut.dynamic=TRUE,
+        cut.params=list(minClusterSize=10, deepSplit=1)))
+table(hclust.dyn)
+
+labels_colors(dend) <- as.integer(hclust.dyn)[order.dendrogram(dend)]
+plot(dend)
+```
+```{r}
+#| label: fig-tsne-hclust-dynamicTreeCut
+colLabels(sce.416b) <- factor(hclust.dyn)
+plotReducedDim(sce.416b, "TSNE", colour_by="label")
+```
+
+### "two-step" mode ：Kmeans-Hierarchical
+
+```{r}
+#| label: fig-K-H_cluster
+#| fig-cap: "根据k-means/hierarchical聚类组合中分配的集群的身份进行着色 "
+
+# Setting the seed due to the randomness of k-means.
+set.seed(1111)
+khclust.info <- clusterCells(sce.pbmc, use.dimred="PCA",
+    BLUSPARAM=TwoStepParam(
+        first=KmeansParam(centers=1000),
+        second=HclustParam(method="ward.D2", cut.dynamic=TRUE,
+            cut.param=list(deepSplit=3)) # for higher resolution.
+    ),
+    full=TRUE
+)
+table(khclust.info$clusters)
+
+plotTSNE(sce.pbmc, colour_by=I(khclust.info$clusters), 
+    text_by=I(khclust.info$clusters))
+```
+
+还可以检查在质心上构建的树状图 @fig-dendrogram-centroids , 这提供了不同亚群之间相对相似性的更定量的可视化。
+
+```{r}
+#| label: fig-dendrogram-centroids
+k.stats <- khclust.info$objects$first
+tree.pbmc <- khclust.info$objects$second$hclust
+
+m <- match(as.integer(tree.pbmc$labels), k.stats$cluster)
+final.clusters <- khclust.info$clusters[m]
+
+# TODO: expose scater color palette for easier re-use,
+# given that the default colors start getting recycled.
+dend <- as.dendrogram(tree.pbmc, hang=0.1)
+labels_colors(dend) <- as.integer(final.clusters)[order.dendrogram(dend)]
+
+plot(dend)
+```
+
+### "two-step" mode ：Kmeans-Affinity
+
+相同的方法可用于加速任何基于距离矩阵的聚类方法。 例如， 使k-means质心通过亲和性传播（affinity propagation）执行聚类。在这个过程中，每个样本（如质心）选择自己或另一个样本作为其“示例exemplar”， 选择的适用性取决于样本之间的距离、每个样本的其他潜在样本以及具有相同所选样本的其他样本。 这些选择的迭代更新会产生一组聚类，其中每个聚类都是根据分配给同一示例的样本定义的。
+与分层聚类不同，它不提供树状图dendrogram，但它也避免了切割树的额外复杂性—— 分辨率主要通过参数`q=`控制，该参数定义了样本将自己视为示例并因此形成自己的簇的强度。
+
+```{r}
+#| label: fig-Kmeans-Affinity
+# Setting the seed due to the randomness of k-means.
+library(apcluster)
+set.seed(1111)
+kaclust.info <- clusterCells(sce.pbmc, use.dimred="PCA",
+    BLUSPARAM=TwoStepParam(
+        first=KmeansParam(centers=1000),
+        second=AffinityParam(q=0.1) # larger q => more clusters
+    ),
+    full=TRUE
+)
+table(kaclust.info$clusters)
+
+plotTSNE(sce.pbmc, colour_by=I(kaclust.info$clusters), 
+    text_by=I(kaclust.info$clusters))
+```
+## Subclustering
+
+提高分辨率的另一种简单方法是在单个聚类中重复特征选择和聚类，这旨在选择与内部结构更相关的 HVGs 和 PCs，通过避免不必要的功能产生的噪音来提高分辨率。 Subclustering 在缺乏不同亚群的情况下根据更适度的异质性分离细胞。
+
+```{r}
+clust.full <- clusterCells(sce.pbmc, use.dimred="PCA")
+plotExpression(sce.pbmc, features=c("CD3E", "CCR7", "CD69", "CD44"),
+    x=I(clust.full), colour_by=I(clust.full))
+```
+```{r}
+# Repeating modelling and PCA on the subset.
+memory <- 10L
+sce.memory <- sce.pbmc[,clust.full==memory]
+dec.memory <- modelGeneVar(sce.memory)
+sce.memory <- denoisePCA(sce.memory, technical=dec.memory,
+    subset.row=getTopHVGs(dec.memory, n=5000))
+```
+
+```{r}
+g.memory <- buildSNNGraph(sce.memory, use.dimred="PCA")
+clust.memory <- igraph::cluster_walktrap(g.memory)$membership
+plotExpression(sce.memory, features=c("CD8A", "CD4"),
+    x=I(factor(clust.memory)))
+```
+
+对于子聚类分析，定义一个自定义函数`quickSubCluster()`
+
+```{r}
+set.seed(1000010)
+subcluster.out <- quickSubCluster(sce.pbmc, groups=clust.full,
+    prepFUN=function(x) { # Preparing the subsetted SCE for clustering.
+        dec <- modelGeneVar(x)
+        input <- denoisePCA(x, technical=dec,
+            subset.row=getTopHVGs(dec, prop=0.1),
+            BSPARAM=BiocSingular::IrlbaParam())
+    },
+    clusterFUN=function(x) { # Performing the subclustering in the subset.
+        g <- buildSNNGraph(x, use.dimred="PCA", k=20)
+        igraph::cluster_walktrap(g)$membership
+    }
+)
+
+# One SingleCellExperiment object per parent cluster:
+names(subcluster.out)
+# Looking at the subclustering for one example:
+table(subcluster.out[[1]]$subcluster)
+```
+

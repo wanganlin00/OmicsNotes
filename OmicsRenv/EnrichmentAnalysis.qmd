@@ -1,0 +1,311 @@
+---
+execute: 
+  cache: true
+---
+
+# 富集分析
+
+## 基因集富集分析 GSEA
+
+基因集表示基因集中基因的一般共享生物属性的先验知识。
+
+![](images/GSEA.gif){fig-align="center"}
+
+### over-representation analysis (ORA)
+
+**基因本体论 （Gene Ontology，GO） 基因集**
+
+**京都基因与基因组百科全书 （Kyoto Encyclopedia of Genes and Genomes，KEGG）基因集**
+
+```{r}
+# BiocManager::install('clusterProfiler')
+# BiocManager::install("org.Hs.eg.db")
+
+DEG <- read_csv("data/DEGs_Analysis/resOrdered.csv")
+x <-  na.omit(DEG) 
+```
+
+对于有参考基因组物种的分析，可以在相关软件包中直接加载该物种的背景基因集。对于常见的模式物种，例如`BiocManager::install("org.Hs.eg.db")` ，安装人类hg19的注释包 `BiocManager::install("org.Mm.eg.db")` ，安装小鼠的注释包
+
+## 基因注释
+
+```{r}
+deg_df <- x[,c(1,3,7)]
+head(deg_df)
+
+deg_df$expression <- factor( 
+    ifelse( deg_df$padj< 0.05 & abs(deg_df$log2FoldChange) >= 1,
+            if_else( deg_df$log2FoldChange >= 1 , 'up', 'down' ),
+            'NS'),
+    levels = c("up","down","NS"))
+table(deg_df$expression)
+
+gtf_v22_transcripts <- read_delim("data/DEGs_Analysis/gencode.v22.annotation.gene.probeMap")
+
+
+# 之前差异分析可以保留ENSEMBL标识符  
+deg_df <- deg_df |> 
+ inner_join(gtf_v22_transcripts, by = c( "gene"= "gene"))
+
+# 移除ENSEMBL版本号
+deg_df$ENSEMBL <- str_sub(deg_df$id, start = 1, end = 15)
+```
+
+R 语言中 `AnnotationDbi` 包提供的一个函数名`bitr()` 代表 "Biological Identifier Translation"，即生物学标识符转换。这个函数用于在不同的基因标识符之间进行转换，例如从基因的 Ensembl ID 转换为 **Entrez ID**（特定基因产物）)、基因符号（**symbol**）或基因名称（**gene name**）。
+
+Entrez是National Center for Biotechnology Information (NCBI) 提供的一个综合性生物信息数据库查询系统。它允许用户搜索和检索包括基因、蛋白质、核酸序列、3D蛋白质结构、基因表达数据、基因组数据、遗传多态性、生物项目、生物文献等各种生物医学信息。Entrez Gene数据库中的基因ID是唯一的数字标识符，用于在NCBI的Entrez系统内标识特定的基因。
+
+[**clusterProfiler**](https://yulab-smu.top/biomedical-knowledge-mining-book/){style="color:red"}
+
+```{r}
+library(clusterProfiler)
+conflicts_prefer(GenomicRanges::setdiff)
+library(org.Hs.eg.db)
+AnnotationDbi::keytypes(org.Hs.eg.db)
+head(keys(org.Hs.eg.db, "ENSEMBL"))
+head(keys(org.Hs.eg.db, "ENTREZID"))
+head(keys(org.Hs.eg.db, "SYMBOL")) #基因名称缩写
+head(keys(org.Hs.eg.db, "GENENAME")) # 基因名称全称
+
+valid_ensembl <- deg_df$ENSEMBL %in% keys(org.Hs.eg.db, "ENSEMBL")  
+table(valid_ensembl)
+
+valid_symbol <- deg_df$gene %in% keys(org.Hs.eg.db, "SYMBOL")  
+table(valid_symbol)
+
+
+deg_df_filtered <- deg_df[valid_ensembl, ]  
+
+# Biological Identifier Translation
+df <- bitr(
+ geneID= deg_df_filtered$ENSEMBL,
+ fromType = "ENSEMBL", 
+ toType = c( "ENTREZID","SYMBOL","GENENAME" ), 
+ OrgDb = org.Hs.eg.db )
+
+head(df)
+
+deg_df <- inner_join(deg_df_filtered, df, by='ENSEMBL' )
+
+
+```
+
+进行上调和下调基因的分离是为了更精确地识别与特定生物学过程或疾病状态相关的途径。例如，某些途径可能在疾病发生时被激活，导致相关基因上调，而其他途径可能被抑制，导致相关基因下调。
+
+```{r}
+gene_up <- deg_df[ deg_df$expression == 'up', "ENTREZID" ] 
+gene_down <- deg_df[ deg_df$expression == 'down', "ENTREZID"]
+
+
+gene_all <- deg_df[ ,"ENTREZID"]
+
+library(biomaRt)
+
+# 使用biomaRt映射基因ID
+gene_info <- getBM(attributes = c("hgnc_symbol", "entrezgene_id"), 
+                     filters = "entrezgene_id", 
+                     values = gene_up$ENTREZID, 
+                     mart = useMart("ensembl", dataset = "hsapiens_gene_ensembl"))
+```
+
+## KEGG 通路富集
+
+```{r}
+kegg_up <- clusterProfiler::enrichKEGG(gene = gene_up$ENTREZID ,# entrez gene id
+                    organism=  'hsa',
+                    keyType = "kegg",
+                    pvalueCutoff  =  0.05,
+                    pAdjustMethod = "BH",  # FDR多重假设检验校正 qvalue
+                    universe=  gene_all$ENTREZID,
+                    minGSSize = 10,
+                    maxGSSize = 500,
+                    qvalueCutoff  =  0.05 )
+kegg_down <- clusterProfiler::enrichKEGG(gene = gene_down$ENTREZID ,
+                    organism=  'hsa',
+                    keyType = "kegg",
+                    pvalueCutoff  =  0.05,
+                    pAdjustMethod = "BH", 
+                    universe=  gene_all$ENTREZID,
+                    qvalueCutoff  =  0.05 )
+```
+
+```{r}
+df_up<- as.data.frame(kegg_up)
+df_down<- as.data.frame(kegg_down)
+df_up
+df_down
+```
+
+对于各列内容：
+
+ID和Description，富集到的通路和功能描述；
+
+GeneRatio和BgRatio，分别为富集到该通路中的基因数目/给定基因的总数目，以及该通路中背景基因总数目/该物种所有已知的KEGG功能基因数目；
+
+pvalue、p.adjust和qvalue，p值、校正后p值和q值信息；
+
+1.  **p值（P-value）**：
+
+    -   p值是在一个假设检验中，当零假设（null hypothesis）为真时，观察到的统计量或更极端情况出现的概率。
+
+    -   一个低的p值（如小于0.05）通常表明统计学上的显著性，意味着结果不太可能仅仅是由随机因素引起的。
+
+    -   不太关心假阳性，而是更关注于发现尽可能多的显著性通路，原始的p值可能足够
+
+2.  **校正后的p值（Adjusted P-value）** - **Benjamini-Hochberg (BH)方法**：
+
+    -   在进行多重检验时，为了控制第一类错误（错误地拒绝零假设）的总体率，需要对p值进行校正。BH方法是一种流行的校正方法，它通过控制假发现率（false discovery rate, FDR）来进行校正。
+
+    -   BH校正后的p值（padj）是基于原始p值按照一定规则调整后的值，用于评估在多重比较情况下的统计显著性。
+
+    -   平衡假阳性和假阴性的发现，可以使用BH方法的p.adjust值
+
+3.  **q值（Q-value）**：
+
+    -   q值同样是用于评估多重检验中的统计显著性，它直接控制了假发现率。
+
+    -   q值定义为在最坏的情况下，所接受的假设中错误发现的比例。例如，q=0.05意味着在所有被认为是显著的发现中，最多有5%实际上是假阳性。
+
+    -   更保守地挑选显著性通路，以减少假阳性的可能性，可能会选择使用q值
+
+    -   R中使用"BY"表示q值校正
+
+geneID和Count，富集到该通路中的基因名称和数目。
+
+```{r}
+df_up <- df_up[df_up$pvalue < 0.05, ]
+df_down <- df_down[df_down$pvalue < 0.05, ]
+lubridate::intersect(df_up$ID,df_down$ID)
+```
+
+```{r}
+df_up$group <- 1
+df_down$group <- -1
+```
+
+```{r}
+up_down <- rbind(df_up,df_down)
+head(up_down)
+```
+
+### 水平条图
+
+```{r}
+barplot(kegg_up, showCategory=20, xlab="-log10(pvalue)", ylab="Pathways") +
+  theme_minimal()
+dotplot(kegg_up)
+```
+
+```{r}
+up_down$Negative_log10pvalue <- -log10(up_down$pvalue)
+
+up_down$Grouped_Negativelog10pvalue <- up_down$Negative_log10pvalue * up_down$group
+
+up_down <- up_down[order( up_down$Grouped_Negativelog10pvalue), ]
+
+ggplot(up_down, aes(
+  x =  reorder(Description, order(Grouped_Negativelog10pvalue, decreasing = F)),
+  y = Grouped_Negativelog10pvalue,
+  fill = group
+)) +
+  geom_bar(stat = "identity") +
+  coord_flip()+
+  scale_fill_gradient(low = "blue", high = "red") +
+  scale_x_discrete(name = "Pathway names") +
+  scale_y_continuous(name = "-log10 pvalue")+
+  theme(plot.title = element_text(hjust = 0.5) ) +
+  ggtitle("KEGG Pathway Enrichment") 
+  
+
+```
+
+### 点图
+
+```{r}
+# GeneRatio 转化成数值型
+GR <- up_down$GeneRatio |> 
+    str_split(pattern = "/",simplify = TRUE) |> as_tibble(.name_repair="unique")
+
+up_down$GeneRatio <- parse_number(GR$...1)/parse_number(GR$...2)
+
+up_down <- up_down[order(up_down$GeneRatio),]
+
+ggplot(data = up_down,aes(x=GeneRatio,
+                      y=reorder(Description,order(GeneRatio)),
+                      color = Grouped_Negativelog10pvalue,
+                      size=Count
+                      )
+       )+
+    geom_point()+
+    scale_x_continuous( name = "GeneRatio" ,breaks = seq(0,1.0,0.1))+
+    scale_color_gradient(low = "blue", high = "red" )+
+    scale_y_discrete( name = "Pathway names" ) +
+    theme( plot.title = element_text( hjust = 0.5 )) +
+    ggtitle( "KEGG Pathway Enrichment " )+
+    labs(color="-log10 pvalue")
+
+```
+
+## GO富集分析
+
+Gene Ontology 基因集
+
+| **Package**  | **Organism** |
+|--------------|--------------|
+| org.Hs.eg.db | Human        |
+| org.Mm.eg.db | Mouse        |
+
+对于输出的GO富集结果表格中的各列内容：
+
+ONTOLOGY，GO的BP（生物学过程）、CC（细胞组分）或MF（分子功能）；
+
+ID和Description，富集到的GO term及其描述；
+
+GeneRatio和BgRatio，分别为富集到该GO term中的基因数目/给定基因的总数目，以及该GO term中背景基因总数目/该物种所有已知GO功能基因数目；
+
+pvalue、p.adjust和qvalue，p值、校正后p值和q值；
+
+geneID和Count，富集到该GO term中的基因名称和数目。
+
+```{r}
+GO_EA<- clusterProfiler::enrichGO(gene = gene_all$ENTREZID,
+                                  OrgDb = "org.Hs.eg.db",
+                        
+                                  keyType = "ENTREZID",
+                                  ont = "ALL",
+                                  pvalueCutoff  =  0.05 ,
+                                  qvalueCutoff  =  0.05,
+                                  readable = F)
+GO_EA_tbl <-  as_tibble(GO_EA)
+```
+
+### 可视化
+
+```{r}
+#clusterProfiler 包里的一些默认作图方法，例如
+barplot(GO_EA)  #富集柱形图
+dotplot(GO_EA)  #富集气泡图
+```
+
+```{r}
+dat2 <- GO_EA_tbl[GO_EA_tbl$pvalue< 0.05, ]
+dat2$Negative_log10pvalue <-  -log10(dat2$pvalue)
+dat2 = dat2[order( dat2$Negative_log10pvalue, decreasing = F ), ]
+
+dat2 <- dat2 |> 
+    group_by(ONTOLOGY) |> 
+    slice_max(order_by = Negative_log10pvalue,n=10) |> 
+    ungroup()
+
+
+ggplot(dat2,aes(x = Negative_log10pvalue, 
+                y = reorder(Description,
+                            order(ONTOLOGY,Negative_log10pvalue,decreasing=F)),
+                fill = ONTOLOGY ))+ 
+    geom_bar( stat = "identity" ) +
+    scale_x_continuous( name = "-log10 pvalue" ) +
+    scale_y_discrete( name = "Pathway names" ) +
+    theme_bw() + 
+    theme( plot.title = element_text( hjust = 0.5 ) ) +
+    ggtitle( "GO Pathway Enrichment" ) 
+```

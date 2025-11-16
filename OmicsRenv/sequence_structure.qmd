@@ -1,0 +1,247 @@
+# 生物序列数据结构
+
+<https://bioconductor.org/packages/release/workflows/html/sequencing.html>
+
+![](images/sequence.png){fig-align="center"}
+
+## S4 类
+
+### DataFrame
+
+```{r}
+library(S4Vectors)
+# 创建一个 DataFrame 对象
+df <- DataFrame(a = 1:3, b = letters[1:3])
+df
+```
+
+### Rle
+
+**Run-Length Encoding (RLE)** 是一种简单且常用的数据压缩方法，特别适用于存储和处理重复数据序列。`class?Rle`
+
+```{r}
+# 创建一个 Rle 对象
+
+rle_obj <- Rle(c(rep("A", 5), rep("B", 3), rep("C", 2), "D", rep("A", 2)))
+
+print(rle_obj)
+
+runLength(rle_obj)
+```
+
+在 RLE 中，连续的重复元素（称为“run”）被压缩成一个值和一个计数对。这个值表示重复的元素，计数表示它们的数量。例如，序列 `[AAAAABBBCCDAA]` 可以被编码为 `(A5, B3, C2, D1, A2)`。
+
+## Biostrings
+
+Biological strings
+
+`DNAstringSet`、`RNAStringSet`、`AAStringSet`、`BStringSet`
+
+### DNA
+
+```{r}
+library(Biostrings)
+
+Biostrings::DNA_ALPHABET
+IUPAC_CODE_MAP
+
+d <- DNAStringSet(c("TGCACGTGCATT","ACTGCA"))
+d
+length(d)
+
+width(d)
+rev(d)
+reverse(d)
+reverseComplement(d)
+translate(d)
+
+alphabetFrequency(d)
+letterFrequency(d,letters = "GC")
+dinucleotideFrequency(d)
+
+# 共识矩阵
+
+consensusMatrix(d)
+```
+
+### RNA
+
+```{r}
+Biostrings::GENETIC_CODE
+Biostrings::RNA_GENETIC_CODE
+RNA_ALPHABET
+r <- RNAStringSet(c("AUCG", "GCAU", "AUCGAU", "GCUA"))
+r
+```
+
+### 蛋白质
+
+组成人体蛋白质的21种氨基酸，20 + 硒代半胱氨酸（UGA-终止密码子）
+
+```{r}
+Biostrings::AMINO_ACID_CODE
+AA_ALPHABET
+
+protein_strings <- AAStringSet(c("MATH", "GCAU", "MATHMATH", "CUMA"))
+protein_strings
+
+# 二进制字符串存储 如seq_id、quality
+binary_strings <- BStringSet(c("ERCC010101", "CRCC110011", "101010", "111000"))
+binary_strings
+```
+
+## Ranges
+
+### IntervalRanges
+
+`IRanges`
+
+```{r}
+library(IRanges)
+set.seed(10)
+ranges <- IRanges::IRanges(
+  start = round(runif(10, 1, 100)),
+  width = round(runif(10, 0, 50)),
+  names = paste0("exton_", letters[sample(1:26, 10)])
+)
+ranges
+
+
+start(ranges)
+width(ranges)
+end(ranges)
+
+```
+
+没有维度，但有长度
+
+```{r}
+dim(ranges)
+length(ranges)
+```
+
+重叠检测: 检查不同区间是否有重叠。
+
+```{r}
+query <- IRanges(1, 10)
+subject <- IRanges(c(5, 15), c(10, 20))
+overlaps <- findOverlaps(query, subject)
+overlaps
+
+queryHits(overlaps)
+```
+
+合并区间: 将重叠或相邻的区间合并为一个更大的区间。
+
+```{r}
+merged <- GenomicRanges::reduce(IRanges(start = c(1, 5), end = c(10, 20)))
+print(merged)
+
+```
+
+```{r}
+plotRanges <- function(x, xlim = x , 
+                       main =deparse(substitute(x)),
+                       col = "black", sep = 0.5, ...){
+  height = 1
+  if(is(xlim, class2 = "Ranges"))
+    xlim = c(min(start(xlim)), max(end(xlim)))
+  bins <- disjointBins(IRanges(start(x),end(x)+1))
+  plot.new()
+  plot.window(xlim, c(0, max(bins)*(height + sep)))
+  ybottom <- bins * (sep + height) - height
+  rect(start(x)-0.5, ybottom, end(x)+0.5, ybottom + height,
+       col = col, ...)
+  title(main)
+  axis(1)
+  
+}
+```
+
+```{r}
+ir <- IRanges::IRanges(
+  start =c(1, 1, 4, 10),
+  end =  c(6, 3, 8, 10)
+)
+ir
+disjoin(ir)
+
+disjointBins(IRanges(start(ir), end(ir) + 1)) # 1,2,3,1 放于第1，2，3，1层
+disjointBins(IRanges(start(disjoin(ir)), end(disjoin(ir)) + 1)) #放于第1，2，1，1层
+
+par(mfrow = c(2,1))
+plotRanges(ir)
+plotRanges(disjoin(ir))
+```
+
+### GenomicRanges
+
+**`GRanges`**：用于表示基因组（染色体）范围的数据结构，例如Promoters，Genes，SNPs，CpG Islands，......
+
+```{r}
+library(GenomicRanges)
+# help("GRanges-class")
+
+set.seed(10)
+Granges <- GRanges(
+  seqnames = Rle( values =  c('chr1', 'chr2', 'chr3'), lengths =  c(3, 3, 3)),
+  ranges = IRanges(start = seq(1,18,2), width = 3),
+  strand = rep(c("+","-","*"),each=3),
+  score = 101:109,
+  GC = runif(9)
+)
+Granges
+```
+
+```{r}
+sort(Granges)
+
+values(Granges) <- DataFrame(score = rnorm(9), GC = runif(9))
+Granges
+```
+
+`flank(x, width, start = TRUE, both = FALSE)` 用于在基因组范围对象 (GRanges) 上扩展或调整范围。它会基于输入的基因组范围返回其上游或下游的邻近区域。flanking sequence
+
+-   `x`: 一个 GRanges 对象。
+-   `width`: 你想要的上下游区域的宽度（如上例中的 5）。
+-   `start`: 这个参数决定了是否使用起始端（TRUE）还是结束端（FALSE）来生成上下游区域。如果你的基因组是正链，start = TRUE 表示上游。如果是负链，start = TRUE 则表示下游。默认为 TRUE。
+-   `both`: 如果设置为 TRUE，则会在范围的两端生成 width 宽度的区域。
+
+```{r}
+flank(Granges,5)
+```
+
+`promoters(x, upstream = 2000, downstream = 200)` 通常用于提取基因的启动子区域（promoter regions）。在基因组分析中，启动子区域是靠近基因起始位点的区域，通常被认为是调控基因表达的关键区域。启动子区域是基于基因组范围的起始位置提取的，上游（upstream）和下游（downstream）的长度可以自定义。
+
+```{r}
+promoters(Granges)
+```
+
+```{r}
+genome(Granges) <- "hg19"
+
+seqinfo(Granges)
+seqlevels(Granges)
+seqlengths(Granges)
+```
+
+`gaps(x)`用于计算给定的 GRanges 对象中缺失（gaps）的基因组区域。它返回的是不被输入的 GRanges 对象覆盖的范围（即空白区域），通常用于确定在某些染色体区域中没有基因或特征的部分。
+
+```{r}
+gaps(Granges)
+```
+
+```{r}
+
+gr1 <- GRanges(seqnames = "chr1", 
+               ranges = IRanges(start = c(1, 20), end = c(10, 30)))
+gr2 <- GRanges(seqnames = "chr1", 
+               ranges = IRanges(start = c(5, 25), end = c(15, 35)))
+gr1
+gr2
+GenomicRanges::setdiff(gr1, gr2)
+
+findOverlaps(gr1,gr2)
+
+subsetByOverlaps(gr1, gr2)
+```

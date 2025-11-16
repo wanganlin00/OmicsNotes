@@ -1,0 +1,174 @@
+```{r}
+#| include: false
+conflicts_prefer(GenomicRanges::setdiff)
+```
+
+# 降维
+
+scRNA-seq数据中每个单独的基因代表数据的一个维度。n个基因m个细胞→n维图，其中n维坐标系的每个轴代表一个基因的表达，图中的每个点代表一个细胞。如此，每个细胞的表达谱定义了其在高维表达空间中的位置。
+
+降维旨在减少数据中单独维度的数量，不同的基因受到相同的生物过程的影响就会相互关联，也就不需要为单个基因存储单独的信息，而是可以将多个相关基因压缩到一个维度中，如**特征基因eigengene**。
+
+```{r loading-ZeiselBrainData}
+#--- loading ---#
+library(scRNAseq)
+sce.zeisel <- ZeiselBrainData()
+
+library(scater)
+sce.zeisel <- aggregateAcrossFeatures(sce.zeisel, 
+    id=sub("_loc[0-9]+$", "", rownames(sce.zeisel)))
+
+#--- gene-annotation ---#
+library(org.Mm.eg.db)
+rowData(sce.zeisel)$Ensembl <- mapIds(org.Mm.eg.db, 
+    keys=rownames(sce.zeisel), keytype="SYMBOL", column="ENSEMBL")
+
+#--- quality-control ---#
+stats <- perCellQCMetrics(sce.zeisel, subsets=list(
+    Mt=rowData(sce.zeisel)$featureType=="mito"))
+qc <- quickPerCellQC(stats, percent_subsets=c("altexps_ERCC_percent", 
+    "subsets_Mt_percent"))
+sce.zeisel <- sce.zeisel[,!qc$discard]
+
+#--- normalization ---#
+library(scran)
+set.seed(1000)
+clusters <- quickCluster(sce.zeisel)
+sce.zeisel <- computeSumFactors(sce.zeisel, cluster=clusters) 
+sce.zeisel <- logNormCounts(sce.zeisel)
+
+#--- variance-modelling ---#
+dec.zeisel <- modelGeneVarWithSpikes(sce.zeisel, "ERCC")
+top.hvgs <- getTopHVGs(dec.zeisel, prop=0.1)
+```
+
+```{r}
+sce.zeisel
+```
+
+## 主成分分析
+
+Principal components analysis (PCA) 是一种线性降维技术，即每个 PC 只捕获高维空间中沿线的变化。 通过将每个轴想象成一条线来最好地理解这一点。 假设我们在任何地方画一条线，然后将数据集中的每个细胞移动到线上最近的位置（？垂线段交点）。 此轴捕获的方差定义为沿该线的细胞位置的方差（？垂线段交点坐标值绝对值的方差，）。
+
+在 PCA 中，选择第一个轴（或"主成分"，PC）以使其最大化这种差异。 选择下一个 PC 时，它与第一个 PC 正交，并捕获最大的剩余变化量，依此类推。 早期的PC可能集中了生物信号，技术噪声应该主要集中在后来的PC中。 虽然PCA对随机噪声具有鲁棒性robust（稳健性），但过量的PCA可能会导致早期的PC捕获噪声而不是生物差异。
+
+```{r}
+library(scran)
+top.zeisel <- getTopHVGs(dec.zeisel, n=2000)
+
+set.seed(100) # See below.
+sce.zeisel <- fixedPCA(sce.zeisel, subset.row=top.zeisel)  # 默认情况下，将计算前 50 个 PC
+reducedDimNames(sce.zeisel)
+```
+
+```{r}
+dim(reducedDim(sce.zeisel, "PCA"))
+```
+
+对于大型数据集，使用仅计算top PCs 的近似 SVD 算法可以获得更高的效率。这些近似算法中有许多是基于随机化的，因此需要`set.seed()`获得可重复的结果。
+
+```{r}
+library(BiocSingular)
+set.seed(1000)
+sce.zeisel <- fixedPCA(sce.zeisel, subset.row=top.zeisel, 
+    BSPARAM=RandomParam(), name="randomized")
+reducedDimNames(sce.zeisel)
+```
+
+```{r}
+dim(reducedDim(sce.zeisel, "randomized"))
+```
+
+### 选择主成分数量
+
+```{r}
+
+percent.var <- attr(reducedDim(sce.zeisel), "percentVar")
+plot(percent.var, log="y", xlab="PC", ylab="Variance explained (%)")
+```
+
+### 可视化主成分
+
+```{r}
+library(scater)
+plotReducedDim(sce.zeisel, dimred="PCA", colour_by="level1class")
+```
+
+```{r}
+plotReducedDim(sce.zeisel, dimred="PCA", ncomponents=4,
+    colour_by="level1class")
+```
+
+## t-分布随机邻域嵌入
+
+scRNA-seq数据可视化的事实标准是t-SNE。
+
+[t-stochastic neighbor embedding （t-SNE）](https://jmlr.csail.mit.edu/beta/papers/v9/vandermaaten08a.html) 是一种非线性降维方法。它试图寻找数据的低维表示，其保留了每个点与其相邻点在高维空间中的距离。t-SNE 在低维空间中排列细胞的方式具有更大的自由度，使其能够在复杂的群体中分离许多不同的簇。
+
+t-SNE的主要缺点之一是计算比其他可视化方法的更密集，可以通过在`runTSNE()`中设置`dimred="PCA"`使得t-SNE在 top PCs 中计算。这利用了PCA的数据压缩和噪声去除，以获得更快、更整洁的结果。
+
+[t-SNE 超参数](https://distill.pub/2016/misread-tsne/)
+
+1.  困惑度perplexity（5 - 50）
+
+2.  学习率epsilon
+
+3.  迭代次数 step
+
+它涉及随机初始化，因此需要设置伪随机以确保结果是可重复的。
+
+```{r}
+#| label: fig-tsne
+set.seed(00101001101)
+
+# runTSNE() stores the t-SNE coordinates in the reducedDims
+# for re-use across multiple plotReducedDim() calls.
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA")
+reducedDimNames(sce.zeisel)
+plotReducedDim(sce.zeisel, dimred="TSNE", colour_by="level1class")
+
+```
+
+clusters的相对大小和相对位置没有意义。
+
+```{r}
+set.seed(100)
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA", perplexity=5)
+out5 <- plotReducedDim(sce.zeisel, dimred="TSNE",
+    colour_by="level1class") + ggtitle("perplexity = 5")
+
+set.seed(100)
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA", perplexity=20)
+out20 <- plotReducedDim(sce.zeisel, dimred="TSNE",
+    colour_by="level1class") + ggtitle("perplexity = 20")
+
+set.seed(100)
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA", perplexity=80)
+out80 <- plotReducedDim(sce.zeisel, dimred="TSNE", 
+    colour_by="level1class") + ggtitle("perplexity = 80")
+
+gridExtra::grid.arrange(out5, out20, out80, ncol=3)
+```
+
+## 均匀流形近似和投影
+
+[Uniform manifold approximation and projection（UMAP）](https://arxiv.org/abs/1802.03426) 也是一种非线性降维方法。UMAP 是可视化大型scRNA-seq数据集的首选方法。
+
+[umap 超参数](https://umap-learn.readthedocs.io/en/latest/parameters.html)
+
+1.  n_neighbors 局部结构-全局结构权衡
+
+2.  min_dist 紧密程度
+
+3.  n_components 降维空间的维数
+
+4.  metric 距离的计算方式
+
+```{r}
+#| label: fig-umap
+set.seed(1100101001)
+sce.zeisel <- runUMAP(sce.zeisel, dimred="PCA")
+plotReducedDim(sce.zeisel, dimred="UMAP", colour_by="level1class")
+```
+
+相比 t-SNE @fig-tsne ，UMAP @fig-umap 往往具有更紧凑的视觉clusters，它们之间有更多的空白空间。 它保留更多的全局结构，但这必然会降低每个视觉集群内的分辨率。

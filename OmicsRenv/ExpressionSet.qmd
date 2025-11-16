@@ -1,0 +1,131 @@
+# `ExpressionSet`
+
+## 组件
+
+### 表达矩阵 Assay data
+
+包含实际的表达数据。通常是一个矩阵，其中行代表基因，列代表样本。数据可以是原始计数值、归一化的表达值等。
+
+```{r}
+dataDirectory <- system.file("extdata", package="Biobase")
+exprsFile <- file.path(dataDirectory, "exprsData.txt")
+
+exprs <- as.matrix(read.table(exprsFile, header=TRUE, sep="\t",
+                              row.names=1,as.is=TRUE))
+class(exprs)
+dim(exprs)
+colnames(exprs)
+head(exprs[,1:5])
+```
+
+### 列数据
+
+包含样本的数据，样本为细胞或病人。这个部分存储有关样本的信息，比如样本的处理条件、时间点等。通常以 `AnnotatedDataFrame` 的形式存储。
+
+```{r}
+pDataFile <- file.path(dataDirectory, "pData.txt")
+pData <- read.table(pDataFile,row.names=1, header=TRUE, sep="\t")
+
+dim(pData)
+colnames(pData)
+sapply(pData, class)
+
+rownames(pData)
+
+summary(pData)
+
+all(rownames(pData)==colnames(exprs))
+```
+
+元数据
+
+```{r}
+metadata <- data.frame(labelDescription= c("Patient gender","Case/control status",
+                                           "Tumor progress on XYZ scale"),
+                       row.names=c("gender", "type", "score"))
+metadata
+```
+
+**`Biobase`** 提供了*`AnnotatedDataFrame`* 类来保存表型数据及其元数据
+
+```{r}
+library(Biobase)
+phenoData <- new("AnnotatedDataFrame",data=pData, varMetadata=metadata)
+phenoData
+```
+
+切片
+
+```{r}
+head(pData(phenoData))
+
+phenoData[c("A","Z"),"gender"]
+pData(phenoData[phenoData$score>0.8,])
+```
+
+### 行数据
+
+包含基因的元数据。这个部分存储有关基因的信息，比如基因的注释、位置等。通常以 `AnnotatedDataFrame` 的形式存储。
+
+**`annotation`**和**`AnnotationDbi`**包为元数据包提供了基本的数据操作
+
+```{r}
+annotation <- "hgu95av2"
+```
+
+### 实验元数据
+
+包含实验的元数据，比如实验设计、数据处理流程等。
+
+*`MIAME`* ob ject
+
+```{r}
+experimentData <- new("MIAME",name="Pierre Fermat",lab="Francis Galton Lab",
+                      contact="pfermat@lab.not.exist",
+                      title="Smoking-Cancer Experiment",
+                      abstract="An example ExpressionSet",
+                      url="www.lab.not.exist",
+                      other=list(
+                        notes="Created from text files"
+                        )
+                      )
+experimentData
+```
+
+## 构造ExpressionSet
+
+```{r}
+#help("ExpressionSet-class")
+miniSet <- ExpressionSet(assayData=exprs)
+miniSet
+
+exampleSet <- ExpressionSet(assayData=exprs,
+                            phenoData=phenoData,
+                            experimentData=experimentData,
+                            annotation="hgu95av2")
+
+exampleSet
+```
+
+### 访问
+
+```{r}
+exprs(exampleSet) |>  head()
+
+pData(exampleSet)
+
+fData(exampleSet)
+experimentData(exampleSet)
+```
+
+### 切片
+
+```{r}
+exampleSet$gender[1:5]
+exampleSet$gender[1:5] == "Female"
+
+featureNames(exampleSet)[1:5]
+sampleNames(exampleSet)[1:5]
+varLabels(exampleSet)
+exprs(exampleSet)[1:6,1:5]
+```

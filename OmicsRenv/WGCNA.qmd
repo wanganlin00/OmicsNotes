@@ -1,0 +1,73 @@
+# WGCNA
+
+加权基因共表达网络分析
+
+```{r eval=FALSE}
+BiocManager::install("GO.db")
+# install.packages("H:/压缩包/impute_1.78.0.tar.gz", repos = NULL, type = "source")
+# install.packages("H:/压缩包/preprocessCore_1.66.0.tar.gz", repos = NULL, type = "source")
+install.packages("WGCNA")
+```
+
+<https://cran.r-project.org/web/packages/WGCNA/index.html>
+
+[简书示例](https://www.jianshu.com/p/e9cc3f43441d)
+
+```{r}
+library(WGCNA)
+Counts <- read_rds("data/WGCNA/gene_sample.rds") |> column_to_rownames("gene")
+
+Counts[1:6,1:4]
+```
+
+```{r}
+# 计算相关矩阵
+datExpr = as.data.frame(t(Counts)) # 转置数据框，使每行表示一个样本
+powers = c(1:10)
+sft = pickSoftThreshold(datExpr, powerVector = powers, verbose = 5)
+
+# # 绘制选择的软阈值
+# plot(sft$powerVector, sft$fitIndices[,1], type = "n", xlab = "Soft Threshold (power)", ylab = "Scale Free Topology Model Fit, signed R^2")
+# text(sft$powerVector, sft$fitIndices[,1], labels = powers, cex = 0.8, col = "red")
+
+# 根据选择的阈值（例如，选择的阈值是6）
+power = 2
+adjacency = adjacency(datExpr, power = power)
+
+
+```
+
+```{r}
+# 确定模块
+moduleDetection = blockwiseModules(
+  datExpr,
+  power = power,
+  TOMType = "unsigned",
+  minModuleSize = 30,
+  reassignThreshold = 0,
+  mergeCutHeight = 0.25,
+  numericLabels = TRUE,
+  pamRespectsDendro = FALSE,
+  saveTOMs = TRUE,
+  saveTOMFileBase = "TOM",
+  verbose = 3
+)
+
+# 提取模块信息
+moduleLabels = moduleDetection$colors
+moduleColors = labels2colors(moduleLabels)
+
+```
+
+```{r}
+# 绘制模块基因树状图
+plotDendroAndColors(
+  moduleDetection$dendrograms[[1]],
+  moduleColors,
+  "Module colors",
+  dendroLabels = FALSE,
+  addGuide = TRUE,
+  guideHang = 0.05
+)
+
+```

@@ -1,0 +1,97 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "OmicsRenv"
+  author: "AnLin"
+  date: "`r Sys.Date()`"
+  reader-mode: true
+  # site-url: https://wanganlin00.github.io/OmicsNotes
+  # repo-url: https://github.com/Wanganlin00/OmicsNotes
+  # repo-branch: main
+  # repo-actions: [edit,issue]
+  chapters:
+    - index.qmd
+    
+    - part: "数据结构"
+      chapters:
+        - ExpressionSet.qmd
+        - SummarizedExperiment.qmd
+        - SingleCellExperiment.qmd
+        - read.qmd
+        
+    - part: "注释数据资源"
+      chapters:        
+        # - biobroom.qmd
+        - annotation_resources.qmd
+        - biomaRt.qmd
+        
+    - part: single_cell_omics.qmd
+      chapters: 
+    #    - Seurat.qmd
+        - Orchestrating_Single_Cell_Analysis.qmd        
+    #     - QC.qmd
+    #     - doublet_detection.qmd
+    #     - variation_check.qmd
+    #     - normalization.qmd
+    #     - batch_correction.qmd
+    #     - feature_selection.qmd
+    #     - DimensionalityReduction.qmd
+    #     - Clustering.qmd
+    #     - MarkerGeneDetection.qmd
+       # - CellTypeAnnotation.qmd
+    
+    # - part: "下游分析"
+    #   chapters:
+    # 
+    #     - DEGs_Analysis.qmd
+    #     - EnrichmentAnalysis.qmd
+    #     - PseudotimeAnalysis.qmd
+        # - eQTL.qmd
+        # - GWAS.qmd
+        # - WGCNA.qmd
+
+    #   
+    
+    
+    # - part: "workflow"
+    #   chapters: 
+    #     - Seurat.qmd
+    #     - workflow.qmd
+    
+    - part: "附录"
+      chapters:
+      - upstream_analysis.qmd
+      - sequence_structure.qmd
+
+
+css: styles.css
+execute:
+  warning: false
+  cache: true
+  message: true
+
+toc: true
+number-sections: true
+
+code-fold: true
+    
+knitr:
+  opts_chunk: 
+    comment: "#>" 
+    collapse: TRUE
+
+# fig-dpi: 600
+fig-format: svg
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  # pdf:
+  #   documentclass: scrreprt
+
+editor: visual
+

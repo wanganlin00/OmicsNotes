@@ -1,0 +1,81 @@
+## [BioMart](https://bioconductor.org/packages/release/bioc/html/biomaRt.html)
+
+访问Ensembl ID
+
+查找智人（homo sapien）基因组
+
+<https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html#introduction>
+
+```{r}
+# BiocManager::install("biomaRt")
+library(biomaRt)
+
+listEnsembl()
+
+# 连接ENSEMBL数据库   智人基因数据集
+ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
+ensembl
+
+
+# 获取基因信息
+genes <- getBM(attributes = c("ensembl_gene_id", "hgnc_symbol", "chromosome_name", 
+                             "start_position", "end_position", "gene_biotype"),
+              mart = ensembl)
+
+genes |> DT::datatable()
+# 获取转录本信息
+transcripts <- getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id",
+                                   "transcript_start", "transcript_end"),
+                    mart = ensembl)
+transcripts |> DT::datatable()
+```
+
+[GRCh38（Genome Research Consortium human genome build 38）](https://asia.ensembl.org/index.html)
+
+```{r}
+# 人类基因BioMart
+ensembl <- useEnsembl(biomart = "ensembl", 
+                   dataset = "hsapiens_gene_ensembl", 
+                   mirror = "asia")
+```
+
+### 映射
+
+```{r}
+listMarts()
+# 连接到Ensembl BioMart
+mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", dataset = "hsapiens_gene_ensembl")
+listAttributes(mart) |>  DT::datatable()
+
+
+
+
+entrez_id <- c("1017", "1018", "1019")  
+
+getBM(attributes = c("entrezgene_id", "ensembl_gene_id", "external_gene_name"),
+                  filters = "entrezgene_id",
+                  values = entrez_id,,
+                  mart = mart)
+ 
+```
+
+### **使用 Ensembl 的存档版本**
+
+```{r}
+listEnsemblArchives()
+listEnsembl(version = 112)
+ensembl_112 <- useEnsembl(biomart = 'genes', 
+                       dataset = 'hsapiens_gene_ensembl',
+                       mirror = "asia",
+                       version = 112)
+```
+
+### **使用 Ensembl 基因组**
+
+```{r}
+listEnsemblGenomes()
+ensembl_plants <- useEnsemblGenomes(biomart = "plants_mart")
+searchDatasets(ensembl_plants, pattern = "Arabidopsis")
+ensembl_arabidopsis <- useEnsemblGenomes(biomart = "plants_mart", 
+                                         dataset = "athaliana_eg_gene")
+```

@@ -1,0 +1,14 @@
+data.table
+dtplyr
+stringr
+matrixStats
+MatrixGenerics
+generics
+BiocGenerics
+S4Vectors
+IRanges
+Seqinfo
+GenomicRanges
+Biobase
+SummarizedExperiment
+SingleCellExperiment

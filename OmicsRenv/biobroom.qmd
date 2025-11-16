@@ -1,0 +1,165 @@
+# Biobroom
+
+```{r}
+library(biobroom)
+
+# ?DESeq2_tidiers
+# ?ExpressionSet_tidiers
+# ?qvalue_tidiers
+```
+
+## ExpressionSet 对象
+
+```{r}
+library(Biobase)
+conflicts_prefer(GenomicRanges::setdiff)
+class(hammer)
+tidy(hammer)
+tidy(hammer, addPheno = TRUE)
+```
+
+```{r}
+ggplot(tidy(hammer, addPheno=TRUE), aes(x=protocol, y=log(value))) +
+  geom_boxplot() + ggtitle("Boxplot Showing Effect of Protocol on Expression")
+```
+
+## DESeq2 对象
+
+```{r}
+# BiocManager::install("DESeq2")
+# BiocManager::install("airway")
+
+library(DESeq2)
+library(airway)
+
+data(airway)
+class(airway)
+# SummarizedExperiment 对象
+airway_se <- airway
+
+tidy(airway_se)
+```
+
+```{r}
+airway_dds <- DESeqDataSet(airway_se, design = ~cell + dex)
+
+tidy(airway_dds)
+```
+
+```{r}
+# differential expression analysis
+deseq <- DESeq(airway_dds)
+results <- results(deseq)
+
+
+results
+# tidy results
+tidy_results <- tidy(results)
+tidy_results
+```
+
+estimate 即 log2FoldChange，
+
+stderror 即 lfcSE
+
+```{r}
+ggplot(tidy_results, aes(x=estimate, y=-log(p.value),
+                         color=log(baseMean))) + 
+    geom_point(alpha=0.5) +
+    scale_x_continuous(name = "log2FoldChange")
+  ggtitle("Volcano Plot For Airway Data via DESeq2") + theme_bw()
+```
+
+```{r}
+airway$dex <-   airway$dex %>% relevel('untrt')
+
+
+#将 Ensembl ID 注释为基因符号
+ens <- rownames(airway)
+
+library(org.Hs.eg.db)
+keytypes(org.Hs.eg.db)
+symbols <- mapIds(
+  org.Hs.eg.db,
+  keys = ens,
+  column = c('SYMBOL'),
+  keytype = 'ENSEMBL'
+)
+
+symbols <- symbols[!is.na(symbols)]
+symbols[1:6]
+# match() 函数用来查找 airway$gene 中的元素在 names(symbols) 中的位置，并返回这些位置的向量。
+symbols <- symbols[match(rownames(airway), names(symbols))]
+rownames(airway)<- symbols
+keep <- !is.na(rownames(airway))
+airway <- airway[keep, ]
+
+
+library('DESeq2')
+dds <- DESeqDataSet(airway, design = ~ cell + dex)
+dds <- DESeq(dds, betaPrior = FALSE)
+res <- results(dds, contrast = c('dex', 'trt', 'untrt'))
+res <- lfcShrink(
+  dds,
+  contrast = c('dex', 'trt', 'untrt'),
+  res = res,
+  type = 'normal'
+)
+
+res |> as.data.frame() |> arrange(pvalue,desc(abs(log2FoldChange)))
+
+library(EnhancedVolcano)
+EnhancedVolcano(
+  res,
+  lab = rownames(res),
+  selectLab = c('CACNB2','SPARCL1','VCAM1'),
+  x = 'log2FoldChange',
+  y = 'pvalue',
+  title = 'N061011 versus N61311',
+  pCutoff = 10e-32,
+  FCcutoff = 0.5,
+  pointSize = 3.0,
+  labSize = 6.0,
+  colAlpha = 1,)
+```
+
+## limma 对象
+
+## edgeR 对象
+
+## qvalue 对象
+
+[qvalue](https://www.bioconductor.org/packages/release/bioc/html/qvalue.html) 是一种常用的包，用于估计 q 值和局部错误发现率（lfdr）
+
+```{r}
+library(qvalue)
+data("hedenfalk")
+qobj <- qvalue(hedenfalk$p)
+names(qobj)
+
+
+tidy(qobj)
+augment(qobj)
+glance(qobj)
+```
+
+```{r}
+# create sample names
+df <- data.frame(gene = 1:length(hedenfalk$p))
+head(augment(qobj, data = df))
+```
+
+```{r}
+library(ggplot2)
+# use augmented data to compare p-values to q-values
+ggplot(augment(qobj), aes(p.value, q.value)) + geom_point() +
+  ggtitle("Simulated P-values versus Computed Q-values") + theme_bw()
+```
+
+```{r}
+library(dplyr)
+
+# Find significant genes under 0.05 threshold
+sig.genes <- augment(qobj) %>% filter(q.value < 0.05)
+head(sig.genes)
+```

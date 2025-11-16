@@ -1,0 +1,97 @@
+# 单细胞组学 Single cell omics
+
+人体由约30万亿个细胞构成。
+
+单细胞组学利用单细胞分离与分选技术、单细胞组测序技术及其生物信息学分析算法，开展高通量、多维度和大群体细胞学研究。包括单一细胞层级上的基因组学（genomics）、**转录组学（transcriptomics）**、蛋白组学（proteomics）、免疫组学、微生物组学和细胞间相互作用等的研究。
+
+**RNA quantification**
+
+1.  基于全长（full-length）
+
+2.  基于标签（tag-based）
+
+    Barcode：长度可能在 10 - 20bp 左右。在一次实验中同时对 1000 个单细胞进行测序，就会有 1000 个不同的 Barcode，每个 Barcode 对应一个细胞。
+
+    Unique molecular identifiers (UMIs) ：。一般较短，约 6 - 12bp。在一个细胞中有 10 个相同 mRNA 分子，相同的 mRNA 可能会被多次反转录和扩增，通过 UMI 可以区分这些最初来自不同 mRNA 分子的相同序列。
+
+**dropout**，**doublet**
+
+**捕获细胞数目和测序深度最佳权衡**
+
+**引物**
+
+1.  10× Genomics：Poly A
+
+2.  基于随机引物：snRandom-seq
+
+## 单细胞分离技术
+
+**低通量**
+
+-   手动单细胞挑取
+
+-   连续稀释
+
+-   流式细胞术（Fluorescence-activated cell sorter，FACS）
+
+-   激光捕获显微切割技术（laser capture microdissection，LCM）
+
+-   显微操作（micromanipulation）
+
+**高通量** 核酸捕获（capture）
+
+-   微流控microfluidic：液滴droplet，“油包水”，事实标准，高通量，低成本
+
+-   微孔板microwell
+
+## 表达矩阵
+
+1.  单细胞分离：单细胞悬液
+
+2.  细胞标记：16bp   在细胞包入微液滴时，带有 Barcode 和 UMI 的寡核苷酸序列一同进入微滴，与细胞释放的 mRNA 分子杂交，之后在反转录过程中标签整合进 cDNA。后续测序和分析时，用 Barcode 区分不同细胞数据、用 UMI 精准定量细胞内基因表达。
+
+3.  核酸捕获：基于微滴，基于微孔板，磁珠捕获，基于组合索引
+
+4.  文库制备：PCR扩增或体外转录扩增
+
+    a.  退化寡核苷酸引物PCR（DOP-PCR）
+
+    b.  多重链置换扩增技术MDA
+
+    c.  多重退火环状循环扩增技术MALBAC
+
+    d.  纯线性扩增技术LIANTI
+
+5.  高通量测序
+
+    i.  plate-based protocols with UMIs：减轻了PCR扩增噪声的影响，如CEL-seq2、MARS-seq；
+
+    ii. plate-based protocols with reads：覆盖转录本全长，如Smart-seq2；
+
+    iii. droplet-based：如10X Genomics、in Drops和Drop-seq;
+
+    iv. 组合索引：sci-RNA-seq
+
+    v.  Cyto-seq，Seq-Well，Microwell-seq，
+
+6.  序列联配、
+
+7.  定量
+
+测序数据→计数矩阵
+
+-   `Cellranger` [10XGenomics/cellranger](https://github.com/10XGenomics/cellranger) <https://www.nature.com/articles/ncomms14049>
+
+-   `alevin` 伪对比方法. <https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1670-y>
+
+-   `spike-in transcripts` 将 spike-in sequences作为参考基因组的一部分
+
+![](images/factors-affecting-measurements.png){fig-align="center"}
+
+## Session Information {style="color:gray"}
+
+```{r}
+Sys.Date()
+BiocManager::version()
+devtools::session_info()
+```

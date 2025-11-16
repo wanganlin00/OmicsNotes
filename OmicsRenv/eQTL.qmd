@@ -1,0 +1,161 @@
+```{r include=FALSE}
+conflicts_prefer(GenomicRanges::setdiff)
+```
+
+# eQTL
+
+**表达数量性状位点(expression quantitative trait loci,eQTL)**是指基因组中的特定位点，这些位点上的遗传变异能够影响基因表达水平的变异。eQTL研究是基因组学研究中的一个重要领域，它有助于我们理解基因表达的遗传基础以及复杂性状的分子机制。
+
+QTL是数量性状位点，比如身高是一个数量性状，其对应的控制基因的位点就是一个数量性状位点，而eQTL就是控制数量性状表达位点，即能控制数量性状基因（如身高基因）表达水平高低的那些位点。
+
+都是位点，一个是常规数量性状，如身高；另一个就是基因表达性状，如Sox10基因的表达；都是在找一些与其具有强烈相关性的（snp）位点。
+
+QTL定位的核心就是连锁。
+
+<https://www.cnblogs.com/leezx/p/10795353.html>
+
+<https://www.gtexportal.org/home/>
+
+GTEx（Genotype-Tissue Expression）是第一个收集了多个人体器官mRNA测序的数据库，并提供了跨器官的eQTL研究平台。研究从来自449名生前健康的人类捐赠者的7000多份尸检样本，涵盖44个组织（42个不同的组织类型），包括31个实体器官组织、10个脑分区、全血、2个来自捐赠者血液和皮肤的细胞系，作者利用这些样本研究基因表达在不同组织和个体中有何差异。
+
+\
+![](images/clipboard-2860543924.png)
+
+eQTL可以分为两大类：
+
+-   顺式eQTL (cis-eQTL)：这类eQTL位于基因表达变化所在的染色体区域内，通常接近或在基因的附近（比如1Mb范围内）。顺式作用eQTL可能涉及基因的启动子或增强子区域的变异，影响基因的转录效率。
+-   反式eQTL (trans-eQTL)：与顺式eQTL不同，反式eQTL位于距离基因较远的染色体区域，甚至可能位于不同的染色体上。反式作用eQTL可能通过远程调控元件，如远程增强子或转录因子，来影响基因表达。
+
+eQTL分析的一般流程包括：
+
+1.  数据收集：需要样本的基因表达数据、基因型数据以及可能的样本表型信息。
+
+2.  数据预处理：包括数据的质量控制、标准化等步骤。
+
+3.  统计分析：通常使用线性回归模型来识别与基因表达水平显著相关的SNP位点。模型可能会包括其他协变量，如性别、年龄或批次效应，以校正混杂因素。
+
+    ![](images/clipboard-3581433730.png)
+
+4.  结果解释：识别出显著的eQTL后，进一步分析其生物学意义和可能的分子机制。
+
+进行eQTL分析的R包包括但不限于：
+
+-   MatrixEQTL：一个用于快速进行大规模eQTL分析的R包，支持多种遗传模型和错误结构。 eQTpLot：一个用户友好的R包，用于eQTL和GWAS信号的可视化和共定位。
+
+eQTL研究的结果可以帮助我们理解遗传变异如何影响基因表达，进而影响个体的性状和疾病风险。此外，eQTL数据还可以用于基因功能的研究、疾病机制的探索以及药物靶点的发现。
+
+值得注意的是，eQTL效应可能具有人群、组织和细胞类型的特异性，这意味着不同背景下eQTL效应可能不同。因此，在应用eQTL结果时需要考虑这些因素。
+
+## `MatrixEQTL`包
+
+<https://www.jianshu.com/p/80d8ae24a91f>
+
+```{r snpdata}
+# install.packages("MatrixEQTL")
+library(MatrixEQTL)
+path <- find.package("MatrixEQTL") 
+path
+
+# 把"MatrixEQTL"包的data复制到当前工作目录
+expr <- read.table("data/eQTL/GE.txt",sep = "\t",header = T,row.names = 1)
+expr
+
+snp <- read.table("data/eQTL/SNP.txt",sep = "\t",header = T,row.names = 1)
+snp
+
+covar <- read.table("data/eQTL/Covariates.txt",sep = "\t",header = T,row.names = 1)
+covar
+```
+
+```{r}
+e1 <- as.numeric(expr[1,])
+s1 <- as.numeric(snp[1,])
+e1
+s1
+lm1 <- lm(e1~s1)
+broom::tidy(lm1)
+
+
+ggplot(data = tibble(e1,
+                     s1=factor(s1,labels = c("AA","Aa","aa"))
+                     ),
+       mapping = aes(x=s1,y=e1)
+)+
+  geom_point(aes(color=s1),position = position_jitter())+
+  geom_smooth(aes(group=1),formula = "y~x",method = "lm",se=F)+
+  xlab("Genetype")+
+  ylab("Expression")
+```
+
+```{r}
+# 设置参数
+pOutputThreshold <- 1e-2
+errorCovariance <- numeric()
+useModel <- modelLINEAR
+
+### SNP
+snp <- SlicedData$new()
+snp$fileDelimiter <- "\t"
+snp$fileOmitCharacters <- "NA"
+snp$fileSkipRows <- 1              # 跳过列名
+snp$fileSkipColumns <- 1           # 跳过行名
+snp$fileSliceSize <- 2000         # nrows
+snp$LoadFile("data/SNP.txt")
+snp
+
+### gene
+gene <- SlicedData$new()
+gene$fileDelimiter <- "\t"
+gene$fileOmitCharacters <- "NA"
+gene$fileSkipRows <- 1     
+gene$fileSkipColumns <- 1
+gene$fileSliceSize <- 2000  
+gene$LoadFile("data/GE.txt")
+gene
+
+# 协变量
+covar <- SlicedData$new()
+covar$fileDelimiter <- "\t"
+covar$fileOmitCharacters <- "NA"
+covar$fileSkipRows <- 1        
+covar$fileSkipColumns <- 1
+covar$fileSliceSize <- 2000    
+covar$LoadFile("data/Covariates.txt")
+covar
+```
+
+```{r eQTL}
+eqtl <- Matrix_eQTL_engine(
+  snps = snp,
+  gene = gene,
+  cvrt = covar,
+  output_file_name = "",
+  pvOutputThreshold = pOutputThreshold,
+  useModel = useModel,
+  errorCovariance = errorCovariance,
+  verbose = T,
+  pvalue.hist = T,
+  min.pv.by.genesnp = F,
+  noFDRsaveMemory = F
+)
+```
+
+```{r}
+eqtl$all
+
+plot(eqtl)
+```
+
+```{r}
+#===================Results==================================#
+
+cat('Analysis done in: ', eqtl$time.in.sec, ' seconds', '\n');
+cat('Detected eQTLs:', '\n');
+show(eqtl$all$eqtls)
+
+## Plot the histogram of all p-values
+
+plot(eqtl)
+```
+
+## `eQTpLot`

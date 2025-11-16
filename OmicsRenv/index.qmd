@@ -1,0 +1,33 @@
+# 前言 {.unnumbered}
+
+## 推荐阅读
+
+-   <https://www.bioconductor.org>
+
+-   [Orchestrating Single-Cell Analysis with ***Bioconductor***](https://bioconductor.org/books/release/OSCA/)
+
+-   [***Seurat***](https://satijalab.org/seurat/)
+
+-   [差异分析DESeq2](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)
+
+-   [富集分析clusterProfiler、Disease Ontology Semantic and Enrichment analysis](https://yulab-smu.top/biomedical-knowledge-mining-book/)
+
+-   [伪时序分析monocle3](https://cole-trapnell-lab.github.io/monocle3/)
+
+-   [系统发育树](https://yulab-smu.top/treedata-book/)
+
+-   [plink 2.0](https://www.cog-genomics.org/plink/2.0/)
+
+## Bioconductor版本
+
+```{r bioconductor-version, echo=FALSE}
+BiocManager::version()
+```
+
+## 会话信息
+
+```{r session-info-settings, echo=FALSE}
+# install.packages("BiocManager", repos = "https://cloud.r-project.org")
+# BiocManager::install(version = "3.22")
+devtools::session_info()
+```

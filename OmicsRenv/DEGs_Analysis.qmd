@@ -1,0 +1,476 @@
+---
+execute: 
+  cache: true
+---
+
+# 差异表达基因(differential expression genes)分析
+
+```{r include=FALSE}
+conflicts_prefer(GenomicRanges::setdiff)
+```
+
+<https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html>
+
+## 数据
+
+肺腺癌
+
+[Lung Adenocarcinoma (LUAD) gene expression RNAseq HTSeq - Counts （n=585） GDC 中心 和Phenotype (n=877)](https://xenabrowser.net/datapages/?cohort=GDC%20TCGA%20Lung%20Adenocarcinoma%20(LUAD)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
+
+## Assays
+
+### 对数计数矩阵
+
+```{r}
+library(arrow, warn.conflicts = FALSE)
+
+logCount <- read_tsv_arrow("data/DEGs_Analysis/TCGA-LUAD.htseq_counts.tsv.gz")
+# 读取计数矩阵 log2(count+1)  # 60488 个gene ×  586 个sample
+
+```
+
+## 基因元数据
+
+如果分析总的转录本，不需要把mRNA、lncRNA等挑出来，所以下载的这个自带注释文件[ID/Gene Mapping](https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap)
+
+```{r}
+gtf_v22_transcripts <- read_delim("data/DEGs_Analysis/gencode.v22.annotation.gene.probeMap")
+```
+
+如果只想用蛋白质编码（protein_coding）相关基因，用全基因编码注释文件 [gencode.v46.annotation.gtf.gz](https://www.gencodegenes.org/human/)
+
+```{r eval=FALSE}
+# 全基因编码  BiocManager::install("rtracklayer")
+gtf_v46 <- rtracklayer::import('data/DEGs_Analysis/gencode.v46.annotation.gtf.gz') |>
+ as_tibble()
+
+distinct(gtf_v46,gene_type)
+distinct(gtf_v46,gene_name)
+
+# 选择 蛋白编码mRNA相关基因
+gtf_v46_mRNA <- dplyr::select(gtf_v46,
+                              c("gene_id","gene_type", "gene_name"))|> 
+    dplyr::filter(gene_type == "protein_coding") |>  
+    distinct()
+
+head(gtf_v46_mRNA )
+write.csv(gtf_v46_mRNA,"data/gtf_v46_mRNA.csv")
+```
+
+### 根据 ENSEBML 编码内连接
+
+```{r}
+gene_logCount <- logCount |> 
+  inner_join(gtf_v22_transcripts, by = c("Ensembl_ID" = "id")) |> 
+  dplyr::select(gene, starts_with("TCGA") )
+```
+
+```{r}
+dim(gene_logCount)
+gene_logCount[1:6,1:3]
+```
+
+### 还原原始数据
+
+先去对数 log2(count+1)
+
+```{r}
+library(Rcpp)
+Rcpp::sourceCpp("data/DEGs_Analysis/exponential_base2_transform.cpp")
+
+# 该函数将 `log2(count + 1)` 转换为原始计数
+gene_Count <- gene_logCount %>%
+  mutate_if(is.numeric, ~ exponential_base2_transform(.))
+```
+
+基因名是有重复的，查看重复情况
+
+```{r}
+gene_Count |> distinct(gene) |> dim()
+repeat_n <- gene_Count |> summarise(n=n(),.by = gene) |> ungroup() |> 
+  summarise(重复n次的基因个数=n(),.by =n ) |> arrange(n)
+# 唯一基因个数
+sum(repeat_n$重复n次的基因个数)
+```
+
+根据基因名分组，重复则取平均值去重，去掉重复的行
+
+```{r}
+library(data.table)
+setDT(gene_Count)
+Counts <- gene_Count[,lapply(.SD,mean),by=gene, .SDcols=patterns("^(TCGA)")]
+```
+
+```{r}
+Counts <- Counts |> column_to_rownames("gene")
+dim(Counts)
+```
+
+::: {#summarise_all .callout-note}
+```{r}
+df <- tibble(
+    g=c('A','B','A','C','C'),
+    x=c(1:5),
+    y=c(3:7),
+    
+)
+df
+# 数据多太慢了
+df|> group_by(g) |> summarise_all(list(mean))
+
+
+# 转化成data.table
+# library(data.table) 非常快
+
+setDT(df)
+# 对基因g进行分组，并对x和y列计算均值
+df[, lapply(.SD, mean), by = g, .SDcols = patterns("x|y")]
+```
+:::
+
+提取lncRNA、miRNA等也是类似的操作
+
+## Sample metadata
+
+### 表型注释文件
+
+```{r}
+#首先载入下载好胆管癌的样本信息文件
+# 877 个sample × 125 个样本变量
+colData <- fread("data/DEGs_Analysis/TCGA-LUAD.GDC_phenotype.tsv.gz", sep = "\t", header = TRUE)
+
+
+# 选择样本  放疗与kras基因
+table(colData$radiation_therapy,colData$kras_mutation_found)
+
+pf <- colData |> dplyr::filter(kras_mutation_found!= "") |> 
+  dplyr::filter(radiation_therapy!= "") |> 
+  dplyr::select(submitter_id.samples,submitter_id,radiation_therapy,kras_mutation_found)
+
+
+xtabs(formula = ~radiation_therapy+kras_mutation_found,data = pf,subset = NULL)
+```
+
+到这里，就从877个样本中挑出了80个样本，但是，我们只要这80个样本中成对样本的表达数据，即同一个病人既有癌旁~~正常~~细胞的表达蛋白，又有肿瘤细胞的异常表达蛋白。
+
+### colData的成对样本
+
+```{r}
+ID <- pf$submitter_id  # 前1~12字符
+
+
+# 21对配对样本
+table(ID)[table(ID)==2] |> length()
+
+PairedSample <- pf |> summarise(n=n(),.by = "submitter_id")|> dplyr::filter(n==2)
+PairedSample 
+sample <-  left_join(PairedSample,pf,by=join_by("submitter_id"))
+sample
+table(sample$radiation_therapy,sample$kras_mutation_found)
+```
+
+### 匹配 assays的成对样本
+
+并且`colData` 中出现的成对样本（21对）要匹配到`assays` 中的成对样本（60对）。（取交集）
+
+```{r}
+# 表达矩阵  
+patient_of_counts <- str_sub(colnames(Counts),1,12)
+
+
+paired_patient <- table(patient_of_counts)[table(patient_of_counts)==2]|> 
+ names()  # 筛选出60对成对数据
+paired_patient |> length()
+```
+
+取`sample`和`paired_patient`的交集，有8对成对数据
+
+```{r}
+# 取交集
+final_sample <- lubridate::intersect(sample$submitter_id,paired_patient)
+final_sample
+
+sample <- sample |>
+  dplyr::filter(sample$submitter_id %in% final_sample) |>
+  dplyr::select(-submitter_id, -n) |>
+  dplyr::rename("sample_id" = "submitter_id.samples") |>
+  arrange(sample_id)
+
+sample
+table(sample$radiation_therapy,sample$kras_mutation_found)
+
+
+
+
+# 最后的表达矩阵
+exprCounts <- Counts  |> dplyr::select(which(colnames(Counts) %in% sample$sample_id)) 
+
+exprCounts <- dplyr::select(exprCounts,order(colnames(exprCounts)))
+colnames(exprCounts)
+dim(exprCounts)
+
+# 去除所有样本都不表达的基因
+exprCounts <- exprCounts |>
+    mutate(rowsum = apply(exprCounts,1,sum)) |>
+    dplyr::filter(rowsum!=0) |> 
+    dplyr::select(-rowsum)
+
+dim(exprCounts)
+```
+
+```{r}
+# 检查计数矩阵和列数据，看看它们在样本顺序方面是否一致。
+colnames(exprCounts)
+sample$sample_id
+
+all(sample$sample_id%in% colnames(exprCounts))
+all(sample$SampleID == colnames(exprCounts))
+```
+
+## 构造DEG实例
+
+```{r}
+dim(exprCounts)
+dim(sample)
+exprCounts <- ceiling(exprCounts)
+```
+
+根据TCGA样本的命名可以区分正常组织和肿瘤样本的测序结果 其中编号01-09表示肿瘤，10-19表示正常
+
+```{r}
+# 字符14~15，
+sample$condition <- factor(
+ ifelse(as.numeric(str_sub(sample$sample_id,14,15)) < 10,'tumor','normal'),
+ levels = c("normal","tumor"),
+ ) 
+
+sample <- column_to_rownames(sample,var ="sample_id" )
+sample
+```
+
+```{r}
+# BiocManager::install("DESeq2")
+library(DESeq2)
+conflicts_prefer(GenomicRanges::setdiff)
+dds <- DESeqDataSetFromMatrix(countData = exprCounts,
+                              colData = sample,
+                              design = ~ condition)
+dds
+```
+
+### 预过滤
+
+```{r}
+smallestGroupSize <- 8
+
+keep <- rowSums(counts(dds) >= 10) >= smallestGroupSize
+dds <- dds[keep,]
+dds
+```
+
+```{r}
+dds$condition
+
+dds@colData
+head(counts(dds)) #  19562   ×   16 
+```
+
+## 差异分析
+
+```{r}
+des <- DESeq(dds)
+
+results <- results(
+  object = des,
+  contrast = c("condition", "tumor", "normal"),
+  alpha = 0.05,
+  filter = rowMeans(counts(des, normalized = TRUE)),# 独立过滤
+  theta = c(0.025, 0.975),
+  pAdjustMethod = "BH",
+)
+metadata(results)["alpha"]
+
+results[1:6,]
+summary(results)
+sum(results$padj < 0.05, na.rm=TRUE)
+
+# 根据padj 升序
+resOrdered <- results[order(results$padj),]
+```
+
+### 保存结果
+
+保存csv以备热图、火山图、富集分析。
+
+```{r eval=FALSE}
+x <- as.data.frame(resOrdered) |> rownames_to_column(var = "gene")
+write_csv(x, file="data/DEGs_Analysis/resOrdered.csv")
+```
+
+```{r}
+mcols(resOrdered)$description
+```
+
+pvalue，是统计学检验变量，代表差异显著性，一般认为P \< 0.05 为显著， P \<0.01 为非常显著。其含义为：由抽样误差导致样本间差异的概率小于0.05 或0.01。
+
+padj，是对pvalue进行多重假设检验校正后的结果。转录组测序的差异表达分析是对大量的基因表达值进行的独立统计假设检验，存在假阳性（Family-Wise Error Rate，FWER），Bonferroni矫正
+
+qvalue，False Discovery Rate，FDR，所有假阳性结果占所有拒绝零假设结果的比例，假阳性结果的比例不超过预设的FDR水平（0.05/0.1）,基于pvalue的分布。多重假设检验校正方法：Benjamini-Hochberg，
+
+log2FoldChange：对数倍数变化，1.5倍差异即0.585，2倍差异即1。
+
+![](images/FoldChange.jpg){fig-align="center" width="60%"}
+
+```{r}
+DEG <- read_csv("data/DEGs_Analysis/resOrdered.csv")
+
+DESeq2_DEG <- na.omit(DEG) 
+nrDEG <- DESeq2_DEG
+nrDEG[1:25,]
+```
+
+### 热图
+
+```{r}
+
+log2exprCounts <- log2(counts(des)+1)
+library(pheatmap)
+
+pheatmap(log2exprCounts[(head(DESeq2_DEG$gene,n=25)) , ])
+```
+
+### 配对图
+
+挑选指定第一个基因看它在同一个病人的配对表达情况
+
+```{r}
+library(ggpubr)
+
+df <- tibble(
+  group = sample$condition,
+  patient = colnames(exprCounts),
+  expressionValue = as.numeric(exprCounts[DESeq2_DEG$gene[1],]),
+  )
+
+ggpubr::ggpaired(df, x = "group", y = "expressionValue",color = "group", 
+                 line.color = "gray", line.size = 0.4,palette = "npg")+
+    stat_compare_means()
+```
+
+### 火山图
+
+```{r}
+nrDEG$group <- factor(
+    if_else(nrDEG$padj<0.05& abs(nrDEG$log2FoldChange)>=1,
+            if_else(nrDEG$log2FoldChange>=1,"up","down"),
+            "NS",),
+    levels =c("up","down","NS") )
+table(nrDEG$group)
+
+gene_labels <- dplyr::filter(nrDEG,nrDEG$padj<0.05 & 
+                                 abs(nrDEG$log2FoldChange)>=1)|> 
+    slice_head(n=25) 
+
+
+ggplot(nrDEG,aes( x = log2FoldChange,y = -log10(padj),color=group,shape=group))+
+    geom_point(alpha=0.5,size=1.5)+
+    scale_color_manual(values = c("red","green","gray"))+
+    #scale_shape_manual(values = c(2,25,4))+
+    geom_vline(xintercept = c(-1,0,1),lty=3,color="grey25",lwd=0.8)+
+    geom_hline(yintercept = -log10(0.05),lty=3,color="grey25",lwd=0.8)+
+    ggrepel::geom_text_repel(
+        data = gene_labels,
+        aes(label=gene),
+        color="black",
+        size=2)+
+    theme_pubr()
+
+```
+
+### **EnhancedVolcano**
+
+```{r}
+if(!require(EnhancedVolcano))
+  BiocManager::install('EnhancedVolcano')
+```
+
+### LFC收缩和pagj
+
+```{r}
+resultsNames(des)
+# BiocManager::install("apeglm")  自适应 t 先验收缩估计器  默认
+# resLFC <- lfcShrink(des, coef="condition_tumor_vs_normal", type="apeglm")
+
+# `normal`是原始的 DESeq2 收缩估计器，是先验的自适应正态分布
+resNorm <- lfcShrink(des, coef=2, type="normal")
+
+# BiocManager::install("ashr")
+# resAsh <- lfcShrink(des, coef=2, type="ashr")
+
+
+## 先验信息
+
+# priorInfo(resLFC)
+priorInfo(resNorm)
+# priorInfo(resAsh)
+
+```
+
+### MA图 Mean-AbsDeviation plot
+
+```{r}
+# 对gene添加“是否呈现显著差异表达”的标签
+DESeq2_DEG$significant <- factor(ifelse(DESeq2_DEG$padj <0.05, "Significant", "NS"),
+levels = c("Significant", "NS"))
+
+table(DESeq2_DEG$significant)
+# 以baseMean作为x，log2FoldChange作为y   以significant作为分类变量
+ggplot(DESeq2_DEG, aes(baseMean, log2FoldChange, colour=significant)) + 
+ geom_point(size=1) + 
+ scale_y_continuous(limits=c(-3, 3)) + 
+ scale_x_log10() + 
+ geom_hline(yintercept = 0, colour="black", linewidth=1) + 
+ labs(x="mean of normalized counts", y="log2FoldChange") + 
+ scale_colour_manual(name="padj", 
+                     values=c("Significant"="blue","NS"="grey50")) +
+ theme_classic()
+```
+
+```{r}
+xlim <- c(1,10e6)
+ylim <- c(-3,3)
+plotMA(resOrdered,  xlim=xlim, ylim=ylim,main="none")
+# plotMA(resLFC, xlim=xlim, ylim=ylim, main="apeglm")
+plotMA(resNorm, xlim=xlim, ylim=ylim, main="normal")
+# plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
+```
+
+### 读取计数
+
+```{r}
+#  the counts of reads for a single gene across the groups
+plotCounts(des, gene=which.min(resOrdered$padj), 
+  intgroup="condition",returnData=TRUE) |> 
+ ggplot(aes(x=condition, y=count)) + 
+ geom_point(position=position_jitter(w=0.1,h=0))
+```
+
+### 异常观测
+
+```{r}
+W <- resOrdered$stat
+maxCooks <- apply(assays(des)[["cooks"]],1,max)
+idx <- !is.na(W)
+plot(rank(W[idx]), maxCooks[idx], xlab="rank of Wald statistic", 
+  ylab="maximum Cook's distance per gene",
+  ylim=c(0,5), cex=.4, col=rgb(0,0,0,.3))
+m <- ncol(des)
+p <- 3
+abline(h=qf(.99, p, m - p))
+```
+
+### 多因素设计
+
+```{r}
+colData(dds)
+```

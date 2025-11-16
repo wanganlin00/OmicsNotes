@@ -1,0 +1,8 @@
+generics
+BiocGenerics
+S4Vectors
+IRanges
+XVector
+Seqinfo
+Biostrings
+GenomicRanges

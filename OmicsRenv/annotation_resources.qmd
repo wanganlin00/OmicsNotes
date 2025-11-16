@@ -1,0 +1,94 @@
+# 注释数据资源
+
+## 人类基因组 Human Genome
+
+人类[基因组参考联盟（Genome Reference Consortium Human）](https://www.ncbi.nlm.nih.gov/grc)
+
++--------------------------------------------------+-----------------------------------------------------------------+-------------------------------------------------------+---------------------------------------------------------------------------+
+| 基因组名称                                       | [UCSC数据库](https://hgdownload.gi.ucsc.edu/downloads.html)别名 | **发布年份**                                          | 描述                                                                      |
++==================================================+=================================================================+=======================================================+===========================================================================+
+| GRCh37                                           | hg19                                                            | 2009                                                  | 存在部分未完全填补的“缺口”（gaps），实际覆盖约92%的人类基因组，已逐步淘汰 |
++--------------------------------------------------+-----------------------------------------------------------------+-------------------------------------------------------+---------------------------------------------------------------------------+
+| [GRCh38](https://www.ncbi.nlm.nih.gov/grc/human) | hg38                                                            | 2013                                                  | 目前的主流版本，修正了基因坐标错误，增加假染色体（ALT）                   |
++--------------------------------------------------+-----------------------------------------------------------------+-------------------------------------------------------+---------------------------------------------------------------------------+
+| [T2T-CHM13](https://github.com/marbl/CHM13)      | 无                                                              | 2022.The complete sequence of a human genome. Science | 首个完整人类基因组，填补了 GRCh38 缺失的 8% DNA                           |
++--------------------------------------------------+-----------------------------------------------------------------+-------------------------------------------------------+---------------------------------------------------------------------------+
+
+## 小鼠基因组
+
+[GRCm](https://www.ncbi.nlm.nih.gov/grc/mouse)
+
+[Gencode mouse](https://www.gencodegenes.org/mouse/)
+
+## 注释包
+
+<https://bioconductor.org/packages/3.22/data/annotation/>
+
+<https://bioconductor.org/packages/release/workflows/html/annotation.html>
+
+<https://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html>
+
++-------------+--------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------+
+| Object Type | Example Package Name                                                                                                           | Contents                                                                                                    |
++:============+:===============================================================================================================================+:============================================================================================================+
+| TxDb        | [TxDb.Hsapiens.UCSC.hg19.knownGene](http://bioconductor.org/packages/TxDb.Hsapiens.UCSC.hg19.knownGene/)                       | Transcriptome ranges for the known gene track of Homo sapiens, e.g., introns, exons, UTR regions.           |
++-------------+--------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------+
+| OrgDb       | [org.Hs.eg.db](http://bioconductor.org/packages/org.Hs.eg.db/)                                                                 | Gene-based information ; useful for mapping between gene IDs, Names, Symbols, GO and KEGG identifiers, etc. |
+|             |                                                                                                                                |                                                                                                             |
+|             | org.Mm.eg.db                                                                                                                   |                                                                                                             |
++-------------+--------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------+
+| BSgenome    | [BSgenome.Hsapiens.UCSC.hg38](https://bioconductor.org/packages/release/data/annotation/html/BSgenome.Hsapiens.UCSC.hg38.html) | Full genome sequence for Homo sapiens.                                                                      |
++-------------+--------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------+
+
+### BSgenome
+
+```{r}
+library(BSgenome)
+bs <- available.genomes(splitNameParts = T)
+human_genomes <- bs[bs$organism == "Hsapiens", ] 
+human_genomes
+installed.genomes()
+```
+
+从UCSC hg38中加载智人的全基因组序列，计算14号染色体GC含量
+
+```{r}
+# pak::pak("BSgenome.Hsapiens.UCSC.hg38")
+library(BSgenome.Hsapiens.UCSC.hg38)
+chr14_range = GRanges(seqnames = "chr14",
+                      ranges =  IRanges(start = 1, 
+                                       end = seqlengths(Hsapiens)["chr14"])
+                      )
+chr14_dna <- getSeq(Hsapiens, chr14_range)
+letterFrequency(chr14_dna, letters = "GC", as.prob=TRUE)
+```
+
+### OrgDb
+
+[org.Hs.eg.db](https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html)
+
+```{r}
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+
+AnnotationDbi::keytypes(org.Hs.eg.db)  # 等价 AnnotationDbi::columns(org.Hs.eg.db)
+
+
+# 示例 
+entrez_id <- c("1017", "1018", "1019")  # 替换为你自己的 entrez_id
+
+# 进行映射
+AnnotationDbi::select(org.Hs.eg.db, 
+                       keys = entrez_id, 
+                       columns = c("GENENAME","ALIAS","SYMBOL","GO","ONTOLOGY"), 
+                       keytype = "ENTREZID", multiVals = "CharacterList") |> 
+  head()
+
+
+# mapIds can only use one column.
+mapIds(org.Hs.eg.db, 
+     keys = entrez_id, 
+     column = c("ALIAS"),   # 别名
+     keytype = "ENTREZID", multiVals = "CharacterList") 
+```

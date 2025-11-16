@@ -1,0 +1,36 @@
+# .gitignore 内容
+
+# R 相关
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user/
+*.rds
+
+
+# renv 相关（但保留 renv.lock 和 renv/activate.R）
+
+
+# 文档输出
+
+docs/_site/
+docs/*.html
+docs/*.pdf
+
+# 数据文件（大文件）
+
+
+# 环境变量
+.env
+.secret
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.log
+*.tmp
+*.temp
+/.quarto/
+**/*.quarto_ipynb

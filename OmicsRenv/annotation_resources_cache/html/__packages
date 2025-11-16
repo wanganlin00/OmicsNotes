@@ -1,0 +1,16 @@
+generics
+BiocGenerics
+S4Vectors
+IRanges
+Seqinfo
+GenomicRanges
+XVector
+Biostrings
+BiocIO
+rtracklayer
+BSgenome
+GenomeInfoDb
+BSgenome.Hsapiens.UCSC.hg38
+Biobase
+AnnotationDbi
+org.Hs.eg.db

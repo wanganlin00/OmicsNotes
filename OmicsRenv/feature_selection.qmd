@@ -1,0 +1,245 @@
+```{r}
+#| include: false
+conflicts_prefer(GenomicRanges::setdiff)
+conflicts_prefer(dplyr::filter)
+```
+
+# 特征选择
+
+特征选择的最简单方法是根据基因在总体中的表达来选择变化最大的基因。 假设与其他只受技术噪音或"无趣"生物学基线水平 的变异（如transcriptional bursting）影响的基因相比，真正的生物学差异表现为受影响基因的变异增加。
+
+有几种方法可用于量化每个基因的变异并选择一组适当的高度可变基因（highly variable genes，HVGs）。。。 [下载：Gene / cell matrix (raw)](https://support.10xgenomics.com/single-cell-gene-expression/datasets/2.1.0/pbmc4k)
+
+```{r}
+#| label: loading-sce.pbmc
+
+#--- loading ---#
+library(DropletUtils)
+sce.pbmc <- DropletUtils::read10xCounts("data/OSCA/raw_gene_bc_matrices/GRCh38",
+                                        col.names = TRUE)
+
+#--- gene-annotation ---#
+library(scater)
+rownames(sce.pbmc) <- uniquifyFeatureNames(
+    rowData(sce.pbmc)$ID, rowData(sce.pbmc)$Symbol)
+
+library(EnsDb.Hsapiens.v86)
+location <- mapIds(EnsDb.Hsapiens.v86, keys=rowData(sce.pbmc)$ID, 
+    column="SEQNAME", keytype="GENEID")
+
+counts(sce.pbmc)
+
+#--- cell-detection ---#
+set.seed(100)
+e.out <- emptyDrops(counts(sce.pbmc))
+e.out
+table(Sig=e.out$FDR<= 0.001,Limited=e.out$Limited)
+
+sce.pbmc <- sce.pbmc[,which(e.out$FDR <= 0.001)]
+
+#--- quality-control ---#
+stats <- perCellQCMetrics(sce.pbmc, subsets=list(Mito=which(location=="MT")))
+high.mito <- isOutlier(stats$subsets_Mito_percent, type="higher")
+sce.pbmc <- sce.pbmc[,!high.mito]
+
+#--- normalization ---#
+library(scran)
+set.seed(1000)
+clusters <- quickCluster(sce.pbmc)
+sce.pbmc <- computeSumFactors(sce.pbmc, cluster=clusters)
+sce.pbmc <- logNormCounts(sce.pbmc)
+```
+
+```{r}
+sce.pbmc
+```
+
+```{r}
+#| label: loading-sce.416b
+#--- loading ---#
+library(scRNAseq)
+sce.416b <- LunSpikeInData(which="416b") 
+sce.416b$block <- factor(sce.416b$block)
+
+#--- gene-annotation ---#
+library(AnnotationHub)
+ens.mm.v97 <- AnnotationHub()[["AH73905"]]
+rowData(sce.416b)$ENSEMBL <- rownames(sce.416b)
+rowData(sce.416b)$SYMBOL <- mapIds(ens.mm.v97, keys=rownames(sce.416b),
+    keytype="GENEID", column="SYMBOL")
+rowData(sce.416b)$SEQNAME <- mapIds(ens.mm.v97, keys=rownames(sce.416b),
+    keytype="GENEID", column="SEQNAME")
+
+library(scater)
+rownames(sce.416b) <- uniquifyFeatureNames(rowData(sce.416b)$ENSEMBL, 
+    rowData(sce.416b)$SYMBOL)
+
+#--- quality-control ---#
+mito <- which(rowData(sce.416b)$SEQNAME=="MT")
+stats <- perCellQCMetrics(sce.416b, subsets=list(Mt=mito))
+qc <- quickPerCellQC(stats, percent_subsets=c("subsets_Mt_percent",
+    "altexps_ERCC_percent"), batch=sce.416b$block)
+sce.416b <- sce.416b[,!qc$discard]
+
+#--- normalization ---#
+library(scran)
+sce.416b <- computeSumFactors(sce.416b)
+sce.416b <- logNormCounts(sce.416b)
+```
+
+
+
+```{r}
+sce.416b
+```
+
+## 量化每个基因的变异
+
+量化每个基因变异的最简单方法是计算所有细胞中每个基因的对数标准化表达值（即\"logcounts\"）的方差。
+在聚类和降维等过程中，对数值方差最大的基因对细胞之间的欧几里得距离贡献最大。
+
+计算每个基因的方差很简单，但特征选择需要对均值-方差关系进行建模。在大多数情况下，对数转换不是一
+种方差稳定的转换，这意味着基因的总方差更多地由其丰度贡献，而不是由其潜在的生物异质性贡献。
+为了解释这种影响，可以使用`modelGeneVar()`拟合所有基因丰度的方差趋势（ @fig-geneVariance_vs_Mean ）。
+
+```{r}
+library(scran)
+dec.pbmc <- modelGeneVar(sce.pbmc)
+
+# 根据生物学成分方差降序排序
+dec.pbmc[order(dec.pbmc$bio, decreasing=TRUE),] 
+```
+
+**假设**在任何给定的丰度下，大多数基因的表达变异是由采样噪声等无趣过程造成的。根据这一假设，在任何给定基因丰度下，方差趋势的拟合值代表了对其无趣变异的估计，称之为技术成分。然后将每个基因的生物学成分定义为其总方差与技术成分之间的差值。这种生物学成分代表了每个基因的“有趣”变异，可以用作HVGs选择的指标。
+
+```{r}
+#| label: fig-geneVariance_vs_Mean
+#| fig-cap: "每个点代表一个基因，而蓝线代表拟合所有基因的方差趋势"
+fit.pbmc <- metadata(dec.pbmc)
+plot(fit.pbmc$mean, fit.pbmc$var, xlab="Mean of log-expression",
+    ylab="Variance of log-expression")
+curve(fit.pbmc$trend(x), col="dodgerblue", add=TRUE, lwd=2)
+```
+
+但此假设在极少数情况下可能是有问题的，因为许多特定丰度的基因受到生物过程的影响。 例如，高丰度cell type-specific genes的强烈上调可能导致 HVGs 的富集，这将夸大该丰度区间的拟合趋势，并损害相关基因的检测。
+
+## 量化技术噪声
+
+通过拟合 **mean-dependent** 和 **spike-in transcripts**的方差趋势 @fig-Spike-in-Variance_vs_Mean 以避免上述问题。 
+
+```{r}
+dec.spike.416b <- modelGeneVarWithSpikes(sce.416b, "ERCC")
+dec.spike.416b[order(dec.spike.416b$bio, decreasing=TRUE),]
+```
+```{r}
+#| label: fig-Spike-in-Variance_vs_Mean
+#| fig-cap: "每个点代表一个基因（黑色）或spike-in transcripts（红色），蓝线代表拟合到所有spike-in transcripts的方差趋势"
+fit.spike.416b <- metadata(dec.spike.416b)
+plot(dec.spike.416b$mean, dec.spike.416b$total, xlab="Mean of log-expression",
+    ylab="Variance of log-expression")
+points(fit.spike.416b$mean, fit.spike.416b$var, col="red", pch=16)
+curve(fit.spike.416b$trend(x), col="dodgerblue", add=TRUE, lwd=2)
+```
+
+在没有 spike-in 数据的情况下，可以尝试通过对噪声进行一些分布假设来拟合趋势。 例如，如果只考虑文库制备和测序产生的技术噪声，UMI 计数通常表现出近泊松变化。 可使用`modelGeneVarByPoisson()`在`logcounts`中构建均值-方差趋势（@fig-modelGeneVarByPoisson ）。 请注意高丰度基因残差的增加，这可以解释为 @fig-geneVariance_vs_Mean 基于基因的趋势时假定为“无趣”的生物变异量。
+
+```{r}
+set.seed(0010101)
+dec.pois.pbmc <- modelGeneVarByPoisson(sce.pbmc)
+dec.pois.pbmc <- dec.pois.pbmc[order(dec.pois.pbmc$bio, decreasing=TRUE),]
+head(dec.pois.pbmc)
+```
+
+```{r}
+#| label: fig-modelGeneVarByPoisson
+#| fig-cap: "每个基因的logcounts的方差与均值作图。蓝线表示对应于泊松噪声的均值-方差关系"
+plot(dec.pois.pbmc$mean, dec.pois.pbmc$total, pch=16, xlab="Mean of log-expression",
+    ylab="Variance of log-expression")
+curve(metadata(dec.pois.pbmc)$trend(x), col="dodgerblue", add=TRUE)
+```
+
+## 批次效应
+
+batch effects
+
+拟合批次之间均值-方差趋势的差异
+
+```{r}
+dec.block.416b <- modelGeneVarWithSpikes(sce.416b, "ERCC", block=sce.416b$block)
+head(dec.block.416b[order(dec.block.416b$bio, decreasing=TRUE),1:6])
+```
+
+```{r}
+par(mfrow=c(1,2))
+blocked.stats <- dec.block.416b$per.block
+for (i in colnames(blocked.stats)) {
+    current <- blocked.stats[[i]]
+    plot(current$mean, current$total, main=i, pch=16, cex=0.5,
+        xlab="Mean of log-expression", ylab="Variance of log-expression")
+    curfit <- metadata(current)
+    points(curfit$mean, curfit$var, col="red", pch=16)
+    curve(curfit$trend(x), col='dodgerblue', add=TRUE, lwd=2) 
+}
+```
+## 高度可变基因
+
+highly variable genes
+
+对于`modelGeneVar()` 和`modelGeneVarWithSpikes()` 选择具有最大生物学成分的基因作为HVGs。
+
+```{r}
+# Taking the top 1000 genes here:
+hvg.pbmc.var <- getTopHVGs(dec.pbmc, n=1000)
+str(hvg.pbmc.var)
+```
+
+
+```{r}
+# select the top 10% of genes with the highest biological components
+dec.pbmc <- modelGeneVar(sce.pbmc)
+chosen <- getTopHVGs(dec.pbmc, prop=0.1)
+str(chosen)
+```
+
+### HVGs子集
+
+```{r}
+sce.pbmc.hvg <- sce.pbmc[chosen,]
+dim(sce.pbmc.hvg)
+```
+```{r}
+# Performing PCA only on the chosen HVGs.
+library(scater)
+sce.pbmc <- runPCA(sce.pbmc, subset_row=chosen)
+reducedDimNames(sce.pbmc)
+```
+
+
+### 保留原始对象
+
+```{r}
+rowSubset(sce.pbmc) <- chosen # stored in the default 'subset'
+rowSubset(sce.pbmc, "HVGs.more") <- getTopHVGs(dec.pbmc, prop=0.2)
+rowSubset(sce.pbmc, "HVGs.less") <- getTopHVGs(dec.pbmc, prop=0.3)
+rowData(sce.pbmc)
+```
+
+### 替代实验
+
+```{r}
+sce.pbmc
+# Recycling the class above.
+altExp(sce.pbmc.hvg, "original") <- sce.pbmc
+altExpNames(sce.pbmc.hvg)
+sce.pbmc.hvg
+```
+
+```{r}
+# No need for explicit subset_row= specification in downstream operations.
+sce.pbmc.hvg <- runPCA(sce.pbmc.hvg)
+
+# 恢复原始数据
+sce.pbmc.original <- altExp(sce.pbmc.hvg, "original", withColData=TRUE)
+sce.pbmc.original
+```
+

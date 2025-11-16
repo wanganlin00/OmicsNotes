@@ -1,0 +1,400 @@
+# `SingleCellExperiment`
+
+该数据结构实际上是从 [SummarizedExperiment](https://bioconductor.org/packages/3.18/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) 继承而来。
+
+`SingleCellExperiment` 如 @fig-sce 所示。
+
+![\`SingleCellExperiment \`的结构概述：assays的每一行对应于 rowData（粉色阴影）的一行，而assays的每一列对应于 colData 和 reducedDims（黄色阴影）的一行](images/SingleCellExperiment.png){#fig-sce fig-align="center" width="60%"}
+
+## 表达矩阵（raw/transformed counts）
+
+要构造一个`SingleCellExperiment`对象，我们只需要导入`assays` ( @fig-sce ,蓝色框 )，其中行对应于特征（基因），列对应于样本（细胞）。[下载：counts_Calero_20160113.tsv](https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-5522){#sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-sce-tbl-counts_Calero_20160113.tsv}。
+
+### `assays`
+
+```{r}
+library(data.table)
+library(dtplyr)
+library(stringr)
+df <- fread("data/SingleCellExperiment/counts_Calero_20160113.tsv")
+
+df |> 
+  dplyr::pull(GeneID) |>  
+  str_sub(start = 1,end = 7) |>   
+  table()
+```
+
+::: {.callout-note appearance="simple"}
+外源RNA对照联盟 （External RNA Controls Consortium，ERCC） 定量质控
+
+1.  ERCC RNA Spike-In Mix（Mix1）：适用于绝对定量实验，评估表达水平准确性
+
+2.  ERCC ExFold（Mix1+Mix2）：专为差异表达分析设计，评估倍数变化准确性（Mix1 和 Mix2 形成已知的倍数关系）
+
+erccdashboard (R 包)<https://bioconductor.org/packages//release/bioc/html/erccdashboard.html>
+:::
+
+::: {.callout-note appearance="simple"}
+Lexogen 公司：SIRVs (Spike-in RNA Variant Control Mixes) 可变剪切质控
+:::
+
+```{r}
+# 分离出spike-in RNA
+df_spikein <- df[str_detect(df$GeneID,pattern = "^ERCC-"),]
+
+# 只考虑内源性基因
+df_endogenous<- df[str_detect(df$GeneID,pattern = "^ENSMUSG"),]
+
+# 分离基因长度
+gene_length <- df_endogenous$Length
+
+
+# geneID -->行标识符
+df_endogenous <- df_endogenous |> tibble::column_to_rownames(var = "GeneID") 
+
+
+# 计数矩阵
+counts<- df_endogenous |> dplyr::select(-Length) |>  as.matrix()
+dim(counts)
+
+
+# 
+# fwrite(df_endogenous, file = "data/SingleCellExperiment/df_endogenous.csv", 
+#        row.names = T)
+```
+
+### 添加`assays`
+
+使用函数 `SingleCellExperiment()` 以命名列表的形式提供数据，其中列表的每个对象都是一个矩阵。
+
+```{r}
+library(SingleCellExperiment)
+sce <- SingleCellExperiment(assays = list(counts = counts))
+sce
+```
+
+#### 标准化变换
+
+```{r}
+sce <- scuttle::logNormCounts(sce) #对数变换标准化表达矩阵
+sce    #  assays 多了一个  "logcounts"
+dim(logcounts(sce))
+```
+
+#### 线性变换
+
+```{r}
+counts_100 <- counts(sce) + 100
+assay(sce, "counts_100") <- counts_100 
+assays(sce) 
+```
+
+#### 访问和切片
+
+```{r}
+#访问计数矩阵
+assayNames(sce)
+mat2 <- assay(sce, "counts")  #通用
+mat3 <- counts(sce)           #特殊名称 counts  
+log_mat <- logcounts(sce)
+
+names(assays(sce))
+# 切片
+assays(sce) <- assays(sce)[1]
+assayNames(sce)
+```
+
+## 列数据（`colData`）
+
+为了进一步构造对象`SingleCellExperiment`，需要添加列数据`colData`注释细胞或样本，该对象`DataFrame`中的行对应于细胞，列对应于样本数据字段，例如原产地批次batch of origin、处理条件treatment condition等（ @fig-sce ,橙色框）。[下载：E-MTAB-5522.sdrf.txt（第2页）](https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-5522)
+
+### `colData`
+
+```{r}
+sdrf <- fread("data/SingleCellExperiment//E-MTAB-5522.sdrf.txt")
+
+# 仅保留在计数矩阵的细胞  第44列=="counts_Calero_20160113.tsv"
+coldata <- sdrf[sdrf$`Derived Array Data File` == "counts_Calero_20160113.tsv", ]
+
+# 仅保留部分列和设置行标识符
+coldata <- DataFrame(
+  genotype=coldata$`Characteristics[genotype]`,
+  phenotype=coldata$`Characteristics[phenotype]`,
+  spike_in=coldata$`Factor Value[spike-in addition]`,
+  row.names = coldata$`Source Name`
+)
+coldata
+
+```
+
+添加之前确保`colData`的行名与计数矩阵的列名相同
+
+```{r}
+identical(rownames(coldata), colnames(counts))
+```
+
+### **添加`colData`**
+
+#### 从头开始
+
+```{r}
+#| eval: false
+sce0 <- SingleCellExperiment(assays = list(counts=counts), 
+                             colData= coldata)
+sce0
+colData(sce0)
+```
+
+#### 向现有对象添加
+
+```{r}
+sce
+colData(sce) <- coldata
+sce
+```
+
+或者 分块添加
+
+```{r}
+sce1 <- SingleCellExperiment(list(counts=counts))
+sce1$phenotype <- coldata$phenotype
+colData(sce1)
+```
+
+### 函数自动添加
+
+某些函数在`colData`中返回额外样本元数据字段，自动添加列元数据。
+
+```{r}
+sce <- scuttle::addPerCellQC(sce)  #quality control metrics质量控制指标
+colData(sce)
+sce
+```
+
+## 行数据 ( `rowData`)
+
+添加行数据`rawData`注释基因，`DataFrame`中每行对应一个基因，每列对应一个基因数据字段，例如转录本长度、基因符号等注释。（ @fig-sce ,绿色框）
+
+#### `rowData`
+
+```{r}
+rowData(sce)
+rowData(sce)$Length <- gene_length
+rowData(sce)
+```
+
+某些函数在`rowData`中返回额外基因元数据字段，自动添加行元数据。
+
+```{r}
+sce <- scuttle::addPerFeatureQC(sce)
+rowData(sce)
+```
+
+#### `rowRanges`
+
+`rowRanges`：以`GRangesList`或 `GRanges`的形式保存基因组坐标，描述了特征（基因、基因组区域）的染色体、起始坐标和结束坐标。
+
+```{r}
+SummarizedExperiment::rowRanges(sce)  #empty
+```
+
+填充 `rowRanges`的方式取决于在比对和定量过程中使用的生物体种类和注释文件。 常用的是Ensembl 标识符，因此我们可以使用[*rtracklayer*](https://bioconductor.org/packages/3.18/rtracklayer)从包含 Ensembl 注释的 GTF 文件中载入`GRanges`。[下载：Mus_musculus.GRCm38.82.gtf.gz](http://ftp.ensembl.org/pub/release-82/gtf/mus_musculus/)
+
+::: callout-note
+GTF（General Transfer Format）**通用转录组注释格式**
+
+1.  seqid 字符串 参考序列 ID（如染色体编号、 scaffold 编号），示例：chr1、NC_000001
+
+2.  source 字符串 注释来源（数据库或预测工具），示例：Ensembl、Gencode、augustus
+
+3.  type 字符串 注释特征类型（严格限定关键词），常见：gene、transcript、exon、CDS
+
+4.  start 整数 特征在参考序列上的起始坐标（1-based 索引，闭区间），示例：1001
+
+5.  end 整数 特征在参考序列上的终止坐标，示例：2000
+
+6.  score 浮点数 /. 置信度得分（预测工具输出），. 表示无数据，示例：95.3、.
+
+7.  strand 字符 链方向，+（正链）、-（负链）、.（未知）、?（不确定）
+
+8.  phase 整数 /. 仅 CDS 特征有效，0/1/2 表示密码子阅读框偏移，非 CDS 特征用.，示例：0、.
+
+9.  attributes 字符串 键值对属性（核心扩展字段），格式：key1 "value1"; key2 "value2";
+:::
+
+```{r}
+gene_data <- rtracklayer::import("data/SingleCellExperiment/Mus_musculus.GRCm38.82.gtf.gz")
+gene_data[1:6,1:9]
+
+# 整理数据
+gene_data <- gene_data[gene_data$type=="gene",]
+names(gene_data) <- gene_data$gene_id
+
+# 保留gene_开头的列   metadata columns
+library(GenomicRanges)
+is.gene.related <- str_detect(colnames(mcols(gene_data)),"^gene_") 
+table(is.gene.related)
+
+mcols(gene_data) <- mcols(gene_data)[,is.gene.related]
+mcols(gene_data)  # 46603 ×  5
+#rownames(sce) 46603行 观测基因
+SummarizedExperiment::rowRanges(sce) <- gene_data[rownames(sce)]
+SummarizedExperiment::rowRanges(sce)[1:6,]
+
+sce
+```
+
+### 其他元数据
+
+其他注释以命名列表存储在`metadata` 中。 例如，实验元数据，高度可变基因（highly variable genes）。。。，缺点是与表达矩阵的行或列的操作不同步。
+
+```{r}
+DEG_up <- c("gene_x", "gene_y")
+metadata(sce) <- list(HVGs = DEG_up)
+metadata(sce)
+DEG_down <- c("gene_a", "gene_b")
+metadata(sce)$DEG_down <- DEG_down
+metadata(sce)
+sce
+```
+
+## 子集和组合
+
+### 子集
+
+```{r}
+first.10 <- sce[,1:10]
+ncol(counts(first.10)) #  计数矩阵仅有 10 列
+colData(first.10) # only 10 rows.
+
+```
+
+只想要野生型细胞
+
+```{r}
+wt.only <- sce[, sce$phenotype == "wild type phenotype"]
+ncol(counts(wt.only))
+colData(wt.only)
+```
+
+只想保留蛋白质编码基因
+
+```{r}
+coding.only <- sce[rowData(sce)$gene_biotype == "protein_coding",]
+nrow(counts(coding.only))
+rowData(coding.only)
+```
+
+### 组合
+
+按列组合，假设所有涉及的对象都具有相同的行注释值和兼容的列注释字段
+
+```{r}
+sce2 <- cbind(sce, sce)
+ncol(counts(sce2)) # twice as many columns
+colData(sce2) # twice as many rows
+```
+
+按行组合，假设所有对象都具有相同的列注释值和兼容的行注释字段。
+
+```{r}
+sce2 <- rbind(sce, sce)
+nrow(counts(sce2)) # twice as many rows
+rowData(sce2) # twice as many rows
+```
+
+## 单细胞特定字段
+
+### 降维 `reducedDims`
+
+降维结果保存在一个列表中，列表的每一个对象是一个代表计数矩阵的低维的数值矩阵，其中行表示计数矩阵的列（如细胞），列表示维度。
+
+```{r}
+#| code-summary: "PCA"
+sce
+sce <- scater::logNormCounts(sce)
+sce <- scater::runPCA(sce)
+head(reducedDim(sce, "PCA"))
+```
+
+```{r}
+#| code-summary: "tSNE"
+sce <- scater::runTSNE(sce, perplexity = 0.1)
+head(reducedDim(sce, "TSNE"))
+```
+
+```{r}
+#| code-summary: "UMAP"
+sce <- scater::runUMAP(sce)
+head(reducedDim(sce,"UMAP"))
+```
+
+```{r}
+#| code-summary: "手动添加UMAP"
+u <- uwot::umap(t(logcounts(sce)), n_neighbors = 2)
+reducedDim(sce, "UMAP_uwot") <- u
+reducedDims(sce) # Now stored in the object.
+head(reducedDim(sce, "UMAP_uwot"))
+```
+
+```{r}
+reducedDims(sce) 
+```
+
+### 替代试验 Alternative Experiments
+
+`SingleCellExperiment`提供了"替代实验"的概念，其是一组不同特征但同一组样本/细胞的数据。经典应用是存储加标转录（spike-in transcripts）的每细胞计数，能够保留这些数据以供下游使用，但要将其与保存的内源性基因计数分离，因为此类替代特征通常需要单独处理。
+
+```{r}
+df_spikein <- df_spikein |> tibble::column_to_rownames("GeneID")
+spike_length <- df_spikein$Length
+spike_mat<- as.matrix(df_spikein[,-1]) 
+spike_mat[1:2,1:2]
+```
+
+首先创建一个单独的对象`SummarizedExperiment`
+
+```{r}
+spike_se <- SummarizedExperiment(list(counts=spike_mat))
+spike_se
+```
+
+```{r}
+altExp(sce, "spike") <- spike_se
+
+altExps(sce) 
+```
+
+替代实验概念确保单细胞数据集的所有相关方面都可以保存在单个对象中，并且确保我们的加标数据与内源性基因的数据同步。
+
+```{r}
+sub <- sce[,1:2] # retain only two samples.
+altExp(sub, "spike")
+```
+
+任何`SummarizedExperiment`对象都可以存储为`alternative Experiment`, 包括另一个 `SingleCellExperiment`。
+
+### 缩放因子`sizeFactors`
+
+```{r}
+# 反卷积deconvolution-based size factors
+sce <- scran::computeSumFactors(sce) 
+summary(sizeFactors(sce))
+```
+
+### 文库大小因子
+
+```{r}
+# library size-derived factors
+sizeFactors(sce) <- scater::librarySizeFactors(sce) 
+summary(sizeFactors(sce))
+```
+
+### 聚类标签
+
+该函数允许我们获取或设置每个细胞标签的向量或因子，通常对应于由无监督聚类分析的分组 或从分类算法预测细胞类型身份。
+
+```{r}
+colLabels(sce) <- scran::clusterCells(sce, use.dimred="PCA")
+table(colLabels(sce))
+```

@@ -1,0 +1,138 @@
+# 全基因组关联研究GWAS
+
+**全基因组关联分析（Genome Wide Association Study，GWAS）**是指在全基因组层面上，开展多中心、大样本、反复验证的基因与疾病的关联研究，是通过对大规模的群体DNA样本进行全基因组高密度遗传标记（如单核苷酸多态性SNP或CNV等）分型，进而将基因型与可观测的性状，即表型，进行群体水平的统计学分析，根据统计量或显著性 p 值筛选出最有可能影响该性状的遗传变异（标记），全面揭示疾病发生、发展与治疗相关的遗传基因
+
+GWAS的主要步骤包括：
+
+1.  样本收集：收集足够数量的个体样本，包括患病个体和对照个体。
+
+2.  基因分型：利用高密度的SNP芯片对个体的全基因组进行分型，以获取遗传信息。
+
+3.  质量控制：对基因分型数据进行质量控制，包括去除低质量的SNP位点和样本，校正人群分层等。
+
+4.  统计分析：使用统计方法（如线性回归、逻辑回归等）对每个SNP位点与表型之间的关联进行检验。
+
+5.  结果解释：对统计显著的SNP位点进行解释，以识别可能的疾病相关基因或遗传区域。
+
+6.  验证研究：在独立的样本中对显著的关联结果进行验证，以确认其可靠性。
+
+7.  生物信息学分析：对GWAS结果进行更深入的生物信息学分析，如路径分析、网络分析等，以理解遗传变异如何影响疾病机制。
+
+**GWAS分析模型介绍**
+
+GWAS 分析一般会构建回归模型检验标记与表型之间是否存在关联。GWAS中的零假设（H0 null hypothesis）是标记的回归系数为零, 标记对表型没有影响。备择假设(H1，也叫对立假设，Alternative Hypothesis)是标记的回归系数不为零，SNP和表型相关。GWAS中的模型主要分为两种：
+
+-   广义线性模型GLM(General Linear Model)：y = Xβ + Zα + e，直接将基因型x和表型y做回归拟合。也可以加入群体结果控制假阳性。GLM模型中，如果两个表型差异很大，但群体本身还含有其他的遗传差异（如地域等），则那些与该表型无关的遗传差异也会影响到相关性。
+
+-   混合线性模型MLM(Mixed Linear Model)：y = Xβ + Zα + Wμ+ e
+
+y: 所要研究的表型性状；
+
+Xβ：固定效应（Fixed Effect），影响y的其他因素，主要指群体结构；
+
+Zα：标记效应（Marker Effect  SNP）；
+
+Wμ：随机效应（RandomEffect），这里一般指个体的亲缘关系。
+
+MLM模型可以把群体结构的影响设为协方差，把这种位点校正掉。此外，材料间的公共祖先关系也会导致非连锁相关，可加入亲缘关系矩阵作为随机效应来矫正。
+
+FarmCPU：GWAS的瓶颈一是计算速度，二是统计准确性。FarmCPU能提升速度和准确性，首先把随机效应的亲缘关系矩阵（Kinship）转换为固定效应的关联SNP矩阵（S矩阵/QTNs矩阵），使计算速度大大加快；再利用QTN矩阵当做协变量，重新做关联分析，提升准确率。
+
+## [GWASTools](https://bioconductor.org/packages/release/bioc/html/GWASTools.html)
+
+```{r eval=FALSE}
+BiocManager::install("GWASTools","SNPRelate")
+install.packages("plink")
+```
+
+-   **GenotypeReader: NcdfGenotypeReader, GdsGenotypeReader, or MatrixGenotypeReader**
+
+-   **IntensityReader: NcdfIntensityReader or GdsIntensityReader**
+
+-   **SnpAnnotationReader: SnpAnnotationDataFrame or SnpAnnotationSQLite**
+
+-   **ScanAnnotationReader: ScanAnnotationDataFrame or ScanAnnotationSQLite**
+
+### GenotypeData 类 和 IntensityData 类
+
+-   Network Common Data Form ([NetCDF](http://www.unidata.ucar.edu/software/netcdf/))
+
+-   Genomic Data Structure ([GDS)](http://corearray.sourceforge.net/)
+
+-   Matrix
+
+### 注释类
+
+`SnpAnnotationDataFrame`和`ScanAnnotationDataFrame`类扩展了**`Biobase`**包中的`AnnotatedDataFrame`类
+
+可移植跨平台类 `SQLite` 类
+
+## 导入
+
+```{r}
+library(plink)
+
+# 设置参数
+num_samples <- 100  # 样本数量
+num_snps <- 10      # SNP数量
+
+# 生成随机基因型数据（0, 1, 2表示不同的基因型）
+genotypes <- matrix(sample(0:2, num_samples * num_snps, replace = TRUE), nrow = num_samples)
+
+# 生成SNP信息
+snp_ids <- paste0("SNP", seq(1, num_snps))
+chromosomes <- sample(1:22, num_snps, replace = TRUE)
+positions <- sample(1:1e6, num_snps, replace = TRUE)
+
+snp_info <- data.frame(
+  SNP = snp_ids,
+  Chromosome = chromosomes,
+  Position = positions
+)
+
+# 生成样本信息
+sample_ids <- paste0("Sample", seq(1, num_samples))
+sex <- sample(c("M", "F"), num_samples, replace = TRUE)
+pheno <- sample(c(0, 1), num_samples, replace = TRUE)
+
+fam_info <- data.frame(
+  FamilyID = rep(1, num_samples),
+  SampleID = sample_ids,
+  FatherID = rep(0, num_samples),
+  MotherID = rep(0, num_samples),
+  Sex = sex,
+  Phenotype = pheno
+)
+
+# 保存到文件
+write.table(genotypes, file = "data/GWAS/genotype.txt", row.names = FALSE, col.names = FALSE)
+write.table(snp_info, file = "data/GWAS/snp_info.txt", row.names = FALSE, col.names = FALSE)
+write.table(fam_info, file = "data/GWAS/fam_info.txt", row.names = FALSE, col.names = FALSE)
+
+# 使用plink工具将TXT文件转换为PLINK格式
+
+```
+
+### 基因型数据Plink
+
+-   `genotype.bed` (二进制文件)
+
+-   `genotype.bim` (SNP信息文件)
+
+-   `genotype.fam` (样本信息文件)
+
+```{r}
+library(GWASTools)
+
+```
+
+```{r}
+
+
+```
+
+## 导出
+
+## CMplot
+
+<https://cran.r-project.org/web//packages/CMplot/index.html>

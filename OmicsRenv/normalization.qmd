@@ -1,0 +1,190 @@
+```{r}
+#| echo: false
+conflicts_prefer(GenomicRanges::setdiff)
+conflicts_prefer(dplyr::filter)
+```
+
+# 标准化
+
+由于难以制备完全一致的文库，在单细胞RNA测序数据中经常观察到文库之间测序覆盖率的系统差异,这通常源于细胞cDNA捕获效率或PCR扩增效率的技术差异。
+
+## scaling normalization
+**标准化（normalization）**旨在消除这些差异，使它们不会干扰细胞之间表达谱的比较。 这确保了在细胞群体中观察到的任何异质性或差异表达都是由生物学差异而非技术差异造成的。 其中**缩放标准化（scaling normalization）**是最简单和最常用的一类标准化策略。这涉及将每个细胞的总计数除以细胞特定的比例因子，通常称为"缩放因子(size factor)"。
+
+**假设**：任何细胞特异性偏差（如捕获或扩增效率）都会通过缩放该细胞的预期平均计数来平等地影响所有基因。 每个细胞的缩放因子表示该细胞中相对偏差的估计值，因此将其计数除以缩放因子应消除该偏差。由此产生的"标准化表达式值"可用于下游分析，如聚类和降维。
+
+```{r}
+#| label: loading-ZeiselBrainData
+
+#--- loading ---#
+sce.zeisel <- scRNAseq::ZeiselBrainData()
+
+library(scater)
+sce.zeisel <- aggregateAcrossFeatures(sce.zeisel, 
+    id=sub("_loc[0-9]+$", "", rownames(sce.zeisel)))
+
+#--- gene-annotation ---#
+library(org.Mm.eg.db)
+rowData(sce.zeisel)$Ensembl <- mapIds(org.Mm.eg.db, 
+    keys=rownames(sce.zeisel), keytype="SYMBOL", column="ENSEMBL")
+
+#--- quality-control ---#
+stats <- perCellQCMetrics(sce.zeisel, subsets=list(
+    Mt=rowData(sce.zeisel)$featureType=="mito"))
+qc <- quickPerCellQC(stats, percent_subsets=c("altexps_ERCC_percent", 
+    "subsets_Mt_percent"))
+sce.zeisel <- sce.zeisel[,!qc$discard]
+```
+
+```{r sce.zeisel}
+sce.zeisel 
+```
+
+### 文库大小标准化
+
+文库大小标准化是执行缩放标准化的最简单策略。我们将文库大小定义为每个细胞所有基因的计数总和，假设其期望值与任何细胞特异性偏差成比例。然后，每个细胞的"文库缩放因子"与其文库大小成正比，其中定义了比例常数，使得所有细胞的平均缩放因子等于 1。 此定义可确保标准化表达式值与原始计数的比例相同，这对解释很有用，尤其是在处理转换后的数据时。
+
+```{r librarySizeFactors}
+lib.sf.zeisel <- scuttle::librarySizeFactors(sce.zeisel)
+summary(lib.sf.zeisel)
+```
+
+在ZeiselBrainData中，细胞文库缩放因子在细胞之间相差多达 10 倍 @fig-histogram-log10sizefactor 。这是scRNA-seq数据覆盖率变异的典型特征。
+
+```{r}
+#| label: fig-histogram-log10sizefactor
+#| fig-cap: "Zeisel 大脑数据集中从文库大小得出的缩放因子分布"
+hist(log10(lib.sf.zeisel), xlab="Log10[Size factor]", col='grey80')
+```
+
+### 反卷积标准化 Normalization by deconvolution
+
+当样本之间存在任何不平衡的差异表达（DE）时，就会出现成分偏差。消除成分偏差可以使用 [*DESeq2*](https://bioconductor.org/packages/3.18/DESeq2) 包中的函数`estimateSizeFactorsFromMatrix()`或 [*edgeR*](https://bioconductor.org/packages/3.18/edgeR) 包中的函数`calcNormFactors()`执行标准化。
+
+假设：细胞之间大多数基因并非差异表达，假设两个细胞之间大多数非 DE 基因的计数大小的任何系统性差异代表被用于计算去除系统性差异的适当缩放因子的偏差。
+
+然而，由于低计数和零计数占主导地位，单细胞数据对于这些批量标准化方法来说可能是个问题。Pool-based size factors are then "deconvolved" into cell-based factors for normalization of each cell's expression profile.基于 pool 的缩放因子"反卷积"为基于细胞的缩放因子，以标准化每个细胞的表达谱。
+
+首先使用预聚类步骤`quickCluster()`，其中每个聚类中的细胞单独标准化，缩放因子重新缩放以在聚类之间具有可比性。
+
+```{r quickCluster}
+library(scran)
+set.seed(100)
+clust.zeisel <- quickCluster(sce.zeisel) 
+table(clust.zeisel)
+```
+
+然后使用 [*scran*](https://bioconductor.org/packages/3.18/scran) 中的函数`calculateSumFactors()`执行反卷积缩放。
+
+```{r Deconvolution_sizeFactor}
+deconv.sf.zeisel <- calculateSumFactors(sce.zeisel, cluster=clust.zeisel)
+summary(deconv.sf.zeisel)
+```
+
+可以看到 @fig-deconvolution_vs_library 反卷积缩放因子表现出与文库缩放因子细胞特定类型的偏差。 这与细胞类型之间的强差异表达所引入的成分偏差的存在是一致的。 使用反卷积缩放因子可以调整这些偏差，以提高下游分析的标准化精度。
+
+```{r}
+#| label: fig-deconvolution_vs_library
+#| fig-cap: "在ZeiselBrainData中，每个细胞的反卷积缩放因子与文库缩放因子进行比较。红线对应于两个缩放因子之间的同一性。"
+tibble(x=lib.sf.zeisel, y=deconv.sf.zeisel) |> 
+  ggplot(aes(x,y))+
+  scale_x_log10()+
+  scale_y_log10()+
+  geom_point(color=as.integer(factor(sce.zeisel$level1class)))+
+  geom_abline(slope = 1,intercept = 0,color="red",linewidth=1.2)+
+  xlab("Library size factor")+
+  ylab("Deconvolution size factor")
+
+```
+
+### Normalization by spike-ins
+
+RNA-seq常用的spike-in有 External RNA Controls Consortium mix (ERCCs)，spike-in RNA variants (SIRVs)和sequencing spike-ins (Sequins) 。
+
+Spike-in normalization基于向每个细胞中添加相同数量的spike-in RNA 的假设。Spike-in transcripts覆盖率的系统性差异只能归因于细胞特异性偏差，如捕获效率或测序深度。
+为了消除这些偏差，我们通过缩放"spike-in size factors "均衡细胞之间的 spike-in 覆盖率。
+
+与之前的方法相比，Spike-in normalization 不需要对系统的生物学特性进行假设（即，缺乏许多DE基因）。 
+相反，它假设spike-in transcripts （i） 以恒定水平添加到每个细胞中，（ii） 以与内源性基因相同的相对方式对偏差做出反应。
+
+实际上，如果对单个细胞的总RNA含量的差异感兴趣，并且必须在下游分析中保留，则应使用 spike-in normalization 。 对于给定的细胞，其内源性RNA总量的增加不会增加其spike-in size factor。 这确保了总RNA含量对整个群体表达的影响不会在缩放时被消除。 相比之下，上述其他标准化方法简单地将总RNA含量的任何变化解释为偏倚的一部分并将其消除。
+
+```{r}
+#| label: loading-RichardTCellData
+library(ensembldb)
+sce.richard <- scRNAseq::RichardTCellData()
+sce.richard <- sce.richard[,sce.richard$`single cell quality`=="OK"]
+sce.richard
+```
+
+使用`computeSpikeFactors()`估计每个细胞的spike-in size factors，这是通过使用与`librarySizeFactors()`相同的方法
+将每个细胞的总spike-in 计数转换为缩放因子来定义的。随后缩放将消除细胞间 spike-in 覆盖率的任何差异。
+
+```{r spike-in sizeFactor}
+sce.richard <- computeSpikeFactors(sce.richard, "ERCC")
+summary(sizeFactors(sce.richard))
+sce.richard$sizeFactor[1:4]
+```
+
+可以观察到每个处理条件下的 spike-in 缩放因子和反卷积缩放因子之间存在正相关关系（@fig-SpikeFactor_vs_DeconvFactor），
+表明它们在测序深度和捕获效率方面捕获了类似的技术偏差。 
+
+还观察到，增加对 T 细胞受体的刺激 - 就亲和力或时间增加而言 - 导致相对于文库缩放因子的 spike-in 因子降低。 这与刺激过程中生物合成活性和总RNA含量的增加一致，这降低了每个文库中的相对 spike-in 覆盖率（从而降低了 spike-in 缩放因子），但增加了内源性基因的覆盖率（从而增加了文库缩放因子）。
+
+```{r}
+#| label: fig-SpikeFactor_vs_DeconvFactor
+#| fig-cap: "Spike-in normalization的spike-in缩放因子与 反卷积缩放因子作图。 每个图代表不同的配体处理，每个点都是一个细胞，根据刺激时间着色。"
+data.frame(
+    DeconvFactor=calculateSumFactors(sce.richard),
+    SpikeFactor=sizeFactors(sce.richard),
+    Stimulus=sce.richard$stimulus, 
+    Time=sce.richard$time
+) |> 
+ggplot(aes(x=DeconvFactor, y=SpikeFactor, color=Time)) +
+    geom_point() + facet_wrap(~Stimulus) + scale_x_log10() + 
+    scale_y_log10() + geom_abline(intercept=0, slope=1, color="red")
+```
+
+
+
+这两组缩放因子之间的差异对下游分析有实际影响。 如果将 spike-in 缩放因子应用于计数，则未刺激细胞中的表达值将放大，而刺激细胞中的表达将缩小。 但是，如果使用反卷积缩放因子，则会出现相反的情况。 当我们在标准化策略之间切换时，这可能表现为不同条件之间 DE 的大小和方向的变化，如 @fig-fig-switch-between-normalization-strategies 所示
+
+```{r}
+#| label: fig-switch-between-normalization-strategies
+#| fig-cap: "使用反卷积缩放因子（左）或 spike-in 缩放因子（右）进行标准化后 Malat1 的对数标准化表达值分布。细胞按配体亲和力分层，并按刺激时间着色"
+sce.richard.deconv <- logNormCounts(sce.richard, size_factors=calculateSumFactors(sce.richard))
+sce.richard.spike <- logNormCounts(sce.richard, size_factors=sizeFactors(sce.richard))
+
+gridExtra::grid.arrange(
+    plotExpression(sce.richard.deconv, x="stimulus", 
+        colour_by="time", features="ENSMUSG00000092341") + 
+        theme(axis.text.x = element_text(angle = 90)) + 
+        ggtitle("After deconvolution normalization"),
+    plotExpression(sce.richard.spike, x="stimulus", 
+        colour_by="time", features="ENSMUSG00000092341") + 
+        theme(axis.text.x = element_text(angle = 90)) +
+        ggtitle("After spike-in normalization"),
+    ncol=2
+)
+```
+
+标准化策略的选择取决于生物学假设。 在大多数情况下，总RNA含量的变化并不有趣，使用文库大小或反卷积因子标准化。 然而，如果总RNA的差异与感兴趣的生物学过程有关，例如细胞周期活性或T细胞活化，使用 spike-in 标准化将保留这些差异，以便生物组之间表达的任何变化都具有正确的符号。
+
+spike-in transcripts 应该使用 spike-in size factors 标准化。
+从内源性基因计数计算的缩放因子不应该spike-in transcripts ，因为前者捕获了后者没有的总 RNA 含量差异。 尝试使用基于内源性基因计数的缩放因子对spike-in计数进行标准化将导致过度标准化和不正确的定量。 因此，如果需要标准化spike-in数据，必须为spike-in transcripts计算一组单独的缩放因子，可以使用 `modelGeneVarWithSpikes()`等函数自动执行。
+
+## 对数变换
+
+The log-transformation is useful as differences in the log-values represent log-fold changes in expression. 这在基于欧几里得距离的下游分析中非常重要，其中包括多种形式的聚类和降维。 通过对数转换数据进行操作，我们确保这些程序是基于表达值的对数倍数变化测量细胞之间的距离。
+对数转换可以促进具有强相对差异的基因的显现。
+
+```{r log-transformation}
+set.seed(100)
+clust.zeisel <- quickCluster(sce.zeisel) 
+sce.zeisel <- computeSumFactors(sce.zeisel, cluster=clust.zeisel, min.mean=0.1)
+sce.zeisel$sizeFactor
+
+sce.zeisel <- logNormCounts(sce.zeisel)
+assayNames(sce.zeisel)
+
+```

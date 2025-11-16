@@ -1,0 +1,48 @@
+# `SummarizedExperiment`
+
+`SummarizeExperiment` 如 @fig-SummarizedExperiment 所示
+
+![](images/SummarizedExperiment.webp){#fig-SummarizedExperiment fig-align="center" width="60%"}
+
+具体可参考 [SummarizedExperiment docs](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) 。
+
+## 构造`SummarizedExperiment`实例
+
+```{r}
+library(SummarizedExperiment)
+# 计数矩阵
+nrows <- 200
+ncols <- 6
+counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
+head(counts)
+
+# 行数据：基因
+rowData <- GRanges(seqnames = rep(c("chr1", "chr2"), c(50, 150)),
+                   ranges = IRanges(floor(runif(200, 1e5, 1e6)), width=100),
+                   strand=sample(c("+", "-"), 200, TRUE),
+                   gene_id=sprintf("ID%03d", 1:200))
+rowData[1:6,]
+
+
+# 列数据：样本
+colData <- DataFrame(Treatment=rep(c("ChIP", "Input"), 3),
+                     row.names=LETTERS[1:6])
+colData
+# 实验元数据
+metadata <- "A example of how to create an instance of SummarizedExperiment" 
+
+se <- SummarizedExperiment(assays=list(counts=counts),
+                           rowRanges=rowData, 
+                           colData=colData,
+                           metadata=metadata)
+se
+```
+
+```{r}
+dim(se)
+
+SummarizedExperiment::assay(se)  |>  head()
+SummarizedExperiment::rowData(se)
+SummarizedExperiment::rowRanges(se)
+SummarizedExperiment::colData(se)
+```
