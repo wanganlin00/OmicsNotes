@@ -4,26 +4,6 @@
 
 单细胞组学利用单细胞分离与分选技术、单细胞组测序技术及其生物信息学分析算法，开展高通量、多维度和大群体细胞学研究。包括单一细胞层级上的基因组学（genomics）、**转录组学（transcriptomics）**、蛋白组学（proteomics）、免疫组学、微生物组学和细胞间相互作用等的研究。
 
-**RNA quantification**
-
-1.  基于全长（full-length）
-
-2.  基于标签（tag-based）
-
-    Barcode：长度可能在 10 - 20bp 左右。在一次实验中同时对 1000 个单细胞进行测序，就会有 1000 个不同的 Barcode，每个 Barcode 对应一个细胞。
-
-    Unique molecular identifiers (UMIs) ：。一般较短，约 6 - 12bp。在一个细胞中有 10 个相同 mRNA 分子，相同的 mRNA 可能会被多次反转录和扩增，通过 UMI 可以区分这些最初来自不同 mRNA 分子的相同序列。
-
-**dropout**，**doublet**
-
-**捕获细胞数目和测序深度最佳权衡**
-
-**引物**
-
-1.  10× Genomics：Poly A
-
-2.  基于随机引物：snRandom-seq
-
 ## 单细胞分离技术
 
 **低通量**
@@ -43,6 +23,16 @@
 -   微流控microfluidic：液滴droplet，“油包水”，事实标准，高通量，低成本
 
 -   微孔板microwell
+
+## **测序技术**
+
+1.  基于全长（full-length）
+
+2.  基于标签（tag-based）
+
+    Barcode：长度可能在 10 - 20bp 左右。在一次实验中同时对 1000 个单细胞进行测序，就会有 1000 个不同的 Barcode，每个 Barcode 对应一个细胞。
+
+    Unique molecular identifiers (UMIs) ：约 6 - 12bp。在一个细胞中相同的 mRNA 可能会被多次反转录和扩增，通过 UMI 可以区分这些最初来自不同 mRNA 分子的相同序列。
 
 ## 表达矩阵
 
@@ -78,13 +68,11 @@
 
 7.  定量
 
-测序数据→计数矩阵
+    -   `Cellranger` [10XGenomics/cellranger](https://github.com/10XGenomics/cellranger) <https://www.nature.com/articles/ncomms14049>
 
--   `Cellranger` [10XGenomics/cellranger](https://github.com/10XGenomics/cellranger) <https://www.nature.com/articles/ncomms14049>
+    -   `alevin` 伪对比方法. <https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1670-y>
 
--   `alevin` 伪对比方法. <https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1670-y>
-
--   `spike-in transcripts` 将 spike-in sequences作为参考基因组的一部分
+    -   `spike-in transcripts` 将 spike-in sequences作为参考基因组的一部分
 
 ![](images/factors-affecting-measurements.png){fig-align="center"}
 

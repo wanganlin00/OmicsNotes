@@ -1,0 +1,84 @@
+## **质量控制**
+
+过滤低质量细胞
+
+-   总计数低（library size）：每个细胞所有内源性基因计数的总和，反映捕获效率和测序深度（UMIs）
+
+-   表达基因少（the number of expressed features）：每个细胞非零计数的内源性基因数量
+
+-   高线粒体基因组/高spike-intranscripts比例：相对于每个细胞所有基因（包括**spike-in**）总计数的比例
+
+-   **dropout**
+
+-   empty droplets
+
+-   **doublets**
+
+## 示例
+
+小鼠髓系细胞scRNA-seq
+
+以稀疏格式sparse format，`.`表示`0`读取矩阵，仅存储非零值，节省内存和提高速度。
+
+```{r}
+library(Seurat)
+myeloid_expr_counts <- readRDS("data/single_cell_omics/myeloid_expr_counts.rds")
+myeloid_meta_data <- readRDS("/data/single_cell_omics/myeloid_meta_data.rds")
+mye <- CreateSeuratObject(counts = myeloid_expr_counts,meta.data = myeloid_meta_data)
+mye
+```
+
+### 总计数、特征基因数
+
+nCount_RNA、nFeature_RNA
+
+```{r}
+VlnPlot(mye, features = c("nCount_RNA"))
+VlnPlot(mye, features = c("nFeature_RNA"))
+FeatureScatter(mye, feature1 = "nCount_RNA", feature2 = "nFeature_RNA") +
+  labs(title = "总计数 vs 表达基因数")
+```
+
+### 线粒体基因、红细胞污染
+
+小鼠线粒体、血红蛋白基因
+
+```{r}
+stringr::str_view(Features(mye),pattern = "^mt-")
+stringr::str_view(Features(mye),pattern = "^Hb[ab]")
+
+
+mye$percent.mt <- PercentageFeatureSet(mye, pattern = "^mt-")
+mye$percent.hb <- PercentageFeatureSet(mye, pattern = "^Hb[ab]")
+head(mye@meta.data, 5)
+
+FeatureScatter(mye, feature1 = "nFeature_RNA", feature2 = "percent.mt") +
+  labs(title = "特征基因数 vs 线粒体比例")
+```
+
+```{r}
+VlnPlot(mye, features = c("percent.mt", "percent.hb"), ncol = 2)
+```
+
+### 确定阈值
+
+```{r}
+# 计算统计量（四分位数、IQR）
+stats_nCount <- quantile(mye$nCount_RNA, probs = c(0.25, 0.75))  # Q1, Q3
+IQR_nCount <- stats_nCount[2] - stats_nCount[1]
+lower_nCount <- stats_nCount[1] - 1.5 * IQR_nCount
+upper_nCount <- stats_nCount[2] + 1.5 * IQR_nCount
+
+stats_nFeature <- quantile(mye$nFeature_RNA, probs = c(0.25, 0.75))  # Q1, Q3
+IQR_nFeature <- stats_nFeature[2] - stats_nFeature[1]
+lower_nFeature <- stats_nFeature[1] - 1.5 * IQR_nFeature
+upper_nFeature <- stats_nFeature[2] + 1.5 * IQR_nFeature
+
+mye_filtered <- subset(
+  mye,
+  subset = nCount_RNA > lower_nCount & nCount_RNA < upper_nCount &
+           nFeature_RNA > lower_nFeature & nFeature_RNA < upper_nFeature
+)
+```
+
+### **Doublet**

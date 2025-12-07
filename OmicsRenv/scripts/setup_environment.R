@@ -28,6 +28,7 @@ pak::pak("tidyverse")
 pak::pak("writexl")
 pak::pak("arrow")
 pak::pak("DT")
+pak::pak("gtsummary")
 
 # 会话信息报告
 pak::pak("devtools")

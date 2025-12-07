@@ -124,22 +124,22 @@ table(Idents(mye))
 # 细胞
 Cells(mye)
 ncol(mye)
-str_match(Cells(mye),pattern = "...\\_\\d\\_") %>% table()
+stringr::str_match(Cells(mye),pattern = "...\\_\\d\\_") |>  table()
 
 # 基因
 Features(mye)
 nrow(mye)
 
 
-mye_counts[c("Cd3d", "Cd14", "Ms4a1"),]
+    mye[c("Cd3d", "Cd14", "Ms4a1"),]
 
 #           预处理  小鼠线粒体、血红蛋白基因####
 # 质量控制 细胞选择和过滤
-str_view(Features(mye),pattern = "^mt-")
+stringr::str_view(Features(mye),pattern = "^mt-")
 mye[["percent_mito"]] <- PercentageFeatureSet(mye, pattern = "^mt-", )
 summary(mye@meta.data$percent_mito)
 
-str_view(Features(mye),pattern = "^Hb[ab]")
+stringr::str_view(Features(mye),pattern = "^Hb[ab]")
 mye[["percent_Hb"]] <- PercentageFeatureSet(mye, 
                                             pattern = "^Hb[ab]")
 summary(mye@meta.data$percent_Hb)

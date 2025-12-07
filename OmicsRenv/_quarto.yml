@@ -19,7 +19,6 @@ book:
         - ExpressionSet.qmd
         - SummarizedExperiment.qmd
         - SingleCellExperiment.qmd
-        - read.qmd
         
     - part: "注释数据资源"
       chapters:        
@@ -29,9 +28,11 @@ book:
         
     - part: single_cell_omics.qmd
       chapters: 
+        - read.qmd
+        - quality_control.qmd
     #    - Seurat.qmd
-        - Orchestrating_Single_Cell_Analysis.qmd        
-    #     - QC.qmd
+        - Orchestrating_Single_Cell_Analysis.qmd
+        - CellAnnotation.qmd        
     #     - doublet_detection.qmd
     #     - variation_check.qmd
     #     - normalization.qmd
@@ -40,7 +41,7 @@ book:
     #     - DimensionalityReduction.qmd
     #     - Clustering.qmd
     #     - MarkerGeneDetection.qmd
-       # - CellTypeAnnotation.qmd
+
     
     # - part: "下游分析"
     #   chapters:
