@@ -130,7 +130,7 @@ pbmc <- RunUMAP(pbmc, dims = 1:10)
 saveRDS(pbmc, file = "data/pbmc_tutorial.rds")
 ```
 
-## 差异表达基因分析
+## 标记基因
 
 ```{r}
 # find all markers of cluster 2

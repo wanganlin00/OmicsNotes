@@ -15,7 +15,7 @@ conflicts_prefer(GenomicRanges::setdiff)
 
 肺腺癌
 
-[Lung Adenocarcinoma (LUAD) gene expression RNAseq HTSeq - Counts （n=585） GDC 中心 和Phenotype (n=877)](https://xenabrowser.net/datapages/?cohort=GDC%20TCGA%20Lung%20Adenocarcinoma%20(LUAD)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
+[Lung Adenocarcinoma (LUAD) gene expression RNAseq STAR - FPKM-UQ GDC Hub](https://xenabrowser.net/datapages/?cohort=GDC%20TCGA%20Lung%20Adenocarcinoma%20(LUAD)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
 
 ## Assays
 

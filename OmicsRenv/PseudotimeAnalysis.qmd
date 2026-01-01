@@ -2,7 +2,11 @@
 
 [monocle2](https://cole-trapnell-lab.github.io/monocle-release/docs/)
 
+<https://github.com/satijalab/seurat-wrappers>
+
 <https://cole-trapnell-lab.github.io/monocle3/>
+
+<https://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/monocle3.html>
 
 ```{r}
 if(!require(monocle)) BiocManager::install("monocle")

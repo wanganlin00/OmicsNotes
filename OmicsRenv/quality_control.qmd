@@ -8,11 +8,9 @@
 
 -   高线粒体基因组/高spike-intranscripts比例：相对于每个细胞所有基因（包括**spike-in**）总计数的比例
 
--   **dropout**
+-   **dropout（假阴性）/**empty droplets（假细胞）
 
--   empty droplets
-
--   **doublets**
+-   **doublets/multiplets**
 
 ## 示例
 
@@ -23,7 +21,7 @@
 ```{r}
 library(Seurat)
 myeloid_expr_counts <- readRDS("data/single_cell_omics/myeloid_expr_counts.rds")
-myeloid_meta_data <- readRDS("/data/single_cell_omics/myeloid_meta_data.rds")
+myeloid_meta_data <- readRDS("data/single_cell_omics/myeloid_meta_data.rds")
 mye <- CreateSeuratObject(counts = myeloid_expr_counts,meta.data = myeloid_meta_data)
 mye
 ```
@@ -41,7 +39,7 @@ FeatureScatter(mye, feature1 = "nCount_RNA", feature2 = "nFeature_RNA") +
 
 ### 线粒体基因、红细胞污染
 
-小鼠线粒体、血红蛋白基因
+线粒体、血红蛋白基因
 
 ```{r}
 stringr::str_view(Features(mye),pattern = "^mt-")

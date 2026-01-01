@@ -1,0 +1,196 @@
+## 细胞注释
+
+在完成预处理步骤（质量控制、过滤、归一化、批次效应校正、特征选择、降维、聚类、标记基因检测等）后，接下来是细胞类型注释。
+
+细胞注释一般包括手动注释和自动注释。
+
+1.  了解样本细胞成分：如免疫细胞；上皮/肿瘤细胞；基质细胞
+
+2.  pan-marker
+
+    -   人类基因通常是全大写（如 `CD3E`）。
+
+    -   小鼠基因通常是首字母大写，其余小写（如 `Cd3e`）
+
+3.  亚群定义
+
+4.  未知细胞的定义
+
+    i.  直接定义为 unknown
+    ii. 根据只在这个cluster高表达（A+ cluster）或不表达（B- cluster）的基因命名
+    iii. 根据可视化位置推断，与其他亚群的空间连续性位置（UMAP）
+
+## 自动注释：`SingleR`
+
+[**Assigning cell types with SingleR**](https://bioconductor.org/books/release/SingleRBook/){style="color:red"}
+
+[SingleR](https://bioconductor.org/packages/release/bioc/html/SingleR.html){style="color:red"}是自动注释方法的一种实现，可以被认为是最近邻分类的稳健变体。
+
+**SingleR 需要什么？**
+
+-   数据集的计数矩阵（原始或标准化）。
+
+-   参考数据集的标准化计数矩阵。
+
+-   参考数据集的标签。
+
+```{r}
+mye_counts <- readRDS("data/single_cell_omics/myeloid_expr_counts.rds")
+mye_metadata <- readRDS("data/single_cell_omics/myeloid_meta_data.rds")
+library(Seurat)
+mye <- CreateSeuratObject(counts = mye_counts, 
+                          meta.data = mye_metadata,
+                          project = "myeloid", 
+                   min.cells = 3,
+                   min.features = 200
+                   )
+
+mye@meta.data |> names()
+
+
+# 预处理
+library(stringr)
+str_view(Features(mye),pattern = "^mt-")
+mye[["percent_mito"]] <- PercentageFeatureSet(mye, pattern = "^mt-")
+summary(mye@meta.data$percent_mito)
+
+str_view(Features(mye),pattern = "^Hb[ab]-")
+mye[["percent_Hb"]] <- PercentageFeatureSet(mye, 
+                                            pattern = "^Hb[ab]-")
+mye@meta.data |> names()
+
+
+mye <- NormalizeData(object = mye)
+mye <- FindVariableFeatures(mye, selection.method = "vst",
+                            nfeatures = 2000)
+mye <- ScaleData(mye, features = VariableFeatures(mye))
+mye
+# pca降维
+mye <- RunPCA(object = mye,npcs = 50, verbose = T)
+ElbowPlot(mye)
+plot_before_batch_correct <- DimPlot(mye, reduction = "pca",group.by = "orig.ident")
+
+# 聚类
+dims_to_use <- 1:30
+mye <- FindNeighbors(mye, dims = dims_to_use,reduction = "pca")
+mye <- FindClusters(mye, resolution = 0.4)
+mye <- RunUMAP(mye, dims = dims_to_use,reduction = "pca",reduction.name = "umap_pca")
+mye
+umap_pca <- DimPlot(mye,reduction = "umap_pca", 
+        label = TRUE, repel = TRUE,
+        label.size = 3)
+
+# MNN批次效应校正
+
+# pak::pak("satijalab/seurat-wrappers")
+library(SeuratWrappers)
+mye <- IntegrateLayers(
+    object = mye, method = FastMNNIntegration,
+  #  orig = "pca", new.reduction = 'integrated.mnn',
+    batch = mye$orig.ident, k = 20,layers = "scale.data",
+    features =  VariableFeatures(mye),
+)
+
+plot_MNN_batch_correct <- DimPlot(mye,reduction = "integrated.mnn",group.by = "orig.ident")
+mye <- FindNeighbors(mye, dims = dims_to_use,reduction = "integrated.mnn")
+mye <- FindClusters(mye, resolution = 0.4)
+mye <- RunUMAP(mye, dims = dims_to_use,reduction = "integrated.mnn",reduction.name = "umap_mnn")
+umap_mnn <- DimPlot(mye,reduction = "umap_mnn", 
+        label = TRUE, repel = TRUE,
+        label.size = 3)
+
+
+plot_before_batch_correct + plot_MNN_batch_correct
+umap_pca + umap_mnn
+```
+
+```{r}
+# raw_counts
+mye_counts[c("Cd3d", "Cd14", "Ms4a1"),1:5]
+
+# normlized_counts
+LayerData(mye, assay = "RNA", layer = 'data')[c("Cd3d", "Cd14", "Ms4a1"),1:5]
+```
+
+```{r}
+library(celldex)
+surveyReferences()
+
+ref_mouse_rnaseq <- celldex::MouseRNAseqData()
+ref_immgen <- celldex::ImmGenData()
+
+unique(ref_mouse_rnaseq$label.main) |> sort()
+unique(ref_immgen$label.main)|> sort()
+```
+
+```{r}
+library(SingleR)
+pred <- SingleR(test = LayerData(mye, assay = "RNA", layer = 'counts'), 
+                assay.type.test=1,
+                ref = list(ImmGen=ref_immgen), 
+                labels = list(ref_immgen$label.main),
+                de.method = 'wilcox')
+```
+
+```{r}
+# Add to seurat object
+head(pred)
+mye <- AddMetaData(mye, pred$pruned.labels, col.name = 'SingleR_immgen')
+
+
+table(mye$SingleR_immgen)
+table(mye$seurat_clusters)
+# Visualise them on the UMAP
+mye <- SetIdent(mye, value = "SingleR_immgen")
+DimPlot(mye,reduction = "umap_mnn", 
+        label = TRUE, repel = TRUE,
+        label.size = 3) 
+```
+
+### 结果解读
+
+<https://biostatsquid.com/singler-tutorial/>
+
+![](images/high_delta.png){fig-align="center" width="50%"}
+
+SingleR 会丢弃具有低 delta 值的cell，在 pruned_labels 列中，您将找到“更干净”或更可靠的标签。
+
+![](images/low_delta.png){fig-align="center" width="50%"}
+
+## marker 手动注释
+
+| marker来源 | url |
+|------------------------------------|------------------------------------|
+| [Cellmarker](https://pmc.ncbi.nlm.nih.gov/articles/PMC9825416/) | [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker){.uri} [CellMarker](http://117.50.127.228/CellMarker/){.uri} |
+| PanglaoDB | <https://panglaodb.se/> |
+| Human cell atlas | <https://www.humancellatlas.org/> |
+| Mouse Cell Atlas | <https://bis.zju.edu.cn/MCA/> |
+| [Asian Immune Diversity Atlas (AIDA)](https://cellxgene.cziscience.com/collections/ced320a1-29f3-47c1-a735-513c7084d508) | Kock KH, Tan LM, Han KY, et al. Asian diversity in human immune cells. *Cell*. 2025;188(8):2288-2306.e24. doi:10.1016/j.cell.2025.02.017 |
+
+```{r}
+cellmarker <- readxl::read_excel("data/single_cell_omics//Cell_marker_Seq.xlsx")
+
+library(dplyr)
+library(stringr)
+myeloid_markers <- cellmarker |> 
+  filter(species == "Human") |> 
+  filter(str_detect(cell_name, "myeloid|monocyte|macrophage|dendritic|granulocyte|neutrophil|eosinophil|basophil|mast")) |> 
+    group_by(cell_type, tissue_type,cell_name) |> 
+  summarise(
+    marker_genes = str_flatten(marker, collapse = ","),
+    num_markers = n(),
+    .groups = "drop"
+  ) |> 
+  arrange(desc(num_markers))
+
+myeloid_markers
+```
+
+## Session Information {style="color:gray"}
+
+```{r}
+Sys.Date() 
+cat("Bioconductor version：")
+BiocManager::version() 
+devtools::session_info()
+```

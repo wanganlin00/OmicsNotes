@@ -1,0 +1,25 @@
+<https://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/harmony.html>
+
+<https://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/fast_mnn.html>
+
+```{r}
+# MNN批次效应校正
+
+# pak::pak("satijalab/seurat-wrappers")
+library(SeuratWrappers)
+mye <- IntegrateLayers(
+    object = mye, method = FastMNNIntegration,
+  #  orig = "pca", new.reduction = 'integrated.mnn',
+    batch = mye$orig.ident, k = 20,layers = "scale.data",
+    features =  VariableFeatures(mye),
+)
+
+plot_MNN_batch_correct <- DimPlot(mye,reduction = "integrated.mnn",group.by = "orig.ident")
+mye <- FindNeighbors(mye, dims = dims_to_use,reduction = "integrated.mnn")
+mye <- FindClusters(mye, resolution = 0.4)
+mye <- RunUMAP(mye, dims = dims_to_use,reduction = "integrated.mnn",reduction.name = "umap_mnn")
+umap_mnn <- DimPlot(mye,reduction = "umap_mnn", 
+        label = TRUE, repel = TRUE,
+        label.size = 3)
+
+```

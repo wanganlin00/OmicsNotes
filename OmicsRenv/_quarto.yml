@@ -28,15 +28,17 @@ book:
         
     - part: single_cell_omics.qmd
       chapters: 
-        - read.qmd
-        - quality_control.qmd
-    #    - Seurat.qmd
         - Orchestrating_Single_Cell_Analysis.qmd
-        - CellAnnotation.qmd        
+    #    - Seurat.qmd
+        - quality_control.qmd
+    #     - batch_correction.qmd
+        - Cell_Annotation.qmd    
+    #     - PseudotimeAnalysis.qmd
     #     - doublet_detection.qmd
+    
     #     - variation_check.qmd
     #     - normalization.qmd
-    #     - batch_correction.qmd
+
     #     - feature_selection.qmd
     #     - DimensionalityReduction.qmd
     #     - Clustering.qmd
@@ -48,7 +50,7 @@ book:
     # 
     #     - DEGs_Analysis.qmd
     #     - EnrichmentAnalysis.qmd
-    #     - PseudotimeAnalysis.qmd
+
         # - eQTL.qmd
         # - GWAS.qmd
         # - WGCNA.qmd
