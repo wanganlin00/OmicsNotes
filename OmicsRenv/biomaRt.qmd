@@ -1,6 +1,6 @@
-## BioMart
+# BioMart
 
-[BioMart](https://bioconductor.org/packages/release/bioc/html/biomaRt.html)
+## [BioMart](https://bioconductor.org/packages/release/bioc/html/biomaRt.html)
 
 访问Ensembl ID
 
@@ -41,7 +41,7 @@ ensembl <- useEnsembl(biomart = "ensembl",
                    mirror = "asia")
 ```
 
-### 映射
+## 映射
 
 ```{r}
 listMarts()
@@ -61,7 +61,7 @@ getBM(attributes = c("entrezgene_id", "ensembl_gene_id", "external_gene_name"),
  
 ```
 
-### **使用 Ensembl 的存档版本**
+## 使用 Ensembl 的存档版本
 
 ```{r}
 listEnsemblArchives()
@@ -72,7 +72,7 @@ ensembl_112 <- useEnsembl(biomart = 'genes',
                        version = 112)
 ```
 
-### **使用 Ensembl 基因组**
+## 使用 Ensembl 基因组
 
 ```{r}
 listEnsemblGenomes()
