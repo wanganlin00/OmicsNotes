@@ -2,7 +2,7 @@
 
 ------------------------------------------------------------------------
 
-记录一下论文中看到的单细胞分析R语言实现方法，主要是 Seurat、DESeq2、clusterProfiler (GO、KEGG)、GSEA。。。[***Seurat***](https://satijalab.org/seurat/)
+记录一下论文中单细胞组学分析R语言实现方法，包括 Seurat、DESeq2、clusterProfiler (GO、KEGG)、GSEA。。。[***Seurat***](https://satijalab.org/seurat/)
 
 pseudotime analysis / trajectory analysis：[monocle](https://cole-trapnell-lab.github.io/monocle-release/docs/#installing-monocle)，[bioconductor/**monocle**](https://bioconductor.org/packages/release/bioc/html/monocle.html)
 
