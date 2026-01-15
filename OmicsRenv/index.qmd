@@ -14,6 +14,8 @@
 
 -   [伪时序分析monocle3](https://cole-trapnell-lab.github.io/monocle3/)
 
+-   [Computational Genomics with R](https://compgenomr.github.io/book/)
+
 -   [系统发育树](https://yulab-smu.top/treedata-book/)
 
 -   [plink 2.0](https://www.cog-genomics.org/plink/2.0/)
